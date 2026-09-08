@@ -1,0 +1,26 @@
+version: 2
+models:
+  - name: wh_shop__order_fact
+    columns:
+      - name: order_pk
+        description: '{{doc("order_pk")}}'
+        tests:
+          - not_null
+          - unique
+      - name: customer_fk
+        description: '{{doc("customer_fk")}}'
+        tests:
+          - dbt_utils.at_least_one
+  - name: wh_shop__customer_dim
+    columns:
+      - name: customer_pk
+        description: '{{doc("customer_pk")}}'
+        tests:
+          - unique
+  - name: wh_shop__product_dim
+    columns:
+      - name: product_pk
+        description: '{{doc("product_pk")}}'
+        tests:
+          - not_null
+          - unique

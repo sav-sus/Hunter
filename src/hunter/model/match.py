@@ -91,6 +91,27 @@ def normalise_domain(name: str, *, prefixes: tuple[str, ...] = DEFAULT_PREFIXES)
     return head or None
 
 
+def normalise_domain_value(
+    value: str | None, *, prefixes: tuple[str, ...] = DEFAULT_PREFIXES
+) -> str | None:
+    """Spell a bare domain name comparably.
+
+    Domains reach Hunter from three places that disagree: a DBML table group
+    (``wh_commerce``), a model name (``commerce``), and a conceptual diagram
+    block (``wh_master_data``). Left alone they produce 16 domain groups on the
+    pilot where there are 10, splitting the site's grouping in two.
+    """
+    if not value:
+        return None
+    lowered = value.strip().lower()
+    for prefix in prefixes:
+        if lowered.startswith(prefix):
+            lowered = lowered[len(prefix) :]
+            break
+    lowered = _DOMAIN_TRIM.sub("", lowered)
+    return lowered or None
+
+
 def qualified_key(
     name: str,
     *,

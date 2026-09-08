@@ -8,12 +8,12 @@ import pytest
 import yaml
 
 import hunter.checks  # noqa: F401  registers every rule
-from conftest import build_context, column, model, score_of
 from hunter.checks import documentation
 from hunter.checks.base import REGISTRY, Findings, plural
 from hunter.config import resolve
 from hunter.config.register import Register
 from hunter.enums import Dimension, Severity
+from tests.conftest import build_context, column, model, score_of
 
 
 class TestRuleRegistry:

@@ -1,0 +1,32 @@
+---
+title: "The tiny shop business model"
+---
+block-beta
+  columns 2
+
+  block:legend:2
+    legend__label("Legend:")
+    legend__built("built")
+    legend__planned("planned")
+    legend__flagged("deviates")
+  end
+
+  block:shop:1
+    columns 3
+    shop__label("Shop")
+    shop__orders("orders")
+    shop__customers("customers")
+    shop__products("products")
+    shop__daily_sales("daily sales")
+    shop__forecasts("forecasts")
+    shop__suppliers("suppliers")
+    shop__returns("returns")
+  end
+
+style legend__built fill:#EFEFEF,stroke:#666,stroke-width:1px
+style legend__planned fill:#EFEFEF,stroke:#666,stroke-width:1px,stroke-dasharray:4 3,opacity:0.6
+style legend__flagged fill:#EFEFEF,stroke:#c0392b,stroke-width:2px
+style shop__label fill:#BAD7E9,stroke:#BAD7E9,stroke-width:0px
+style shop__suppliers stroke-dasharray:4 3,opacity:0.6
+style shop__returns stroke-dasharray:4 3,opacity:0.6
+style shop__forecasts stroke:#c0392b,stroke-width:2px

@@ -122,6 +122,7 @@ AMBIGUOUS_MATCH = rule(
     plain_heading="What was not checked",
     requires=(REQ_DBML,),
     exposure_weighted=False,
+    about_coverage=True,
 )
 
 APPROVED_OFF_PLAN = rule(

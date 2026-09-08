@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from conftest import build_context, column, designed, model, rules_fired
 from hunter.checks import documentation, naming, structure
 from hunter.checks.structure import hardcoded_references, strip_noise
 from hunter.config.register import Register
+from tests.conftest import build_context, column, designed, model, rules_fired
 
 
 class TestDocumentation:

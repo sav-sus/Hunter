@@ -179,6 +179,7 @@ def run(
         git=git,
         as_of=today,
     )
+    relativise_paths(project, root)
     alignment = build_alignment(project, config, register, logical=logical)
 
     available = availability(project)
@@ -221,9 +222,53 @@ def run(
             commit=git.head_sha if git and git.available else None,
         ),
         baseline=baseline,
-        sources_read=sorted(set(sources)),
+        sources_read=sorted({_relative(item, root) or item for item in sources}),
         as_of=today,
     )
+
+
+def _relative(path: str | None, root: Path) -> str | None:
+    """Rewrite an absolute path to be relative to the repository root.
+
+    File paths reach findings, the report and pull request comments. A local
+    absolute path in a client's pull request is both unreadable and a small
+    leak of whoever ran it, so every path is made repository-relative before it
+    can travel.
+    """
+    if not path:
+        return path
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        return path
+    try:
+        return str(candidate.resolve().relative_to(root.resolve()))
+    except ValueError:
+        # Outside the repository. Keep the file name only rather than the path.
+        return candidate.name
+
+
+def relativise_paths(project: Project, root: Path) -> None:
+    """Make every recorded file path relative to the repository root."""
+    for view in project.lookml_views.values():
+        view.file = _relative(view.file, root)
+        view.refined_by = [
+            item for item in (_relative(entry, root) for entry in view.refined_by) if item
+        ]
+        for field_spec in view.fields:
+            field_spec.file = _relative(field_spec.file, root)
+    for explore in project.explores.values():
+        explore.file = _relative(explore.file, root)
+    for entity in project.designed.values():
+        entity.source_file = _relative(entity.source_file, root)
+    if project.droughty is not None:
+        project.droughty.project_file = _relative(project.droughty.project_file, root)
+        project.droughty.schema_file = _relative(project.droughty.schema_file, root)
+        for entity in project.droughty.introspected.values():
+            entity.source_file = _relative(entity.source_file, root)
+    project.parse_issues = [
+        issue.model_copy(update={"source": _relative(issue.source, root) or issue.source})
+        for issue in project.parse_issues
+    ]
 
 
 def availability(project: Project) -> frozenset[str]:
@@ -250,4 +295,4 @@ def availability(project: Project) -> frozenset[str]:
     return frozenset(present)
 
 
-__all__ = ["ManifestError", "RunResult", "availability", "run"]
+__all__ = ["ManifestError", "RunResult", "availability", "relativise_paths", "run"]

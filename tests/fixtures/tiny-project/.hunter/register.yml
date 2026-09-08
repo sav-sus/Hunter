@@ -1,0 +1,19 @@
+# The tiny-project fixture's register.
+version: 1
+
+models:
+  wh_shop__legacy_fact:
+    owner: commerce
+    grain: one row per legacy order
+  int_shop__orders:
+    persistence: temporary
+    reason: a working step feeding the order fact, not for reporting from
+    review_by: 2027-01-31
+
+off_plan_approved: []
+
+ignores:
+  - rule: documentation.model_description_missing
+    models: ['wh_shop__customer_dim']
+    reason: the description is being written as part of the customer rework
+    expires: 2027-01-31

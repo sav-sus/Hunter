@@ -1,0 +1,21 @@
+# The tiny-project fixture's ruleset.
+extends: ra-house@1
+
+paths:
+  dbt_project_dir: .
+  manifest: target/manifest.json
+  dbml:
+    - models/_model/*.dbml
+  conceptual_diagram: docs/conceptual_model.mermaid
+  lookml:
+    - lookml/*.lkml
+
+pull_request:
+  mode: advisory
+
+# One deliberate divergence, so the divergence report has something in it and
+# the reason is exercised.
+rules:
+  structure.model_too_long:
+    enabled: false
+    reason: this fixture has no long models, so the rule adds nothing here

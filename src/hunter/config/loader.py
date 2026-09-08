@@ -257,12 +257,22 @@ def _collect_divergences(
     house: dict[str, Any],
     provenance: dict[str, ConfigLevel],
 ) -> list[Divergence]:
-    """Every leaf the project changed that the house had already set."""
+    """Every place the project departs from the house standard.
+
+    Two kinds. A leaf the project changed that the house had already set, and a
+    rule the project switched off or repointed. The second needs handling
+    separately because the house ruleset declares no ``rules`` block: its
+    position is the implicit one that every rule is on at its declared points.
+    Without this, FR7b's "disabled or reweighted" would never appear in the
+    report, which is exactly the case the fixture caught.
+    """
     stronger = {ConfigLevel.PROJECT, ConfigLevel.REGISTER, ConfigLevel.MODEL}
     out: list[Divergence] = []
     for path, level in sorted(provenance.items()):
         if level not in stronger:
             continue
+        if path.startswith("rules."):
+            continue  # handled below, against the implicit house position
         found, house_value = _lookup(house, path)
         if not found:
             continue
@@ -278,6 +288,66 @@ def _collect_divergences(
                 reason=_reason_for(merged, path),
             )
         )
+
+    out.extend(_rule_divergences(merged, provenance, stronger))
+    out.sort(key=lambda item: item.path)
+    return out
+
+
+def _rule_divergences(
+    merged: dict[str, Any],
+    provenance: dict[str, ConfigLevel],
+    stronger: set[ConfigLevel],
+) -> list[Divergence]:
+    """Rules the project switched off, reweighted or re-graded."""
+    rules = merged.get("rules")
+    if not isinstance(rules, dict):
+        return []
+
+    out: list[Divergence] = []
+    for rule_id, setting in sorted(rules.items()):
+        if not isinstance(setting, dict):
+            continue
+        level = (
+            provenance.get(f"rules.{rule_id}.enabled")
+            or provenance.get(f"rules.{rule_id}.points")
+            or provenance.get(f"rules.{rule_id}.severity")
+            or ConfigLevel.PROJECT
+        )
+        if level not in stronger:
+            continue
+        reason = setting.get("reason")
+
+        if setting.get("enabled") is False:
+            out.append(
+                Divergence(
+                    path=f"rules.{rule_id}.enabled",
+                    house_value=True,
+                    project_value=False,
+                    level=level,
+                    reason=str(reason) if reason else None,
+                )
+            )
+        if setting.get("points") is not None:
+            out.append(
+                Divergence(
+                    path=f"rules.{rule_id}.points",
+                    house_value="the rule's declared points",
+                    project_value=setting["points"],
+                    level=level,
+                    reason=str(reason) if reason else None,
+                )
+            )
+        if setting.get("severity") is not None:
+            out.append(
+                Divergence(
+                    path=f"rules.{rule_id}.severity",
+                    house_value="the rule's declared severity",
+                    project_value=setting["severity"],
+                    level=level,
+                    reason=str(reason) if reason else None,
+                )
+            )
     return out
 
 

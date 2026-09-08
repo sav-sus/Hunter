@@ -69,6 +69,12 @@ class Rule:
     #: Whether points scale with how much depends on the object. FR7.4.
     exposure_weighted: bool = True
 
+    #: True for rules that report what Hunter could not check rather than what
+    #: the repository got wrong. These belong on the "what was not checked"
+    #: page and must never appear as a gap in the repository: "Hunter could not
+    #: resolve this table name" is not something the team failed to do.
+    about_coverage: bool = False
+
     def format_title(self, values: dict[str, Any]) -> str:
         return _fill(self.title, values)
 
@@ -151,6 +157,7 @@ def rule(
     requires: tuple[Requirement, ...] = (REQ_MANIFEST,),
     confidence: float = 1.0,
     exposure_weighted: bool = True,
+    about_coverage: bool = False,
 ) -> Rule:
     """Declare a rule and add it to the registry."""
     return REGISTRY.add(
@@ -165,6 +172,7 @@ def rule(
             requires=requires,
             confidence=confidence,
             exposure_weighted=exposure_weighted,
+            about_coverage=about_coverage,
         )
     )
 

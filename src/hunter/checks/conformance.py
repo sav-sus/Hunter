@@ -77,6 +77,7 @@ TYPES_UNAVAILABLE = rule(
     plain_heading="What was not checked",
     requires=(REQ_MANIFEST, REQ_DBML),
     exposure_weighted=False,
+    about_coverage=True,
 )
 
 RELATIONSHIP_NOT_TESTED = rule(

@@ -39,7 +39,7 @@ from hunter.enums import (
 from hunter.ingest.diagrams import LogicalData
 from hunter.model.entities import Project
 from hunter.model.findings import Coverage
-from hunter.model.match import Index, Match, qualified_key
+from hunter.model.match import Index, Match, normalise_domain_value, qualified_key
 
 #: Legend words that mean "this exists in production".
 BUILT_CLAIMS = frozenset({"built", "live", "delivered", "done", "complete", "implemented"})
@@ -340,7 +340,9 @@ def build_alignment(
                 row.business_name = logical.entities[name] or None
 
     # 5. Approvals, owners, state and the claim comparison.
+    domain_prefixes = index_kwargs.get("prefixes", ()) or ()
     for row in rows.values():
+        row.domain = normalise_domain_value(row.domain, prefixes=domain_prefixes)
         model_name = row.model_name
         approval = register.approval(model_name) if model_name else None
         row.approved_off_plan = approval is not None

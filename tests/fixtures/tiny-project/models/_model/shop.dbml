@@ -1,0 +1,72 @@
+project tiny_shop {
+    database_type: 'bigquery'
+    note: '''
+        # The tiny shop warehouse
+
+        A deliberately small design, used to test Hunter. Names are invented.
+    '''
+}
+
+TableGroup wh_shop {
+  wh_shop__order_fact
+  wh_shop__customer_dim
+  wh_shop__product_dim
+  wh_shop__daily_sales_xa
+  wh_shop__forecast_fact
+  wh_shop__supplier_dim
+}
+
+table wh_shop__order_fact {
+  order_pk varchar [pk, note: 'Surrogate key for the order.']
+  customer_fk varchar [note: 'The customer who placed it.', ref: > wh_shop__customer_dim.customer_pk]
+  order_natural_key varchar [note: 'The order reference from the shop system.']
+  order_placed_dt date [note: 'Date the order was placed.']
+  order_total_amount numeric [note: 'Order value before returns.']
+
+  Note: 'Table Grain: One row per order. Source system: the shop platform.'
+}
+
+table wh_shop__customer_dim {
+  customer_pk varchar [pk, note: 'Surrogate key for the customer.']
+  customer_natural_key varchar [note: 'The customer reference.']
+  customer_name varchar [note: 'Customer name.']
+  customer_joined_dt date [note: 'Date the customer first ordered.']
+
+  Note: 'Table Grain: One row per customer.'
+}
+
+table wh_shop__product_dim {
+  product_pk varchar [pk, note: 'Surrogate key for the product.']
+  product_natural_key varchar [note: 'The product reference.']
+  product_name varchar [note: 'Product name.']
+  product_category_name varchar [note: 'Category the product sits in.']
+
+  Note: 'Table Grain: One row per product. It holds last year''s categories too.'
+}
+
+table wh_shop__daily_sales_xa {
+  daily_sales_pk varchar [pk, note: 'Surrogate key for the day.']
+  daily_sales_dt date [note: 'The day summarised.']
+  daily_sales_order_count numeric [note: 'Orders placed that day.']
+  daily_sales_total_amount numeric [note: 'Order value that day.']
+  daily_sales_returned_amount numeric [note: 'Value returned that day.']
+
+  Note: 'Table Grain: One row per day.'
+}
+
+table wh_shop__forecast_fact {
+  forecast_pk varchar [pk, note: 'Surrogate key.']
+  product_fk varchar [note: 'The product forecast.', ref: > wh_shop__product_dim.product_pk]
+  forecast_week_dt date [note: 'Week forecast.']
+  forecast_units numeric [note: 'Units expected.']
+
+  Note: 'Table Grain: One row per product per week.'
+}
+
+table wh_shop__supplier_dim {
+  supplier_pk varchar [pk, note: 'Surrogate key for the supplier.']
+  supplier_name varchar [note: 'Supplier name.']
+  supplier_country_code varchar [note: 'Country the supplier ships from.']
+
+  Note: 'Table Grain: One row per supplier.'
+}

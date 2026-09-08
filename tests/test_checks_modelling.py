@@ -6,7 +6,6 @@ import datetime as dt
 
 import pytest
 
-from conftest import build_context, column, dbt_test, designed, model, rules_fired
 from hunter.checks import (
     alignment,
     conformance,
@@ -28,6 +27,7 @@ from hunter.model.entities import (
     LookmlField,
     LookmlView,
 )
+from tests.conftest import build_context, column, dbt_test, designed, model, rules_fired
 
 
 def keyed_model(name: str = "wh_a__thing_fact", **kwargs):

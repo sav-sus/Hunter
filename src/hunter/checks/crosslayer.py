@@ -64,6 +64,7 @@ VIEW_TABLE_UNRESOLVABLE = rule(
     plain_heading="What was not checked",
     requires=(REQ_LOOKML,),
     exposure_weighted=False,
+    about_coverage=True,
 )
 
 EXPLORE_NO_CACHING = rule(

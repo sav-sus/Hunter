@@ -280,7 +280,10 @@ def systemic_gaps(
             spec = REGISTRY.get(rule_id)
         except KeyError:
             continue
-        if spec.points <= 0:
+        if spec.points <= 0 or spec.about_coverage:
+            # A zero-point rule reports without scoring, and a coverage rule
+            # reports what Hunter could not check. Neither is a gap in the
+            # repository.
             continue
         example = examples[rule_id]
         setting = config.rule_setting(rule_id)
