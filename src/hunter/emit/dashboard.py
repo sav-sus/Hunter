@@ -1,16 +1,22 @@
 """The report front page, as a self-contained dashboard.
 
 One HTML file with the stylesheet, the charts and the logo inlined. No network
-request, no JavaScript, nothing to install. It opens from a build artifact, a
-shared drive or an email attachment and looks the same in all three.
+request, nothing to install. It opens from a build artifact, a shared drive or
+an email attachment and looks the same in all three.
+
+There is one inline script, and it does one thing: filter the table list as
+somebody types. Every row is already in the HTML, so with scripting switched
+off the whole page still reads. Nothing else on the page depends on it.
 
 The page is built to be read in this order, and each band answers one question:
 
     the number        how healthy is this repository
+    the questions     do the layers agree with each other
     the alert strip   what has nobody decided
+    the lanes         the same entities at every model level
+    the table list    what have we got, and what stands behind each one
     the areas         where is the ground being lost
     the funnel        how much of the plan is real
-    the mix           what kind of problem is this
     the grid          is this a few bad tables or a habit
     the queue         what should be done first
 
@@ -22,17 +28,19 @@ through to is a figure nobody should trust.
 from __future__ import annotations
 
 import datetime as dt
+from dataclasses import dataclass
 
 from hunter import brand
 from hunter.emit import charts
-from hunter.emit.charts import Slice, esc
+from hunter.emit.charts import LaneCell, LaneRow, Slice, esc
 from hunter.emit.plain import (
     DIMENSION_HEADINGS,
     severity_label,
     state_summary,
     top_fixes,
 )
-from hunter.enums import AlignmentState, Dimension, Severity
+from hunter.enums import AlignmentState, Dimension, Presence, Severity
+from hunter.model.align import AlignmentRow
 from hunter.run import RunResult
 
 STYLE = f"""
@@ -205,6 +213,77 @@ code {{
 }}
 .objects {{ color: #6b7280; font-size: 12px; }}
 
+/* ---- the sync questions ---- */
+.sync {{ background: #fff; border-bottom: 1px solid var(--border); padding: 26px 0; }}
+.sync h2 {{
+  margin: 0 0 14px; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.09em; color: #6b7280; font-weight: 700;
+}}
+.sync-grid {{
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+}}
+.q {{
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px;
+  border-top: 4px solid var(--border);
+}}
+.q.yes {{ border-top-color: #16a34a; }}
+.q.mostly {{ border-top-color: #d97706; }}
+.q.no {{ border-top-color: {brand.DESTRUCTIVE}; }}
+.q .answer {{ font-size: 15px; font-weight: 700; margin: 0 0 2px; }}
+.q.yes .answer {{ color: #15803d; }}
+.q.mostly .answer {{ color: #b45309; }}
+.q.no .answer {{ color: {brand.DESTRUCTIVE}; }}
+.q .ask {{ margin: 0 0 8px; font-size: 14px; font-weight: 600; }}
+.q .count {{
+  margin: 0; font-size: 12.5px; color: #6b7280; font-family: {brand.MONO_STACK};
+}}
+.q .miss {{ margin: 6px 0 0; font-size: 12.5px; color: #52525b; }}
+
+/* ---- model lanes ---- */
+.lanes {{ display: block; }}
+.lane-bed {{ fill: #f7f8fc; }}
+.lane-head {{
+  font: 700 11px/1 {brand.FONT_STACK}; fill: #6b7280; text-transform: uppercase;
+  letter-spacing: 0.07em;
+}}
+.lane-group {{
+  font: 700 10.5px/1 {brand.FONT_STACK}; fill: #9aa1ad; text-transform: uppercase;
+  letter-spacing: 0.07em;
+}}
+.lane-box {{ fill: #fff; stroke: var(--primary); stroke-width: 1.5; }}
+.lane-box.off {{ fill: none; stroke: #d3d7e0; stroke-dasharray: 4 3; }}
+.lane-text {{
+  font: 600 12px/1 {brand.MONO_STACK}; fill: var(--ink); dominant-baseline: middle;
+}}
+.lane-text.off {{ font-weight: 400; fill: #b0b6c2; font-family: {brand.FONT_STACK}; }}
+.lane-link {{ stroke-width: 2; }}
+.lane-link.ok {{ stroke: #16a34a; }}
+.lane-link.broken {{ stroke: {brand.DESTRUCTIVE}; stroke-dasharray: 4 3; }}
+.lane-link.unplanned {{ stroke: #d97706; stroke-dasharray: 1 4; stroke-linecap: round; }}
+.lane-link.none {{ stroke: #e2e5ec; }}
+
+/* ---- searchable catalogue ---- */
+.finder {{
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;
+}}
+.finder input {{
+  flex: 1 1 260px; min-width: 200px; font: 400 14px/1.4 {brand.FONT_STACK};
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; color: var(--ink);
+}}
+.finder input:focus {{ outline: 2px solid var(--primary); outline-offset: -1px; }}
+.finder .tally {{ font-size: 12.5px; color: #6b7280; font-family: {brand.MONO_STACK}; }}
+.mark {{
+  display: inline-block; width: 20px; text-align: center; font-weight: 700; font-size: 14px;
+}}
+.mark.yes {{ color: #16a34a; }}
+.mark.no {{ color: {brand.DESTRUCTIVE}; }}
+.mark.off {{ color: #d97706; font-size: 11px; }}
+.mark.dash {{ color: #c3c8d2; }}
+.scroller {{ overflow-x: auto; }}
+.empty {{ padding: 18px 0; color: #6b7280; font-size: 13.5px; }}
+[hidden] {{ display: none !important; }}
+
 /* ---- footer ---- */
 footer {{
   margin-top: 34px; border-top: 1px solid var(--border); background: #fff;
@@ -238,6 +317,176 @@ def _card(
         f"<section class='{classes}'{ident}><h2>{esc(title)}</h2>"
         f"<p class='sub'>{esc(sub)}</p>{body}{footer}</section>"
     )
+
+
+# ------------------------------------------------- the questions in the band
+
+
+@dataclass(frozen=True)
+class Question:
+    """One plain question about whether two levels agree.
+
+    ``done`` of ``total`` is the whole answer. ``missing`` names the ones that
+    do not, because a fraction tells a reader there is a problem and a name
+    tells them where it is.
+    """
+
+    ask: str
+    done: int
+    total: int
+    missing: tuple[str, ...] = ()
+
+    @property
+    def verdict(self) -> str:
+        """Green, amber or red. Amber is "nearly", which is 4 in 5 or better."""
+        if self.total == 0:
+            return "mostly"
+        if self.done == self.total:
+            return "yes"
+        return "mostly" if self.done >= 0.8 * self.total else "no"
+
+    @property
+    def answer(self) -> str:
+        short = self.total - self.done
+        if self.total == 0:
+            return "Nothing to compare"
+        if short == 0:
+            return "Yes, all of them"
+        return f"No, {short} of {self.total} " + ("is" if short == 1 else "are") + " missing"
+
+
+def _in_repo(row: AlignmentRow) -> bool:
+    """Whether the code for this entity exists, switched on or off.
+
+    A model behind a disabled flag is still written, reviewed and merged. Saying
+    it is not built would report the same table as both missing and off-plan.
+    """
+    return row.repo in (Presence.PRESENT, Presence.DISABLED)
+
+
+def sync_questions(result: RunResult) -> list[Question]:
+    """The layer-by-layer agreement questions, in reading order.
+
+    Each one is asked only where Hunter read the source it needs. A question
+    nobody could answer is left off rather than answered "no".
+    """
+    rows = result.alignment.rows
+    built = [row for row in rows if _in_repo(row)]
+    project = result.project
+    out: list[Question] = []
+
+    if project.has_conceptual:
+        wanted = [row for row in rows if row.conceptual is Presence.PRESENT]
+        designed = [row for row in wanted if row.designed is Presence.PRESENT]
+        out.append(
+            Question(
+                "Does every business entity have a design?",
+                len(designed),
+                len(wanted),
+                tuple(sorted(row.label for row in wanted if row.designed is not Presence.PRESENT)),
+            )
+        )
+
+    if project.has_dbml:
+        planned = [row for row in rows if row.designed is Presence.PRESENT]
+        out.append(
+            Question(
+                "Is every designed table built?",
+                sum(1 for row in planned if _in_repo(row)),
+                len(planned),
+                tuple(
+                    sorted(row.designed_name or row.label for row in planned if not _in_repo(row))
+                ),
+            )
+        )
+        out.append(
+            Question(
+                "Does every built table have a design?",
+                sum(1 for row in built if row.designed is Presence.PRESENT),
+                len(built),
+                tuple(
+                    sorted(
+                        row.model_name or row.label
+                        for row in built
+                        if row.designed is not Presence.PRESENT
+                    )
+                ),
+            )
+        )
+
+    if project.has_droughty and project.droughty and project.droughty.introspected:
+        live = {name.lower() for name in project.droughty.introspected}
+        out.append(
+            Question(
+                "Is every built table live in the warehouse?",
+                sum(1 for row in built if (row.model_name or "").lower() in live),
+                len(built),
+                tuple(
+                    sorted(
+                        row.model_name or row.label
+                        for row in built
+                        if (row.model_name or "").lower() not in live
+                    )
+                ),
+            )
+        )
+
+    if project.has_lookml:
+        out.append(
+            Question(
+                "Does every built table have a Looker view?",
+                sum(1 for row in built if project.views_for_model(row.model_name or "")),
+                len(built),
+                tuple(
+                    sorted(
+                        row.model_name or row.label
+                        for row in built
+                        if not project.views_for_model(row.model_name or "")
+                    )
+                ),
+            )
+        )
+
+    claimed = [row for row in rows if row.claim_matches_reality is not None]
+    if claimed:
+        agree = [row for row in claimed if row.claim_matches_reality]
+        out.append(
+            Question(
+                "Does the business diagram match what is built?",
+                len(agree),
+                len(claimed),
+                tuple(sorted(row.label for row in claimed if not row.claim_matches_reality)),
+            )
+        )
+
+    return out
+
+
+def _sync(result: RunResult) -> str:
+    questions = sync_questions(result)
+    if not questions:
+        return ""
+    cards = []
+    for item in questions:
+        miss = ""
+        if item.missing:
+            named = ", ".join(item.missing[:3])
+            if len(item.missing) > 3:
+                named += f" and {len(item.missing) - 3} more"
+            miss = f"<p class='miss'>{esc(named)}</p>"
+        cards.append(
+            f"<div class='q {item.verdict}'>"
+            f"<p class='ask'>{esc(item.ask)}</p>"
+            f"<p class='answer'>{esc(item.answer)}</p>"
+            f"<p class='count'>{item.done} of {item.total}</p>"
+            f"{miss}</div>"
+        )
+    return f"""<div class="sync" id="sync">
+  <div class="wrap">
+    <h2>Do the layers agree</h2>
+    <div class="sync-grid">{"".join(cards)}</div>
+  </div>
+</div>"""
 
 
 # ------------------------------------------------------------------- panels
@@ -311,9 +560,8 @@ def _alerts(result: RunResult) -> str:
     return f"""<div class="alerts">
   <div class="wrap">
     <h2>Needs a decision, not a fix</h2>
-    <p class="lead">Each of these was missing everywhere Hunter looked. That is one
-       decision nobody has taken, not a list of separate defects, so it sits above
-       the score rather than inside it.</p>
+    <p class="lead">Each of these was missing everywhere Hunter looked. One decision
+       nobody has taken, not a list of separate defects.</p>
     <div class="alert-grid">{"".join(cards)}</div>
   </div>
 </div>"""
@@ -348,8 +596,7 @@ def _areas(result: RunResult) -> str:
         )
     return _card(
         "Where the ground is being lost",
-        "Each area scored out of 100, weakest first. The weight is how much of the "
-        "total it can move, after unmeasured areas were excluded.",
+        "Each area out of 100, weakest first. The weight is how much of the total it can move.",
         charts.bars(rows, maximum=100.0, width=700, label_width=260),
         span="two-thirds",
         foot=foot,
@@ -373,8 +620,7 @@ def _severity_mix(result: RunResult) -> str:
     total = sum(item.value for item in slices)
     return _card(
         "What kind of problem this is",
-        "Open findings by how much they matter. A tall bar of tidy-ups is a "
-        "different repository from a short one of urgent gaps.",
+        "Open findings, by how much each one matters.",
         "<div class='split'>"
         f"<div class='chart'>{charts.donut(slices, centre_label=f'{total:g}')}</div>"
         f"<div class='side'>{charts.legend(slices)}</div>"
@@ -407,8 +653,7 @@ def _funnel(result: RunResult) -> str:
         foot = ""
     return _card(
         "How much of the plan is real",
-        "Every entity, from what the business asked for through to what exists. "
-        "The narrowing is the part nobody has a number for today.",
+        "Every entity, from what the business asked for to what exists.",
         charts.funnel(stages, band=92),
         span="half",
         foot=foot,
@@ -442,14 +687,258 @@ def _states(result: RunResult) -> str:
         for item, (_, _, meaning) in zip(slices, summary, strict=True)
     )
     return _card(
-        "Every entity, and where it actually stands",
-        "One state per entity. Built and switched off is not the same as unbuilt, "
-        "and approved off-plan is not the same as off-plan.",
+        "Every entity, and where it stands",
+        "One state per entity.",
         charts.stacked(slices)
         + "<table><thead><tr><th>State</th><th>Count</th><th>What it means</th></tr></thead>"
         f"<tbody>{rows}</tbody></table>",
         span="half",
         anchor="states",
+    )
+
+
+#: The chain, in the order a table travels along it. Each entry is the lane
+#: heading, the attribute on an alignment row, and the source that has to have
+#: been read for the lane to mean anything.
+LANES: tuple[tuple[str, str, str], ...] = (
+    ("Conceptual · the business model", "conceptual", "conceptual"),
+    ("Logical · the data flow", "logical", "logical"),
+    ("Physical · the DBML design", "designed", "dbml"),
+    ("Built · in the repository", "repo", "manifest"),
+)
+
+#: How many entities the lane diagram draws before it stops. Past this it stops
+#: being a picture and becomes a list, and there is a searchable list below it.
+LANE_LIMIT = 30
+
+
+def _three_models(result: RunResult) -> str:
+    """The business, logical and physical models drawn against each other."""
+    available = {
+        "conceptual": result.project.has_conceptual,
+        "logical": any(row.logical is not Presence.UNKNOWN for row in result.alignment.rows),
+        "dbml": result.project.has_dbml,
+        "manifest": result.project.has_manifest,
+    }
+    lanes = [lane for lane in LANES if available.get(lane[2])]
+    if len(lanes) < 2:
+        return ""
+
+    # The two business levels are named in business words and the two technical
+    # levels in table names, because that is what each level is written in.
+    names = {
+        "conceptual": lambda row: row.label,
+        "logical": lambda row: row.label,
+        "designed": lambda row: row.designed_name or row.key,
+        "repo": lambda row: row.model_name or row.key,
+    }
+    drawn = result.alignment.rows[:LANE_LIMIT]
+    rows = [
+        LaneRow(
+            label=row.label,
+            group=row.domain or "",
+            cells=tuple(
+                LaneCell(
+                    present=getattr(row, attr) is Presence.PRESENT,
+                    name=names[attr](row),
+                    note=row.state_label,
+                )
+                for _, attr, _ in lanes
+            ),
+        )
+        for row in drawn
+    ]
+
+    hidden = len(result.alignment.rows) - len(drawn)
+    foot = (
+        "Green means the two levels agree. Red is a break: the level on the left "
+        "has it, the level on the right does not. Amber is the other way round, "
+        "something built that the level above never asked for."
+    )
+    if hidden > 0:
+        foot += f" {hidden} more entities are in the searchable table below."
+    return _card(
+        "The three models, and what was built",
+        "Read across one band to follow a single table from what the business asked "
+        "for to what exists.",
+        charts.model_lanes([lane[0] for lane in lanes], rows),
+        foot=foot,
+        anchor="models",
+    )
+
+
+#: What one cell in the catalogue can say. "off" is a table whose code exists
+#: but is switched off; "unknown" is a level Hunter had no source for.
+MARKS: dict[str, tuple[str, str, str]] = {
+    "yes": ("yes", "&#10003;", "yes"),
+    "no": ("no", "&#10007;", "no"),
+    "off": ("off", "&#9679;", "built but switched off"),
+    "unknown": ("dash", "&#8211;", "Hunter had nothing to read"),
+}
+
+
+def _mark(state: str) -> str:
+    klass, glyph, title = MARKS[state]
+    return f"<span class='mark {klass}' title='{title}'>{glyph}</span>"
+
+
+@dataclass(frozen=True)
+class CatalogueRow:
+    """One table, and what stands behind it at every level."""
+
+    name: str
+    business: str
+    domain: str
+    designed: str
+    built: str
+    warehouse: str
+    looker: str
+    state: str
+    is_table: bool = True
+
+    @property
+    def searchable(self) -> str:
+        parts = (self.name, self.business, self.domain, self.state)
+        return " ".join(part for part in parts if part).lower()
+
+
+def catalogue_rows(result: RunResult) -> list[CatalogueRow]:
+    """Every table Hunter saw anywhere, sorted by area then name.
+
+    The union matters. A table can be in the design and not the repository, in
+    the repository and not the warehouse, or in the warehouse and in neither,
+    and a list built from any single source hides one of those three.
+    """
+    project = result.project
+    introspected = project.droughty.introspected if project.droughty else {}
+    live = {name.lower(): name for name in introspected}
+    knows_warehouse = bool(live)
+    knows_looker = project.has_lookml
+    knows_design = project.has_dbml
+
+    def looker_for(model_name: str | None) -> str:
+        if not knows_looker:
+            return "unknown"
+        return "yes" if model_name and project.views_for_model(model_name) else "no"
+
+    rows: list[CatalogueRow] = []
+    seen: set[str] = set()
+
+    for row in result.alignment.rows:
+        name = row.technical_name or ""
+        lookup = name.lower()
+        if lookup:
+            seen.add(lookup)
+        if row.repo is Presence.PRESENT:
+            built = "yes"
+        elif row.repo is Presence.DISABLED:
+            built = "off"
+        else:
+            built = "no"
+        rows.append(
+            CatalogueRow(
+                name=name or row.label,
+                business=row.business_name or "",
+                domain=row.domain or "",
+                designed=("yes" if row.designed is Presence.PRESENT else "no")
+                if knows_design
+                else "unknown",
+                built=built,
+                warehouse=("yes" if lookup in live else "no") if knows_warehouse else "unknown",
+                looker=looker_for(row.model_name),
+                state=row.state_label,
+                is_table=bool(name),
+            )
+        )
+
+    # Anything the warehouse holds that no design and no model accounts for.
+    for lowered, name in sorted(live.items()):
+        if lowered in seen:
+            continue
+        rows.append(
+            CatalogueRow(
+                name=name,
+                business="",
+                domain="",
+                designed="no" if knows_design else "unknown",
+                built="no",
+                warehouse="yes",
+                looker=looker_for(None),
+                state="Untracked table",
+            )
+        )
+
+    rows.sort(key=lambda row: (row.domain or "~", row.name))
+    return rows
+
+
+def _catalogue(result: RunResult) -> str:
+    """Every table, at every level, with a search box over it."""
+    rows = catalogue_rows(result)
+    if not rows:
+        return ""
+    knows_warehouse = any(row.warehouse != "unknown" for row in rows)
+    knows_looker = any(row.looker != "unknown" for row in rows)
+
+    heads = ["Table", "Area", "In the design", "In the repository"]
+    if knows_warehouse:
+        heads.append("In the warehouse")
+    if knows_looker:
+        heads.append("Looker view")
+    heads.append("Where it stands")
+
+    body = []
+    for row in rows:
+        if row.is_table:
+            label = f"<code>{esc(row.name)}</code>"
+        else:
+            label = f"{esc(row.name)} <span class='objects'>(no table yet)</span>"
+        if row.business and row.business.lower() != row.name.lower():
+            label += f"<br><span class='objects'>{esc(row.business)}</span>"
+        cells = [
+            f"<td>{label}</td>",
+            f"<td class='objects'>{esc(row.domain.replace('_', ' ') or '-')}</td>",
+            f"<td>{_mark(row.designed)}</td>",
+            f"<td>{_mark(row.built)}</td>",
+        ]
+        if knows_warehouse:
+            cells.append(f"<td>{_mark(row.warehouse)}</td>")
+        if knows_looker:
+            cells.append(f"<td>{_mark(row.looker)}</td>")
+        cells.append(f"<td class='objects'>{esc(row.state)}</td>")
+        body.append(f'<tr data-find="{esc(row.searchable)}">{"".join(cells)}</tr>')
+
+    header = "".join(f"<th>{esc(head)}</th>" for head in heads)
+    finder = (
+        "<div class='finder'>"
+        "<input type='search' id='table-search' autocomplete='off'"
+        " placeholder='Search a table, an area or a state'"
+        " aria-label='Search the table list'>"
+        f"<span class='tally' id='table-tally'>{len(rows)} tables</span>"
+        "</div>"
+    )
+    key = (
+        "<div class='heat-key'>"
+        "<span><b class='mark yes'>&#10003;</b> it is there</span>"
+        "<span><b class='mark no'>&#10007;</b> it is not</span>"
+        "<span><b class='mark off'>&#9679;</b> built but switched off</span>"
+        "<span><b class='mark dash'>&#8211;</b> Hunter had nothing to read</span>"
+        "</div>"
+    )
+    foot = ""
+    if knows_warehouse:
+        foot = (
+            "The warehouse column is read from the Droughty introspection committed "
+            "in the repository, not from a live connection."
+        )
+    return _card(
+        "Every table, and what stands behind it",
+        "One row per table. Type to filter.",
+        finder + "<div class='scroller'><table id='table-list'>"
+        f"<thead><tr>{header}</tr></thead><tbody>{''.join(body)}</tbody></table></div>"
+        "<p class='empty' id='table-empty' hidden>Nothing matches that.</p>" + key,
+        foot=foot,
+        anchor="catalogue",
     )
 
 
@@ -507,9 +996,7 @@ def _rule_grid(result: RunResult) -> str:
     )
     return _card(
         "Every rule at once",
-        f"One square per rule, {len(cells)} of them. The shape of the block is the "
-        "point: a field of green with three red squares is a different repository "
-        "from an even wash of amber. Hover a square for its numbers.",
+        f"One square per rule, {len(cells)} of them. Hover a square for its numbers.",
         charts.heat_grid(cells, columns=16) + key,
         span="two-thirds",
         anchor="rules",
@@ -536,8 +1023,7 @@ def _findings_by_area(result: RunResult) -> str:
         return ""
     return _card(
         "Where the findings are",
-        "Count of open findings per area. Read this next to the scores: a large "
-        "count on a well-scored area means many small things.",
+        "Open findings per area. A large count on a well-scored area means many small things.",
         charts.bars(rows, width=440, label_width=250, row_height=34),
         span="third",
         anchor="by-area",
@@ -598,9 +1084,8 @@ def _load_bearing(result: RunResult) -> str:
         )
     return _card(
         "What everything else is built on",
-        "Ranked by total reach: tables downstream plus report views. A table with "
-        "nothing checking it and a long reach is where one silent error becomes "
-        "many wrong numbers.",
+        "Ranked by reach: tables downstream plus report views. Long reach and "
+        "nothing checking it is where one silent error becomes many wrong numbers.",
         "<table><thead><tr><th>Table</th><th>Tables downstream</th>"
         "<th>Report views</th><th>Reach</th><th>Is it checked</th></tr></thead>"
         f"<tbody>{''.join(rows)}</tbody></table>",
@@ -629,8 +1114,7 @@ def _queue(result: RunResult) -> str:
         )
     return _card(
         "Do these first",
-        "Ranked by how many points closing the whole group would recover, most "
-        "serious first. The last column is what happens if it is left.",
+        "Ranked by the points closing the whole group would recover.",
         "<table><thead><tr><th>Points back</th><th>How much it matters</th>"
         "<th>What is wrong</th><th>What breaks if it is left</th></tr></thead>"
         f"<tbody>{''.join(rows)}</tbody></table>",
@@ -650,8 +1134,7 @@ def _not_checked(result: RunResult) -> str:
     )
     return _card(
         "What this score is not based on",
-        "A score is only as good as what went into it. Anything Hunter could not "
-        "read is named here and excluded, never scored as zero.",
+        "Anything Hunter could not read is excluded, never scored as zero.",
         f"<table><thead><tr><th>Not available</th><th>What that means</th></tr>"
         f"</thead><tbody>{rows}</tbody></table>",
         span="half",
@@ -665,8 +1148,7 @@ def _sources(result: RunResult) -> str:
     rows = "".join(f"<tr><td><code>{esc(path)}</code></td></tr>" for path in result.sources_read)
     return _card(
         "Every file this was computed from",
-        "Nothing else was read, and nothing was written. Hunter never modifies "
-        "code, opens a commit or writes to a warehouse.",
+        "Nothing else was read. Nothing was written.",
         f"<table><tbody>{rows}</tbody></table>",
         span="half",
         anchor="sources",
@@ -677,13 +1159,43 @@ def _sources(result: RunResult) -> str:
 
 
 NAV = [
+    ("#sync", "Do the layers agree"),
+    ("#models", "The models"),
+    ("#catalogue", "Every table"),
     ("#areas", "Areas"),
-    ("#funnel", "The plan"),
-    ("#rules", "Rules"),
     ("#queue", "Do first"),
-    ("#not-checked", "Not checked"),
     ("scorecard/", "Full report"),
 ]
+
+#: The only script on the page. It filters a table that is already fully
+#: rendered in the HTML, so with scripting switched off every row still shows
+#: and nothing on the page depends on it running.
+SEARCH_JS = """
+(function () {
+  var box = document.getElementById('table-search');
+  var table = document.getElementById('table-list');
+  if (!box || !table) { return; }
+  var tally = document.getElementById('table-tally');
+  var empty = document.getElementById('table-empty');
+  var rows = Array.prototype.slice.call(table.tBodies[0].rows);
+  function filter() {
+    var needle = box.value.trim().toLowerCase();
+    var shown = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var hit = !needle || rows[i].getAttribute('data-find').indexOf(needle) !== -1;
+      rows[i].hidden = !hit;
+      if (hit) { shown++; }
+    }
+    if (tally) {
+      tally.textContent = shown === rows.length
+        ? rows.length + ' tables'
+        : shown + ' of ' + rows.length + ' tables';
+    }
+    if (empty) { empty.hidden = shown !== 0; }
+  }
+  box.addEventListener('input', filter);
+})();
+"""
 
 
 def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None) -> str:
@@ -696,6 +1208,8 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
 
     panels = "".join(
         [
+            _three_models(result),
+            _catalogue(result),
             _areas(result),
             _severity_mix(result),
             _funnel(result),
@@ -742,6 +1256,7 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
 </div></header>
 
 {_hero(result, generated)}
+{_sync(result)}
 {_alerts(result)}
 
 <main><div class="wrap"><div class="grid">{panels}</div></div></main>
@@ -751,6 +1266,7 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
   <span>{esc(branding.attribution)}. Read from the repository, nothing written back.</span>
   <span class="meta">{esc(stamp)}</span>
 </div></footer>
+<script>{SEARCH_JS}</script>
 </body>
 </html>
 """

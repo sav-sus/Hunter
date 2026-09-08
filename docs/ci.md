@@ -1,9 +1,8 @@
 # In CI
 
-Hunter ships as a composite GitHub Action, published by Rittman Analytics and
-wrapping the command line. It calls
-the same commands you would run locally, so CI and local results are the same by
-construction rather than by discipline.
+<p class="lede">A composite GitHub Action from Rittman Analytics, wrapping the
+command line. It calls the same commands you would run locally, so CI and local
+results agree by construction rather than by discipline.</p>
 
 ## The workflow
 
@@ -36,14 +35,14 @@ jobs:
 
 `hunter init` writes this file for you.
 
-## Two things that are easy to get wrong
-
-**`fetch-depth: 0`.** The default checkout is shallow and has no history, so
-attribution and the window report silently produce nothing. Hunter reports a
+<div class="key" markdown>
+**`fetch-depth: 0` matters.** The default checkout is shallow and has no
+history, so attribution and the window report produce nothing. Hunter reports a
 shallow clone rather than staying quiet about it, but the fix is here.
 
-**Never reference the Action at `@main`.** Pin a tag. A repository's score must
-not move because somebody pushed a commit to Hunter.
+**Never reference the Action at `@main`.** Pin a tag, or a repository's score
+moves because somebody pushed a commit to Hunter.
+</div>
 
 ## Inputs
 
@@ -77,10 +76,8 @@ not move because somebody pushed a commit to Hunter.
 | `gate` | Fails below `scoring.fail_under` | Once a threshold has been agreed rather than imposed |
 
 Start on advisory. A tool that fails builds in its first week gets switched off
-in its second, and then none of the rest of this matters.
-
-Ratchet mode distinguishes real movement from movement caused by upgrading
-Hunter, so an upgrade never fails a build.
+in its second. Ratchet mode tells real movement from upgrade movement, so
+upgrading Hunter never fails a build.
 
 ## What it does on each event
 
@@ -90,70 +87,67 @@ Hunter, so an upgrade never fails a build.
 | A push to main | Scores, builds the site if `publish` is set, uploads both |
 | The weekly schedule | The same as a push. Catches drift that arrives from outside the repository |
 
-The weekly run is worth keeping. A design file edited outside a pull request, or
-a reporting change made in Looker, changes the answer without anything being
-pushed.
+The weekly run is worth keeping: a design file edited outside a pull request,
+or a change made in Looker, moves the answer without anything being pushed.
 
 ## The comment
 
 One comment, edited in place on each push. A new comment on every push is how a
 tool gets muted.
 
-It carries the score and its movement, the findings on what this change touches,
-what those tables reach, and a collapsed diagram of the affected tables.
+It carries the score and its movement, the findings on what this change
+touches, what those tables reach, and a collapsed diagram of the affected
+tables. Standing debt stays on the site; the comment is about this change.
 
-Standing debt stays on the site. The comment is about this change.
+Needs `pull-requests: write`. Without it the score and summary still work and
+the comment step is skipped.
 
-Needs `pull-requests: write`. Without it the score and the summary still work
-and the comment step is skipped.
+??? note "Getting a true before-and-after"
 
-## A true before-and-after
+    By default the comment lists findings on the files the change touched,
+    which is a superset of what the change introduced, and says so. For an
+    exact diff, give it the report from before.
 
-By default the comment lists findings on the files the change touched, which is a
-superset of what the change introduced, and says so.
+    ```yaml
+          - name: Fetch the report from main
+            uses: actions/download-artifact@v4
+            continue-on-error: true
+            with:
+              name: hunter-report
+              path: previous
+              github-token: ${{ github.token }}
+              run-id: ${{ needs.find-baseline.outputs.run-id }}
 
-For an exact diff, give it the previous report:
+          - uses: sav-sus/Hunter@v0.1.0
+            with:
+              previous-report: previous/report.json
+    ```
 
-```yaml
-      - name: Fetch the report from main
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: hunter-report
-          path: previous
-          github-token: ${{ github.token }}
-          run-id: ${{ needs.find-baseline.outputs.run-id }}
-
-      - uses: sav-sus/Hunter@v0.1.0
-        with:
-          previous-report: previous/report.json
-```
-
-Worth it once the comment is being read. Not worth it on day one.
+    Worth it once the comment is being read. Not worth it on day one.
 
 ## Publishing the site
 
 Set `publish: true` on pushes to main and the site is built and uploaded as an
 artifact. Serving it somewhere is a separate decision.
 
-If your organisation is on GitHub Enterprise Cloud, private Pages restricts a
-site to people with read access to the repository, which is the straightforward
-option. Outside Enterprise Cloud a private repository still publishes a
-**public** Pages site, and its HTML and JSON are downloadable by anyone, so
-Pages is not an option there. Cloud Run behind IAP is the fallback. A
-browser-side password check is not access control.
+| Your situation | Option |
+|---|---|
+| On GitHub Enterprise Cloud | Private Pages restricts the site to people with read access. The straightforward choice |
+| Not on Enterprise Cloud | Pages from a private repository is still **public**, and its HTML and JSON are downloadable by anyone. Use Cloud Run behind IAP |
 
-## Running it without GitHub Actions
+A browser-side password check is not access control.
 
-Nothing in Hunter depends on Actions. In any CI system:
+??? note "Running it without GitHub Actions"
 
-```bash
-pip install "rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"
-hunter score . --out report.json
-hunter docs build . --out site
-```
+    Nothing in Hunter depends on Actions. In any CI system:
 
-Exit code 1 means the gate failed, 2 means it could not run.
+    ```bash
+    pip install "rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"
+    hunter score . --out report.json
+    hunter docs build . --out site
+    ```
+
+    Exit code 1 means the gate failed, 2 means it could not run.
 
 ## What it never does
 

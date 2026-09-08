@@ -27,7 +27,7 @@
     
     
       
-        <title>Installing - Rittman Hunter</title>
+        <title>Install - Rittman Hunter</title>
       
     
     
@@ -55,6 +55,8 @@
     
       <link rel="stylesheet" href="../assets/rittman.css">
     
+      <link rel="stylesheet" href="../assets/docs.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installing" class="md-skip">
+        <a href="#install" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installing
+              Install
             
           </span>
         </div>
@@ -297,30 +299,29 @@
       
         
       
-    
-    
-    
-      
-        
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Getting started
+    Start here
   
 
     
@@ -336,7 +337,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Getting started
+    Start here
   
 
           </label>
@@ -365,7 +366,7 @@
   <span class="md-ellipsis">
     
   
-    Installing
+    Install
   
 
     
@@ -383,7 +384,7 @@
   <span class="md-ellipsis">
     
   
-    Installing
+    Install
   
 
     
@@ -409,39 +410,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-you-need" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What you need
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#as-a-tool" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        As a tool
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#always-pin-a-version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Always pin a version
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#getting-the-manifest" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -450,63 +418,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Getting the manifest">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-parse-with-no-credential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Parse with no credential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-parse-with-a-read-only-credential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Parse with a read-only credential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-use-the-manifest-your-dbt-job-already-produces" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Use the manifest your dbt job already produces
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#finding-out-which-applies-to-you" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Finding out which applies to you
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#also-useful-a-catalogue" class="md-nav__link">
+  <a href="#optional-a-catalogue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Also useful: a catalogue
+        Optional: a catalogue
       
     </span>
   </a>
@@ -561,408 +479,6 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Understanding it
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Understanding it
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Concepts
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scoring/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the score works
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Using it
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Using it
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../register/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    The register
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Commands
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ci/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    In CI
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../example/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    See it working
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    See it working
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
               
                 
   
@@ -977,343 +493,7 @@
   <span class="md-ellipsis">
     
   
-    The dashboard
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/index-page/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/reconciliation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: designed against built
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/conceptual-model/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: the business model
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/data-model/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: the data model
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/scorecard/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: the score
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/physical-model/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: what is built
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/lineage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: how it fits together
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/debt/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: what needs doing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/sync/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: do the layers agree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/conventions/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: the rules
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/not-checked/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: what was not checked
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example/glossary/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Output: words used here
+    See it working
   
 
     
@@ -1347,32 +527,221 @@
       
         
       
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../concepts/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
         
       
     
     
     
+    
       
         
         
       
     
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../configuration/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+  
+    Set it up
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../cli/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
-            
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../example/" class="md-nav__link">
+      
   
   
   <span class="md-ellipsis">
     
   
-    Reference
+    Example output
   
 
     
@@ -1380,106 +749,12 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Reference
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
   
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/rules/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Every rule
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../faq/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Questions
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../contributing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
       
     </li>
   
@@ -1512,39 +787,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-you-need" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What you need
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#as-a-tool" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        As a tool
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#always-pin-a-version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Always pin a version
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#getting-the-manifest" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1553,63 +795,13 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Getting the manifest">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-parse-with-no-credential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Parse with no credential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-parse-with-a-read-only-credential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Parse with a read-only credential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-use-the-manifest-your-dbt-job-already-produces" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Use the manifest your dbt job already produces
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#finding-out-which-applies-to-you" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Finding out which applies to you
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#also-useful-a-catalogue" class="md-nav__link">
+  <a href="#optional-a-catalogue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Also useful: a catalogue
+        Optional: a catalogue
       
     </span>
   </a>
@@ -1652,72 +844,92 @@
   
 
 
-<h1 id="installing">Installing<a class="headerlink" href="#installing" title="Permanent link">&para;</a></h1>
-<p>Hunter is a Rittman Analytics tool. It is proprietary and installed from
-this repository rather than from a public index.</p>
-<h2 id="what-you-need">What you need<a class="headerlink" href="#what-you-need" title="Permanent link">&para;</a></h2>
+<h1 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h1>
+<p class="lede">One command, then find your dbt manifest. No warehouse
+credential.</p>
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>hunter<span class="w"> </span>version
+</code></pre></div>
 <table>
 <thead>
 <tr>
-<th>Requirement</th>
+<th>You need</th>
 <th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Python 3.11 or later</td>
+<td>Python 3.11+</td>
 <td>Tested on 3.11, 3.12 and 3.13</td>
 </tr>
 <tr>
 <td>A dbt <code>manifest.json</code></td>
-<td>Anywhere. Hunter is told where to look</td>
+<td>Anywhere. You tell Hunter where</td>
 </tr>
 <tr>
 <td>Read access to the repository</td>
-<td>Nothing else. No warehouse credential</td>
+<td>Nothing else</td>
 </tr>
 </tbody>
 </table>
-<p>Hunter does not install dbt and does not import it. It reads a manifest file.</p>
-<h2 id="as-a-tool">As a tool<a class="headerlink" href="#as-a-tool" title="Permanent link">&para;</a></h2>
-<p>The usual way. Installs Hunter on its own, isolated from your project's
-dependencies.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
-</code></pre></div>
-<p>The <code>[site]</code> extra pulls in MkDocs, which is only needed for <code>hunter docs
-build</code>. Leave it off if you only want the score and the report.</p>
-<p>With pip instead:</p>
+<p>The <code>[site]</code> extra pulls in MkDocs, needed only for <code>hunter docs build</code>. Leave
+it off for the score, the report and the dashboard.</p>
+<div class="key">
+<p><strong>Always pin a version. Never install from a branch.</strong> A repository's score
+must not move because somebody pushed a commit. Same for the
+<a href="../ci/">GitHub Action</a>: reference a tag, never <code>@main</code>.</p>
+</div>
+<details class="note">
+<summary>With pipx instead of uv</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pipx<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
 </code></pre></div>
-<p>Check it worked:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hunter<span class="w"> </span>version
+</details>
+<details class="note">
+<summary>What <code>hunter version</code> prints, and why three numbers</summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">"hunter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span><span class="w"> </span><span class="nt">"house_ruleset"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w"> </span><span class="nt">"score_model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"hunter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">"house_ruleset"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">"score_model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</code></pre></div>
-<p>Those three versions are stamped on every report. The score model version is
-what lets a later run tell real change from a change caused by upgrading
-Hunter.</p>
-<h2 id="always-pin-a-version">Always pin a version<a class="headerlink" href="#always-pin-a-version" title="Permanent link">&para;</a></h2>
-<p>Never install from a branch. A repository's score must not move because someone
-pushed a commit, and pinning is what guarantees that.</p>
-<p>The same applies to the <a href="../ci/">GitHub Action</a>: reference a tag, never <code>@main</code>.</p>
+<p>All three are stamped on every report. The score model version is what lets
+a later run tell real change from movement caused by upgrading Hunter.</p>
+</details>
 <h2 id="getting-the-manifest">Getting the manifest<a class="headerlink" href="#getting-the-manifest" title="Permanent link">&para;</a></h2>
-<p>Hunter needs <code>manifest.json</code>, which dbt writes into <code>target/</code>. That directory
-is almost always in <code>.gitignore</code>, so it is a build output rather than something
-sitting in the repository.</p>
+<p>dbt writes <code>manifest.json</code> into <code>target/</code>, which is almost always in
+<code>.gitignore</code>. So it is a build output, not a file sitting in the repository.</p>
 <p>Three ways to get one, in the order worth trying.</p>
-<h3 id="1-parse-with-no-credential">1. Parse with no credential<a class="headerlink" href="#1-parse-with-no-credential" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">cd</span><span class="w"> </span>your-dbt-project
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>dbt<span class="w"> </span>parse
+<ol class="steps">
+<li>
+<b>Parse with no credential</b>
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>your-dbt-project
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>dbt<span class="w"> </span>parse
 </code></pre></div>
-<p>Usually this needs no warehouse connection. dbt reads the project files and
-works out what each model refers to.</p>
-<p>It fails without a connection when a model cannot be understood without asking
-the warehouse a question first. The common cases:</p>
+
+Usually enough. dbt reads the project files and works out what each model
+refers to. It needs a valid-looking <code>profiles.yml</code> entry even when it never
+connects, so a stub profile does.
+</li>
+<li>
+<b>Parse with a read-only credential</b>
+
+If step 1 fails, use a read-only service account. Workload Identity Federation
+rather than a stored key file.
+</li>
+<li>
+<b>Use the manifest your dbt job already produces</b>
+
+If dbt runs anywhere already, the manifest already exists.
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--manifest<span class="w"> </span>path/to/manifest.json
+</code></pre></div>
+
+This is the option that turns installing Hunter from a security review into a
+configuration change, so it is worth five minutes to check.
+</li>
+</ol>
+<details class="note">
+<summary>Why <code>dbt parse</code> sometimes needs a connection</summary>
+<p>It fails when a model cannot be understood without asking the warehouse a
+question first.</p>
 <table>
 <thead>
 <tr>
@@ -1740,7 +952,7 @@ the warehouse a question first. The common cases:</p>
 </tr>
 <tr>
 <td><code>adapter.get_columns_in_relation(...)</code></td>
-<td>The same question, asked directly</td>
+<td>The same, asked directly</td>
 </tr>
 <tr>
 <td><code>run_query(...)</code> in a macro</td>
@@ -1748,17 +960,11 @@ the warehouse a question first. The common cases:</p>
 </tr>
 </tbody>
 </table>
-<p>Well-written versions of these are wrapped so they are skipped during parsing.
-Badly wrapped ones are not.</p>
-<p>dbt also expects a valid-looking <code>profiles.yml</code> entry even when it never
-connects, so a stub profile is enough.</p>
-<h3 id="2-parse-with-a-read-only-credential">2. Parse with a read-only credential<a class="headerlink" href="#2-parse-with-a-read-only-credential" title="Permanent link">&para;</a></h3>
-<p>If the above fails, <code>dbt parse</code> with a read-only service account. Workload
-Identity Federation rather than a stored key file.</p>
-<h3 id="3-use-the-manifest-your-dbt-job-already-produces">3. Use the manifest your dbt job already produces<a class="headerlink" href="#3-use-the-manifest-your-dbt-job-already-produces" title="Permanent link">&para;</a></h3>
-<p>If dbt already runs somewhere, the manifest already exists. Point Hunter at it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--manifest<span class="w"> </span>path/to/manifest.json
-</code></pre></div>
+<p>Well-written versions of these are wrapped so parsing skips them. Badly
+wrapped ones are not.</p>
+</details>
+<details class="note">
+<summary>Where to look for an existing manifest</summary>
 <table>
 <thead>
 <tr>
@@ -1769,7 +975,7 @@ Identity Federation rather than a stored key file.</p>
 <tbody>
 <tr>
 <td>dbt Cloud</td>
-<td>The run artifacts endpoint, or the Discovery API</td>
+<td>Run artifacts endpoint, or the Discovery API</td>
 </tr>
 <tr>
 <td>GitHub Actions</td>
@@ -1781,15 +987,11 @@ Identity Federation rather than a stored key file.</p>
 </tr>
 <tr>
 <td>Committed for state comparison</td>
-<td>A dedicated branch or a <code>state/</code> directory</td>
+<td>A dedicated branch or <code>state/</code></td>
 </tr>
 </tbody>
 </table>
-<p>This is the option that turns installing Hunter from a security review into a
-configuration change, so it is worth five minutes to find out whether it
-applies.</p>
-<h3 id="finding-out-which-applies-to-you">Finding out which applies to you<a class="headerlink" href="#finding-out-which-applies-to-you" title="Permanent link">&para;</a></h3>
-<p>Five checks against the repository, needing access to nothing else.</p>
+<p>Five checks that need access to nothing but the repository:</p>
 <table>
 <thead>
 <tr>
@@ -1800,44 +1002,59 @@ applies.</p>
 <tbody>
 <tr>
 <td><code>.gitignore</code> for <code>target/</code></td>
-<td>Confirms the manifest is not committed. It almost always is ignored</td>
+<td>Confirms the manifest is not committed</td>
 </tr>
 <tr>
 <td><code>.github/workflows/*.yml</code> for <code>dbt</code></td>
-<td>Whether dbt runs in Actions, and whether the run uploads artifacts</td>
+<td>Whether dbt runs in Actions, and whether it uploads artifacts</td>
 </tr>
 <tr>
 <td><code>cloudbuild.yaml</code> or Cloud Build triggers</td>
 <td>Whether dbt runs there, and whether it writes to a bucket</td>
 </tr>
 <tr>
-<td>Any Dagster, Airflow or scheduler config</td>
+<td>Dagster, Airflow or scheduler config</td>
 <td>Whether a scheduler runs dbt, and where its working directory persists</td>
 </tr>
 <tr>
-<td>A repository-wide search for <code>manifest.json</code></td>
-<td>Existing code that already moves the artifact somewhere</td>
+<td>Search the repository for <code>manifest.json</code></td>
+<td>Code that already moves the artifact somewhere</td>
 </tr>
 </tbody>
 </table>
-<p>If none of those turn anything up, either dbt Cloud holds it in run artifacts,
-or dbt only runs on developer laptops and there is no artifact to fetch.</p>
-<h2 id="also-useful-a-catalogue">Also useful: a catalogue<a class="headerlink" href="#also-useful-a-catalogue" title="Permanent link">&para;</a></h2>
-<p><code>dbt docs generate</code> writes <code>catalog.json</code> next to the manifest. It carries
-column data types, which a manifest almost never does: one real repository has
-types for 164 of 5,251 columns.</p>
-<p>Hunter reads it automatically where it exists. Without it, two things are
-weaker. Entity inference rests on naming rather than types and caps its
-confidence lower. And the type comparison between the design and what was built
-cannot run at all, so it reports that rather than reporting no drift.</p>
-<p>Nothing breaks without it. Hunter says which of the two situations it is in.</p>
+<p>If none turn anything up, either dbt Cloud holds it in run artifacts, or dbt
+only runs on laptops and there is no artifact to fetch.</p>
+</details>
+<h2 id="optional-a-catalogue">Optional: a catalogue<a class="headerlink" href="#optional-a-catalogue" title="Permanent link">&para;</a></h2>
+<p><code>dbt docs generate</code> writes <code>catalog.json</code> beside the manifest, carrying column
+data types. A manifest almost never has them: one real repository has types for
+164 of 5,251 columns.</p>
+<p>Hunter reads it automatically where it exists. Without it, two checks are
+weaker, and Hunter says so rather than reporting a clean result.</p>
+<table>
+<thead>
+<tr>
+<th>Without a catalogue</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entity inference</td>
+<td>Rests on naming, and caps its confidence at 0.65 instead of 0.85</td>
+</tr>
+<tr>
+<td>Type drift between design and build</td>
+<td>Cannot run. Reported as not checked</td>
+</tr>
+</tbody>
+</table>
 <h2 id="for-development">For development<a class="headerlink" href="#for-development" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sav-sus/Hunter
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">cd</span><span class="w"> </span>Hunter
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>score<span class="w"> </span>examples/tiny-shop
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sav-sus/Hunter
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">cd</span><span class="w"> </span>Hunter
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>score<span class="w"> </span>examples/tiny-shop
 </code></pre></div>
 <p>See <a href="../contributing/">Contributing</a>.</p>
 
@@ -1915,7 +1132,7 @@ cannot run at all, so it reports that rather than reporting no drift.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.indexes", "content.code.copy", "content.action.edit", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.prune", "navigation.top", "navigation.indexes", "content.code.copy", "content.action.edit", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>

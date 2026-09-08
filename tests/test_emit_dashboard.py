@@ -19,7 +19,7 @@ import pytest
 from hunter import brand
 from hunter.emit import charts
 from hunter.emit.charts import Slice
-from hunter.emit.dashboard import dashboard_html
+from hunter.emit.dashboard import catalogue_rows, dashboard_html, sync_questions
 from hunter.run import RunResult, run
 
 EXAMPLE = Path(__file__).parent.parent / "examples" / "tiny-shop"
@@ -49,8 +49,14 @@ class TestSelfContained:
         remote = re.findall(r'(?:src|href)="(?!#|data:)([^"]+)"', page)
         assert remote == [], f"the dashboard references files it does not carry: {remote}"
 
-    def test_there_is_no_script_tag(self, page: str) -> None:
-        assert "<script" not in page.lower()
+    def test_no_script_is_loaded_from_elsewhere(self, page: str) -> None:
+        """The table filter is inline, which keeps the file self-contained.
+
+        An inline script is fine. A `src` is not: it would make the report
+        depend on a file it does not carry.
+        """
+        assert "<script src" not in page.lower()
+        assert "<script" in page.lower(), "expected the inline table filter"
 
     def test_the_logo_is_inlined(self, page: str) -> None:
         assert "data:image/png;base64," in page
@@ -69,8 +75,14 @@ class TestWellFormed:
             ElementTree.fromstring(svg)  # raises if the SVG is not well formed
 
     def test_the_page_has_no_unfilled_placeholders(self, page: str) -> None:
-        assert "{" not in page.split("<style>")[0]
-        body = page.split("</style>", 1)[1]
+        """A rule title is a template. One reaching the page renders as raw
+        "{subject} is built but switched off", which this catches.
+
+        The stylesheet and the inline script are both full of braces by nature,
+        so they are removed before looking.
+        """
+        body = re.sub(r"<style>.*?</style>", "", page, flags=re.S)
+        body = re.sub(r"<script>.*?</script>", "", body, flags=re.S)
         assert "{" not in body and "}" not in body
 
 
@@ -95,6 +107,94 @@ class TestContent:
 
     def test_the_attribution_is_present(self, page: str, result: RunResult) -> None:
         assert result.config.branding.attribution in page
+
+
+class TestSyncQuestions:
+    """The band that answers "do the layers agree" in one line each."""
+
+    def test_a_question_is_only_asked_where_the_source_was_read(self, result: RunResult) -> None:
+        asked = [item.ask for item in sync_questions(result)]
+        assert "Does every business entity have a design?" in asked
+        assert "Does every built table have a Looker view?" in asked
+
+    def test_the_answer_names_what_is_missing(self, result: RunResult) -> None:
+        """A fraction says there is a problem. A name says where it is."""
+        by_ask = {item.ask: item for item in sync_questions(result)}
+        design = by_ask["Does every built table have a design?"]
+        assert design.done < design.total
+        assert "wh_shop__legacy_fact" in design.missing
+
+    def test_a_switched_off_model_still_counts_as_built(self, result: RunResult) -> None:
+        """The code was written, reviewed and merged. It is not unbuilt."""
+        by_ask = {item.ask: item for item in sync_questions(result)}
+        assert "wh_shop__forecast_fact" not in by_ask["Is every designed table built?"].missing
+
+    def test_the_verdict_is_yes_only_when_nothing_is_missing(self) -> None:
+        from hunter.emit.dashboard import Question
+
+        assert Question("q", 6, 6).verdict == "yes"
+        assert Question("q", 5, 6).verdict == "mostly"
+        assert Question("q", 3, 6).verdict == "no"
+
+    def test_one_missing_reads_as_singular(self) -> None:
+        from hunter.emit.dashboard import Question
+
+        assert Question("q", 6, 7).answer == "No, 1 of 7 is missing"
+        assert Question("q", 5, 7).answer == "No, 2 of 7 are missing"
+
+
+class TestCatalogue:
+    """The searchable list of every table, and what stands behind it."""
+
+    def test_every_level_gets_a_column(self, page: str) -> None:
+        for head in ("In the design", "In the repository", "In the warehouse", "Looker view"):
+            assert f"<th>{head}</th>" in page
+
+    def test_a_table_only_the_warehouse_knows_about_is_still_listed(
+        self, result: RunResult
+    ) -> None:
+        """A list built from the design alone would hide it."""
+        rows = catalogue_rows(result)
+        assert {row.name for row in rows} >= set(result.project.droughty.introspected)
+
+    def test_a_switched_off_model_is_marked_apart_from_a_missing_one(
+        self, result: RunResult
+    ) -> None:
+        by_name = {row.name: row for row in catalogue_rows(result)}
+        assert by_name["wh_shop__forecast_fact"].built == "off"
+        assert by_name["wh_shop__supplier_dim"].built == "no"
+
+    def test_an_entity_with_no_table_yet_is_not_dressed_up_as_one(self, result: RunResult) -> None:
+        """It is a business entity nobody has built. Showing a table name would lie."""
+        by_name = {row.name: row for row in catalogue_rows(result)}
+        assert by_name["returns"].is_table is False
+
+    def test_the_rows_carry_what_the_filter_searches(self, page: str) -> None:
+        assert 'data-find="' in page
+        assert "id='table-search'" in page
+
+    def test_the_order_does_not_move_between_runs(self, result: RunResult) -> None:
+        assert [row.name for row in catalogue_rows(result)] == [
+            row.name for row in catalogue_rows(result)
+        ]
+
+
+class TestModelLanes:
+    """The three models drawn against each other."""
+
+    def test_every_level_hunter_read_gets_a_lane(self, page: str) -> None:
+        for heading in (
+            "Conceptual \u00b7 the business model",
+            "Logical \u00b7 the data flow",
+            "Physical \u00b7 the DBML design",
+            "Built \u00b7 in the repository",
+        ):
+            assert heading in page
+
+    def test_a_break_in_the_chain_is_drawn_differently_from_agreement(self, page: str) -> None:
+        assert 'class="lane-link ok"' in page
+        assert 'class="lane-link broken"' in page
+        assert 'class="lane-link unplanned"' in page
 
 
 class TestDeterminism:

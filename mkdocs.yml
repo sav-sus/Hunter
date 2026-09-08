@@ -40,7 +40,10 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.sections
+    # Deliberately not navigation.sections: that renders every group expanded,
+    # and the example-output group alone is 13 pages. Collapsible keeps the
+    # sidebar short enough to scan.
+    - navigation.prune
     - navigation.top
     - navigation.indexes
     - content.code.copy
@@ -80,6 +83,7 @@ plugins:
 # apart. Regenerate with: python scripts/build_docs_pages.py
 extra_css:
   - assets/rittman.css
+  - assets/docs.css
 
 extra:
   # The theme's own "Made with Material for MkDocs" line is switched off, so the
@@ -93,38 +97,37 @@ extra:
       link: https://rittmananalytics.com
       name: Rittman Analytics
 
-# Only the framing pages are listed. The generated example pages under
-# docs/example/models/ are reachable by link and deliberately left out of the
-# navigation, which would otherwise carry one entry per table.
+# The generated per-table pages under docs/example/models/ are reachable by
+# link and deliberately left out, which would otherwise add one entry per table.
 nav:
   - Home: index.md
-  - Getting started:
-      - Installing: install.md
+  - Start here:
+      - Install: install.md
       - First run: quickstart.md
-  - Understanding it:
-      - Concepts: concepts.md
-      - How the score works: scoring.md
-  - Using it:
+      - See it working: example/dashboard.md
+  - How it works:
+      - The ideas behind it: concepts.md
+      - The score: scoring.md
+  - Set it up:
       - Configuration: configuration.md
       - The register: register.md
-      - Commands: cli.md
       - In CI: ci.md
-  - See it working:
-      - Overview: example/index.md
-      - 'The dashboard': example/dashboard.md
-      - 'Output: overview': example/index-page.md
-      - 'Output: designed against built': example/reconciliation.md
-      - 'Output: the business model': example/conceptual-model.md
-      - 'Output: the data model': example/data-model.md
-      - 'Output: the score': example/scorecard.md
-      - 'Output: what is built': example/physical-model.md
-      - 'Output: how it fits together': example/lineage.md
-      - 'Output: what needs doing': example/debt.md
-      - 'Output: do the layers agree': example/sync.md
-      - 'Output: the rules': example/conventions.md
-      - 'Output: what was not checked': example/not-checked.md
-      - 'Output: words used here': example/glossary.md
   - Reference:
+      - Commands: cli.md
       - Every rule: reference/rules.md
       - Questions: faq.md
       - Contributing: contributing.md
+  - Example output:
+      - Every page: example/index.md
+      - Overview: example/index-page.md
+      - The score: example/scorecard.md
+      - Designed against built: example/reconciliation.md
+      - The business model: example/conceptual-model.md
+      - The data model: example/data-model.md
+      - What is built: example/physical-model.md
+      - How it fits together: example/lineage.md
+      - What needs doing: example/debt.md
+      - Do the layers agree: example/sync.md
+      - The rules: example/conventions.md
+      - What was not checked: example/not-checked.md
+      - Words used here: example/glossary.md

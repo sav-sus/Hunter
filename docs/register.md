@@ -1,35 +1,26 @@
 # The register
 
-`.hunter/register.yml` is the file people actually edit. It records what the
-team has decided about particular tables.
+<p class="lede">The file people actually edit. It records what your team
+decided about particular tables, including which ones are temporary on
+purpose.</p>
 
-`hunter.yml` says what correct looks like, extending the Rittman Analytics
-house standard, and changes rarely. The register records decisions about
-individual tables and changes constantly. Different owners, different rates of
-change, so two files.
+`hunter.yml` says what correct looks like and changes rarely. The register
+records decisions about individual tables and changes constantly. Different
+owners, different rates of change, so two files.
 
-Both sit in `.hunter/` at the repository root, not beside `dbt_project.yml`. See
-[where the files go](configuration.md#where-the-files-go) for why. A worked
-register, commented option by option, is in the
-[example project](https://github.com/sav-sus/Hunter/blob/main/examples/tiny-shop/.hunter/register.yml).
+Both sit in `.hunter/` at the repository root. See
+[where the files go](configuration.md#where-the-files-go).
 
-## What it is for
+## Four things Hunter cannot work out on its own
 
-Four things Hunter cannot work out on its own.
+| | Why it needs a person |
+|---|---|
+| **That something is temporary on purpose** | Hunter infers persistence from the layer and the materialisation. Sometimes that is wrong, and a person saying so outranks a guess |
+| **That an off-plan build is accepted** | A table built ahead of its design is a finding. Sometimes it is one somebody already agreed to |
+| **Who owns what, and what one row means** | Neither is in the manifest or the design. Both are what make a finding routable and a table understandable |
+| **That a rule is being left for now** | With a reason and an end date |
 
-**That something is temporary on purpose.** Hunter infers persistence from the
-layer and the materialisation. Sometimes that is wrong, and a person saying so
-outranks a guess.
-
-**That an off-plan build is accepted.** A table built ahead of its design is a
-finding. Sometimes it is a finding somebody has already agreed to.
-
-**Who owns what, and what one row means.** Neither is in the manifest or the
-design, and both are what make a finding routable and a table understandable.
-
-**That a rule is being left for now.** With a reason and an end date.
-
-## Reasons: where they are needed and where they are not
+## Reasons: where they are needed
 
 This is the rule that makes the file usable.
 
@@ -40,82 +31,119 @@ This is the rule that makes the file usable.
 | Any approval | Yes, and a named approver | Somebody is accepting something |
 | A silenced rule | Yes, and an end date | Otherwise it goes quiet permanently |
 
-An earlier draft required a reason for every entry. That made recording an owner
-annoying enough that nobody would, which defeats the point.
+??? note "Why not require a reason for everything"
 
-## The shape
+    An earlier draft did. That made recording an owner annoying enough that
+    nobody would, which defeats the point of the file.
+
+## Marking a table temporary
+
+The most common reason to open this file.
 
 ```yaml
-version: 1
-
 models:
-  # Plain information. No reason needed.
+  int_shop__orders:
+    persistence: temporary
+    reason: a working step feeding the order fact, not for reporting from
+    review_by: 2027-01-31
+```
+
+The table is then not judged as a finished table: no consumer-facing
+description expected, no owner, no key tests, and no complaint that reports do
+not read from it.
+
+<div class="key" markdown>
+**A declaration here beats every signal Hunter can compute.** It sits first in
+the [precedence chain](concepts.md#3-temporary-against-permanent), which is why
+it costs a written reason. The report says which signal decided, so the answer
+can be argued with.
+</div>
+
+## Recording plain information
+
+No reason needed. This closes the "no identifiable owner" finding and puts the
+grain in plain English on the report.
+
+```yaml
+models:
   wh_shop__order_fact:
     owner: commerce
     grain: one row per order
     business_name: Orders
     domain: sales
+```
 
-  # Overriding what Hunter inferred. Needs a reason.
-  int_shop__orders:
-    persistence: temporary
-    reason: a working step feeding the order fact, not for reporting from
-    review_by: 2027-01-31
+??? note "Everything a table entry accepts"
 
-  # Where the built name and the designed name differ, and normalised matching
-  # cannot bridge it. This settles the reconciliation row.
-  wh_shop__orders_v2:
-    implements: wh_shop__order_fact
-    owner: commerce
+    ```yaml
+    models:
+      # Lifecycle, and metadata the design cannot express.
+      wh_shop__forecast_fact:
+        status: building        # planned, building, live, deprecated, retired
+        owner: commerce
+        entity_type: fact      # fact, dimension, aggregate, bridge, mapping
+        grain: one row per product per week
+        scd_type: 2
+        source_of_truth: the forecasting service
+        business_name: Forecast
+        domain: sales
 
-  # Lifecycle, and metadata the design cannot express.
-  wh_shop__forecast_fact:
-    status: building          # planned, building, live, deprecated, retired
-    owner: commerce
-    entity_type: fact
-    grain: one row per product per week
-    scd_type: 2
-    source_of_truth: the forecasting service
+      # Where the built name and the designed name differ and normalised
+      # matching cannot bridge it. This settles the reconciliation row.
+      wh_shop__orders_v2:
+        implements: wh_shop__order_fact
+    ```
 
-# A table built ahead of its design, accepted. It still appears on the site, as
-# an approved exception rather than as a fault.
+## Accepting an off-plan build
+
+Still appears on the report, as an approved exception rather than a fault.
+
+```yaml
 off_plan_approved:
   - model: wh_shop__legacy_fact
     reason: kept from the previous warehouse while reports move across
     approved_by: sav
     approved_on: 2026-09-08
     review_by: 2026-12-31
+```
 
-# A finding somebody agreed to leave. It still appears, with this reason, and
-# comes back automatically on the expiry date.
+## Silencing a finding, with an end date
+
+```yaml
 ignores:
   - rule: documentation.model_description_missing
-    models: ['stg_legacy__*']
+    models: ['stg_legacy__*']       # globs accepted
     reason: legacy staging, scheduled for removal this quarter
     expires: 2027-01-31
-
-# Business entities, where there is no conceptual diagram to read them from.
-conceptual:
-  - name: returns
-    business_name: Returns
-    domain: sales
-    note: agreed at the design review, not designed yet
 ```
+
+`expires` is required and has no "never" value. On that date the finding comes
+back on its own.
+
+??? note "Declaring business entities with no conceptual diagram"
+
+    ```yaml
+    conceptual:
+      - name: returns
+        business_name: Returns
+        domain: sales
+        note: agreed at the design review, not designed yet
+    ```
 
 ## Nothing here hides a finding
 
-An approved exception appears on the site as an approved exception, with its
-reason and its review date. A silenced finding appears on the site as silenced,
-with its reason and the date it comes back.
+An approved exception appears as an approved exception, with its reason and
+review date. A silenced finding appears as silenced, with the date it comes
+back.
 
-The register can change how a finding is classified and reported. It cannot make
+The register changes how a finding is classified and reported. It cannot make
 one disappear. Otherwise it would become the place a score goes to be improved
 without anything improving.
 
 ## It reports its own staleness
 
 A register nobody prunes stops being a record of decisions and becomes a hiding
-place. So Hunter checks it against the repository:
+place, so Hunter checks it against the repository.
 
 | Finding | When |
 |---|---|
@@ -126,36 +154,32 @@ place. So Hunter checks it against the repository:
 | `register.ignore_expired` | A silence that has expired. The finding is back |
 | `register.ignore_names_unknown_rule` | A misspelt or renamed rule, silencing nothing |
 
-The last one matters more than it looks. A silence naming a rule that does not
-exist silences nothing, and without this check it would sit there looking like
-it was doing something.
+The last matters more than it looks. A silence naming a rule that does not
+exist silences nothing, and without this check it would sit there looking as
+though it were doing something.
 
-## Letting `hunter init` fill it in
+## Let `hunter init` fill it in
 
 ```bash
 hunter init
 ```
 
 Where a manifest is present, this scores the repository and lists the tables it
-would flag, each with a blank field:
+would flag, each with a blank field.
 
 ```yaml
 models:
   # Hunter found no owner for these. Fill in a team name against each.
-  # Owner is plain information, so no reason is needed.
   wh_shop__customer_dim:
     owner:            # who to ask about this table
     grain:            # what one row of it means, in plain words
-  wh_shop__daily_sales_xa:
-    owner:
-    grain:
 
 off_plan_approved:
-  # These are built and appear on no design. Either add them to the
-  # design, or accept them here with a reason and a review date.
+  # Built and on no design. Either add them to the design, or accept them
+  # here with a reason and a review date.
   - model: wh_shop__legacy_fact
-    reason:           # why this was built ahead of the design
-    approved_by:      # who accepted it
+    reason:
+    approved_by:
     review_by: 2027-09-08
 ```
 
@@ -163,18 +187,9 @@ Filling in blanks against a list works. Authoring a file from nothing does not.
 
 ## Advice from use
 
-**Owners first.** It is the most common systemic gap and the one that makes
-every other finding routable. A finding with no owner is a finding nobody will
-pick up.
-
-**Write grain in plain words.** "One row per store per day", not
-`store_pk + date_pk`. It goes on the site next to the business name, and it is
-the single most useful thing a non-technical reader can be told about a table.
-
-**Set review dates you mean.** An overdue review is a finding. That is the
-point: an exception nobody revisits has quietly become permanent.
-
-**Prefer `hunter.yml` for a rule that does not fit how you work.** Use a
-register silence for something true that is not being fixed yet. Disabling a
-rule that is genuinely wrong for you is honest; silencing it repeatedly is
-paperwork.
+| | |
+|---|---|
+| **Owners first** | The most common systemic gap, and the one that makes every other finding routable. A finding with no owner is one nobody picks up |
+| **Write grain in plain words** | "One row per store per day", not `store_pk + date_pk`. It is the most useful thing a non-technical reader can be told about a table |
+| **Set review dates you mean** | An overdue review is a finding. That is the point: an exception nobody revisits has quietly become permanent |
+| **Prefer `hunter.yml` for a rule that does not fit you** | Disabling a rule that is genuinely wrong for you is straightforward. Silencing it again and again is paperwork |

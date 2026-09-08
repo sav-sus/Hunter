@@ -1,7 +1,7 @@
 # Contributing
 
-Hunter is maintained by Rittman Analytics. The repository is private and the
-licence is proprietary, so this is for maintainers rather than for the public.
+<p class="lede">For maintainers. Hunter is maintained by Rittman Analytics; the
+repository is private and the licence is proprietary.</p>
 
 ## Getting set up
 
@@ -14,33 +14,28 @@ uv sync --all-extras
 Four gates, all of which CI runs:
 
 ```bash
-uv run pytest                    # 521 tests
+uv run pytest                    # the suite
 uv run ruff check .              # lint
 uv run ruff format --check .     # formatting
 uv run mypy                      # types, strict on checks, score and model
-```
 
-Plus two that are specific to Hunter:
-
-```bash
 uv run python scripts/check_no_client_content.py
 uv run python -m tests.regenerate_golden && git diff --exit-code tests/golden/
 ```
 
-## The rule that holds the design together
-
-Every reader writes into one normalised model in `src/hunter/model/entities.py`,
-and no check ever reads a raw source. A check that opens `manifest.json` is a
-bug, however convenient.
-
-The point is replaceability. Adding Snowflake, or a semantic layer other than
-LookML, touches one file in `ingest/` and nothing else.
+<div class="key" markdown>
+**Every reader writes into one normalised model** in `model/entities.py`, and
+no check ever reads a raw source. A check that opens `manifest.json` is a bug,
+however convenient. The point is replaceability: adding Snowflake, or a
+semantic layer other than LookML, touches one file in `ingest/` and nothing
+else.
+</div>
 
 ## Adding a rule
 
 Declare it, then use it. Three steps.
 
-**1. Declare it in the check module**, with everything about it in one place:
+**1. Declare it in the check module**, everything in one place:
 
 ```python
 KEY_UNIQUENESS_MISSING = rule(
@@ -81,46 +76,38 @@ Calling `examine` only when a rule fires makes the denominator equal the
 numerator, and the area then scores 0 whenever anything fails. That bug shipped
 once.
 
-**3. Write both cases into the example project.** A passing case and a failing
-case. See below.
+**3. Write both cases into the example project**, a passing one and a failing
+one.
 
 ### Rules to follow
 
-**No numbers in check code.** Every threshold is a field on a configuration
-model. A rule with a hardcoded number is a rule nobody can tune.
-
-**The consequence line says what breaks.** Not what is missing, and never how
-severe it is. "Three dashboards will show wrong figures if this changes", not
-"high severity: test missing". A test asserts that no consequence line contains
-the word "severity".
-
-**Build findings through `context.finding`.** It applies rule overrides,
-register silences, exposure weighting and the confidence floor. Constructing a
-`Finding` directly bypasses all of it.
-
-**Use `plural()` for counts in prose.** "1 columns" is not acceptable output.
-
-**Scale a partial gap.** Pass `points_scale` where a rule reports once per table
-but counts many things inside it.
-
-**Mark a coverage rule as one.** If the rule reports what Hunter could not check
-rather than what the repository got wrong, set `about_coverage=True`. Otherwise
-it appears as a gap in the repository, which it is not.
+| | |
+|---|---|
+| **No numbers in check code** | Every threshold is a configuration field. A rule with a hardcoded number is a rule nobody can tune |
+| **The consequence says what breaks** | Not what is missing, and never how severe it is. A test asserts no consequence line contains the word "severity" |
+| **Build findings through `context.finding`** | It applies rule overrides, register silences, exposure weighting and the confidence floor. Constructing a `Finding` directly bypasses all of it |
+| **Use `plural()` for counts in prose** | "1 columns" is not acceptable output |
+| **Scale a partial gap** | Pass `points_scale` where a rule reports once per table but counts many things inside it |
+| **Mark a coverage rule as one** | Set `about_coverage=True` where the rule reports what Hunter could not check. Otherwise it appears as a gap in the repository, which it is not |
 
 ## Run it against something real
 
-This is the part that matters most, and it is what the test suite cannot do for
-you.
+The part that matters most, and the part the test suite cannot do for you.
+Point it at the largest repository you have access to, read the findings, then
+read them again asking "would I act on this".
 
-Twelve rules were wrong when first written, and every one was found by running
-against a real repository rather than by testing against the example. `select *`
-fired on 226 of 228 models. `is distinct from` was read as a FROM clause. A
-LookML refinement replaced the field it refined, which silently hid 629 field
-references. A rule tested only against a fixture is a rule tested against its
-own assumptions, because the same person wrote both.
+??? note "Twelve rules were wrong when first written. None was caught by a test"
 
-Point it at the largest repository you have access to and read the findings.
-Then read them again asking "would I act on this".
+    Every one was found by running against a real repository.
+
+    | What went wrong | Scale |
+    |---|---|
+    | `select *` fired on almost everything | 226 of 228 models |
+    | `is distinct from` read as a FROM clause | Silent wrong findings |
+    | A LookML refinement replaced the field it refined | Hid 629 field references |
+
+    A rule tested only against a fixture is a rule tested against its own
+    assumptions, because the same person wrote both.
 
 ## The example project
 
@@ -197,13 +184,11 @@ and resemble no client's.
 
 ## Third-party parsers
 
-`pydbml` and `lkml` are pinned exactly, not to a range. Both are
-small-maintainer projects parsing formats that shift, and pinning means a break
-surfaces at upgrade rather than in a client run.
-
-Both are wrapped behind Hunter's own interface, so nothing outside
-`ingest/dbml.py` and `ingest/lookml.py` knows they exist. When one breaks, the
-fix is in one file.
+`pydbml` and `lkml` are pinned exactly, not to a range: both are
+small-maintainer projects parsing formats that shift, so a break surfaces at
+upgrade rather than in a client run. Both are wrapped behind Hunter's own
+interface, so nothing outside `ingest/dbml.py` and `ingest/lookml.py` knows
+they exist.
 
 MkDocs and its theme are pinned below their next major version. MkDocs 2.0 will
 remove the plugin system and rewrite theming with no migration path, so moving
@@ -213,16 +198,11 @@ those pins is a piece of work rather than a bump.
 
 Match the surrounding code. Beyond that:
 
-**Say why, not what.** The code says what it does. A comment earns its place by
-explaining a decision, a constraint, or something that was tried and did not
-work. Several of the comments in the codebase record a rule that was wrong and
-how it was found; those are the useful ones.
-
-**Docstrings name the requirement.** `FR7.9` or `section 11.4`. It makes the
-link from behaviour back to the reason it exists.
-
-**Type everything in `checks/`, `score/` and `model/`.** They are strict under
-mypy, because a wrong type there is a wrong number in somebody's report.
+| | |
+|---|---|
+| **Say why, not what** | The code says what it does. A comment earns its place by explaining a decision, a constraint, or something that was tried and failed |
+| **Docstrings name the requirement** | `FR7.9` or `section 11.4`, so behaviour links back to the reason it exists |
+| **Type `checks/`, `score/` and `model/`** | Strict under mypy, because a wrong type there is a wrong number in somebody's report |
 
 ## Where things are
 

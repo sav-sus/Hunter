@@ -1,128 +1,146 @@
-# Rittman Hunter
+---
+hide:
+  - navigation
+  - toc
+---
 
-Point it at an analytics repository and it tells you what state the repository
-is in.
+<div class="hero" markdown>
 
-Hunter reads dbt, LookML, your data model design and your git history, then
-reports on them. It changes nothing: no commits, no pull requests, no writes to
-your warehouse.
+# Know what state your analytics repository is in
 
-```
-89.6 / 100    Well maintained. Safe to build on
+Point Hunter at a repository holding dbt and LookML. It reads the code, the
+design and the git history, then reports on them. It changes nothing: no
+commits, no pull requests, no writes to your warehouse.
 
- 90.4  A  What is checked automatically            38 findings
- 87.3  A  Does what was built match the design    190 findings
- 92.6  A  How the tables fit together              53 findings
- 77.2  B  What is written down                    135 findings
- 86.7  A  Do the reports still match the data     183 findings
- 98.3  A  Are the house rules followed             48 findings
- 98.3  A  Are the tables the shape they claim       7 findings
-    -  -  What it costs to run                  not measured
+[See the dashboard](example/dashboard.md){ .md-button }
+[Install it](install.md){ .md-button .md-button--secondary }
 
-Missing everywhere it was checked:
-  63 of 63  Who owns what
-  54 of 54  Do the reports still match the data
-```
+<div class="figures">
+  <div><b>2s</b><span>on 280 models</span></div>
+  <div><b>77</b><span>rules</span></div>
+  <div><b>0</b><span>credentials needed</span></div>
+  <div><b>8</b><span>areas scored</span></div>
+</div>
 
-Two seconds on a 280-model repository. No warehouse credential needed.
+</div>
 
-That is the terminal output. The report itself is a dashboard: the score, what
-nobody has decided, where the points are going, how much of the plan is real,
-and what to fix first, in one screen.
+## What you get
 
-[See the dashboard](example/dashboard.md){ .md-button .md-button--primary }
-[Install it](install.md){ .md-button }
-
-The dashboard is one HTML file. The stylesheet, every chart and the logo are
-inlined, so it opens with no network and nothing beside it: from a build
-artifact, a shared drive or an email attachment.
-
-```bash
-hunter dashboard          # one self-contained file
-hunter docs build         # the dashboard plus every detail page behind it
-```
+<div class="cards">
+  <a href="example/dashboard/">
+    <span class="tag">One screen</span>
+    <b>A dashboard</b>
+    <p>The score, what nobody has decided, where the points are going, and what
+    to fix first. One self-contained HTML file.</p>
+  </a>
+  <a href="example/reconciliation/">
+    <span class="tag">One row per table</span>
+    <b>Designed against built</b>
+    <p>Whether the business asked for it, whether it was designed, whether it
+    was built. Readable without opening a file.</p>
+  </a>
+  <a href="example/debt/">
+    <span class="tag">Ranked</span>
+    <b>What needs doing</b>
+    <p>Ordered by how many points closing it recovers, each item saying what
+    breaks if it is left.</p>
+  </a>
+  <a href="ci/">
+    <span class="tag">On every change</span>
+    <b>A pull request comment</b>
+    <p>What the change touches, what it breaks downstream, and the debt it
+    adds. Advisory by default.</p>
+  </a>
+</div>
 
 ## The four questions it answers
 
-Each is something nobody can answer today without reading the whole repository
-by hand.
+Each one currently takes reading the whole repository by hand.
 
-**What is in here, and which parts are working steps rather than finished
-tables?** Hunter classifies every table as temporary or permanent, and records
-which signal decided, so the answer can be argued with rather than just
-accepted.
-
-**Who built each part?** Every table is attributed to the commit, author and
-pull request that created it. Findings are routed to whoever can close them and
-reported by team, never as a ranking of people.
-
-**Is the modelling right?** Hunter works out what each table behaves like from
-the shape of its columns, then compares that against what its name claims. A
-table named as something you total that has nothing to total is worth knowing
-about.
-
-**Do the layers agree?** The business model, the design, the repository and the
-reporting layer. Every reporting field is mapped to the column it reads, so a
-renamed column shows up as a broken field in the same pull request rather than
-in a client's report.
+| Question | How Hunter answers it |
+|---|---|
+| **What is in here, and what is just a working step?** | Classifies every table as temporary or permanent, and records which of five signals decided |
+| **Who built each part?** | Attributes every table to a commit, author and pull request. Routes findings by owner, reports by team, never ranks people |
+| **Is the modelling right?** | Works out what a table behaves like from its columns, then compares that against what its name claims |
+| **Do the layers agree?** | Maps every report field to the column it reads, so a renamed column shows up in the pull request, not in a client's dashboard |
 
 ## What makes it different
 
-**Every finding says what breaks.** Not "high severity: relationships test
-missing", but:
+<div class="cards">
+  <div>
+    <b>Every finding says what breaks</b>
+    <p>Not "high severity: relationships test missing". Instead: "Where these
+    references point at rows that do not exist, joined figures come out low and
+    the rows simply vanish."</p>
+  </div>
+  <div>
+    <b>It says what it did not check</b>
+    <p>An area Hunter could not measure is excluded and named, with its weight
+    shared across the rest. Never scored as zero, never quietly out of less
+    than 100.</p>
+  </div>
+  <div>
+    <b>It has no opinions of its own</b>
+    <p>Layer names, conventions and weights are all declared. It ships with the
+    Rittman Analytics standard, and every difference from it is published with
+    the reason given.</p>
+  </div>
+  <div>
+    <b>Systemic gaps sit above the number</b>
+    <p>"No table names an owner, 63 of 63" is one decision nobody took, not 63
+    defects. A weighted mean buries that, so it is listed separately.</p>
+  </div>
+</div>
 
-> Nothing checks that these references in daily store performance point at rows
-> that exist. Where they do not, joined figures come out low and the rows simply
-> vanish.
-
-Those lines are templates filled from each finding's own evidence. Nothing is
-written by a language model, so every sentence has a deterministic check behind
-it.
-
-**It says what it did not check.** A score is only as good as what went into it.
-Areas Hunter could not measure are excluded, their weight shared across the
-rest, and named on a page of their own. It never scores an unmeasured area as
-zero, and it never quietly scores out of less than 100.
-
-**It has no opinions of its own.** Layer names, naming conventions, entity
-suffixes and weights are all declared in configuration. It ships with a house
-standard, and any difference from that standard is published with the reason
-given for it.
-
-**It reports systemic gaps above the number.** "No table names an owner, 63 of
-63" is one decision nobody has taken, not 63 separate defects. A weighted mean
-buries that, so it is listed separately, above the score.
+<div class="key" markdown>
+**Nothing is written by a language model.** Every sentence in a report is a
+template filled from a finding's own evidence, so each one has a deterministic
+check behind it.
+</div>
 
 ## What it reads
 
-A dbt `manifest.json` and nothing else is required. Everything beyond that adds
-an area to the score rather than being a prerequisite.
+A dbt `manifest.json` is the only requirement. Everything else adds an area to
+the score rather than being a prerequisite.
 
-| Source | What it adds | Needs a credential |
+| Source | What it adds | Credential |
 |---|---|---|
 | `manifest.json` | Tables, columns, tests, lineage | No |
-| DBML design files | Does what was built match what was designed | No |
+| DBML design files | Does what was built match the design | No |
 | A conceptual Mermaid diagram | Does the design match what the business asked for | No |
 | LookML | Will a renamed column break a report | No |
-| Committed Droughty output | Are the generated tests and descriptions still applied | No |
+| Committed Droughty output | Are generated tests and descriptions still applied | No |
 | Git history | Who wrote what, and what changed in a window | No |
+| `catalog.json` | Column types, which sharpen two checks | No |
 | BigQuery metadata | What is deployed, and what it costs | Yes. Not built yet |
 
 ## Where to go next
 
-| If you want to | Read |
-|---|---|
-| See what it produces | [The dashboard](example/dashboard.md) |
-| Install it and run it | [Installing](install.md), then [Getting started](quickstart.md) |
-| See real output before installing anything | [See it working](example/index.md) |
-| Understand the ideas behind it | [Concepts](concepts.md) |
-| Configure it for your repository | [Configuration](configuration.md) and [The register](register.md) |
-| Understand the number | [How the score works](scoring.md) |
-| Look up a rule | [Every rule](reference/rules.md) |
-| Run it in CI | [In CI](ci.md) |
-| Know why it was built this way | [The product record](https://github.com/sav-sus/Hunter/tree/main/.doc) |
+<div class="cards">
+  <a href="install/">
+    <span class="tag">5 minutes</span>
+    <b>Install and run it</b>
+    <p>Then the first run, and what to do with the score you get.</p>
+  </a>
+  <a href="concepts/">
+    <span class="tag">Background</span>
+    <b>The ideas behind it</b>
+    <p>Seven of them. Everything else in Hunter follows from these.</p>
+  </a>
+  <a href="configuration/">
+    <span class="tag">Setup</span>
+    <b>Configure it</b>
+    <p>Two files. What correct looks like, and what your team has decided.</p>
+  </a>
+  <a href="cli/">
+    <span class="tag">Reference</span>
+    <b>Commands and rules</b>
+    <p>Ten commands, 77 rules, and what each one costs.</p>
+  </a>
+</div>
 
-## Licence
+---
 
 Proprietary. Not open source. See
 [LICENSE](https://github.com/sav-sus/Hunter/blob/main/LICENSE).
+Rittman Hunter is a Rittman Analytics product.

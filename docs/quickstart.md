@@ -1,51 +1,46 @@
-# Getting started
+# First run
 
-Five commands, about ten minutes. Nothing is written to your warehouse and
-nothing in your repository is changed except the two configuration files
-`hunter init` creates.
+<p class="lede">Five commands, about ten minutes. Nothing is written to your
+warehouse, and nothing in your repository changes except the two files
+<code>hunter init</code> creates.</p>
 
-## 1. Set it up
+<ol class="steps" markdown>
+
+<li markdown>
+<b>Set it up</b>
 
 ```bash
 cd your-analytics-repo
 hunter init
 ```
 
-This looks at the repository, works out where things are, and writes two
-files. The ruleset it writes extends the Rittman Analytics house standard,
-`ra-house@1`.
+Works out where everything is and writes `.hunter/hunter.yml` and
+`.hunter/register.yml`. Read the notes it prints: each one is a line to correct
+if the guess was wrong.
 
-```
-note: No target/manifest.json was found. Run `dbt parse` in the project, or
-      pass --manifest with the path to one your dbt job already produces.
-Wrote .hunter/hunter.yml
-Wrote .hunter/register.yml
-```
+If a manifest is already there, it also fills the register with the tables it
+would flag, each with a blank reason.
 
-Read the notes. They say what Hunter could not find, and each one is a line to
-correct in `.hunter/hunter.yml` if the guess was wrong.
+??? note "Why it pre-fills the register"
 
-If a manifest is already present, `hunter init` also scores the repository and
-fills the register with the tables it would flag, each with a blank reason:
+    Being handed an empty file and asked to document your exceptions does not
+    work. Being handed the list and asked for a reason against each does.
 
-```
-  The register lists 63 tables with no owner and 8 built without a design.
-  Fill in the blanks.
-```
+    ```
+    The register lists 63 tables with no owner and 8 built without a design.
+    Fill in the blanks.
+    ```
+</li>
 
-That is the intended way to use it. Being handed an empty file and asked to
-document your exceptions does not work. Being handed the list and asked for a
-reason against each does.
-
-## 2. Score it
+<li markdown>
+<b>Score it</b>
 
 ```bash
 hunter score
 ```
 
 ```
-  89.6 / 100
-  Well maintained. Safe to build on
+  89.6 / 100     Well maintained. Safe to build on
 
    90.4  A  What is checked automatically            38 findings
    87.3  A  Does what was built match the design    190 findings
@@ -61,102 +56,75 @@ hunter score
     54 of 54  Do the reports still match the data
 
   648 open, 10 suggestions, 0 silenced
-
-  Report written to out/report.json
 ```
 
-Three things to read, in this order.
+Read it in this order:
 
-**The systemic gaps.** A rule that failed on everything it examined is one
-decision nobody has taken, not many defects. Those are the conversations.
+| Read | Because |
+|---|---|
+| **The systemic gaps** | A rule that failed on everything is one decision nobody took, not many defects. These are the conversations |
+| **"not measured"** | That area was excluded and its weight shared out. Not a zero, not a pass |
+| **The number** | Last. On its own it invites an argument |
+</li>
 
-**"not measured".** That area was excluded and its weight shared across the
-rest. It is not a zero and it is not a pass.
-
-**The number.** Last, because on its own it invites an argument. Everything
-behind it is in `out/report.json` and on the site.
-
-## 3. Record where you started
+<li markdown>
+<b>Record where you started</b>
 
 ```bash
 hunter baseline
 git add .hunter/baseline.json && git commit -m "Record the starting score"
 ```
 
-An existing repository starts where it starts and only has to improve. Without
-this, every later run reports an absolute number and the first conversation is
-about whether the number is fair.
+An existing repository starts where it starts and only has to improve. Commit
+it, and later runs measure movement instead of arguing about an absolute number.
+</li>
 
-Commit it. Later runs then measure movement, and a drop caused by upgrading
-Hunter is reported apart from a real one.
-
-## 4. Read the site
+<li markdown>
+<b>Open the dashboard</b>
 
 ```bash
-hunter docs build
-open out/site/_built/index.html
+hunter dashboard && open out/dashboard.html
 ```
 
-Twelve pages. Start with these three.
+The whole report in one screen. [See one](example/dashboard.md).
 
-| Page | What it answers |
-|---|---|
-| Overview | Is this in good shape, what is going well, what needs a decision |
-| Designed against built | One table: what was asked for, what was designed, what exists |
-| What was not checked | What the score is not based on |
+For the detail pages behind it, with search and navigation:
 
-The overview page is written for someone who has never opened a SQL file. That
-is deliberate: the plain language sits above the detail on the same page rather
-than in a separate mode nobody finds.
+```bash
+hunter docs build && open out/site/_built/dashboard.html
+```
+</li>
 
-## 5. Look at one table
+<li markdown>
+<b>Look at one table</b>
 
 ```bash
 hunter explain wh_shop__customer_dim
 ```
 
-Everything Hunter knows about it: what it is, what one row means, who owns it,
-what it is named as against how it behaves, its columns and their tests, what
-depends on it, and every finding against it.
+What it is, what one row means, who owns it, how it behaves against what its
+name claims, its columns and tests, what depends on it, and every finding
+against it.
+</li>
+
+</ol>
 
 ## Then what
 
-**Fill in the register.** Owners first. It is the single most common systemic
-gap, and it is the one that makes every other finding routable.
-
-**Leave the mode on advisory.** A tool that fails builds in its first week gets
-switched off in its second. Advisory is the default and it never fails
-anything.
-
-**Add it to CI when you are ready.** See [In CI](ci.md).
-
-## Other commands worth knowing
-
-```bash
-# What was designed against what exists, on its own
-hunter align
-
-# What changed in the last two weeks, and what it cost
-hunter showcase --days 14
-
-# Build the pull request comment for the current branch
-hunter check --pr 1184
-
-# Print one diagram
-hunter diagram --level conceptual
-
-# Every rule Hunter can report
-hunter rules
-```
-
-Full reference: [Commands](cli.md).
+| Do this | Why |
+|---|---|
+| **Fill in owners first** | The most common systemic gap, and the one that makes every other finding routable |
+| **Leave the mode on advisory** | A tool that fails builds in its first week gets switched off in its second. Advisory is the default |
+| **Add it to CI when ready** | See [In CI](ci.md) |
 
 ## If something goes wrong
 
 | Message | What to do |
 |---|---|
-| `Could not read the dbt manifest` | Run `dbt parse`, or pass `--manifest` with a path. See [Installing](install.md) |
+| `Could not read the dbt manifest` | Run `dbt parse`, or pass `--manifest`. See [Install](install.md) |
 | `The ruleset is not valid` | The message names the field. Unknown keys are errors on purpose, so a typo cannot silently switch off a rule |
 | `The register file is not valid` | The message names the entry. Approvals need a reason and a named approver; silences need an end date |
 | `No model named 'x'` | Hunter suggests near matches. Use the name as it appears in the manifest |
-| Most areas say "not measured" | Read the "what was not checked" page. Usually the design files or the reporting layer are somewhere Hunter did not look |
+| Most areas say "not measured" | Read the "what was not checked" page. Usually the design files or the LookML are somewhere Hunter did not look |
+
+Full command reference: [Commands](cli.md).
