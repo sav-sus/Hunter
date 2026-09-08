@@ -30,8 +30,8 @@ GOLDEN = Path(__file__).parent / "golden" / "tiny-shop.json"
 #: calendar. Every date in the fixture is chosen relative to this.
 AS_OF = dt.date(2026, 9, 8)
 
-#: The fixture's score. Changing this line is how a score change gets reviewed.
-EXPECTED_SCORE = 87.1
+#: The example's score. Changing this line is how a score change gets reviewed.
+EXPECTED_SCORE = 88.2
 
 #: Every rule the fixture is built to trigger, and how many times. Each entry
 #: is a deliberate flaw described in fixtures/tiny-project/build.py.
@@ -43,22 +43,22 @@ EXPECTED_FINDINGS: dict[str, int] = {
     "conformance.column_missing_from_model": 1,
     "conformance.design_not_built": 1,
     "conformance.types_unavailable": 1,
-    "crosslayer.duplicate_measure": 1,
     "crosslayer.explore_no_caching_policy": 1,
-    "crosslayer.exposure_missing": 2,
+    "crosslayer.exposure_missing": 3,
     "crosslayer.field_references_missing_column": 1,
     "documentation.model_description_missing": 1,
     "documentation.owner_missing": 1,
     "droughty.description_orphaned": 1,
-    "droughty.generated_test_missing": 2,
-    "droughty.model_not_covered": 2,
+    "droughty.generated_test_missing": 3,
+    "droughty.introspected_column_undesigned": 2,
+    "droughty.model_not_covered": 1,
     "droughty.override_dropped": 1,
     "entity.dimension_with_measures": 1,
     "entity.type_unclear": 1,
-    "lineage.dead_model": 3,
+    "lineage.dead_model": 2,
     "lineage.staging_bypassed": 2,
     "structure.hardcoded_reference": 1,
-    "structure.select_star_from_source": 1,
+    "structure.select_star_from_source": 2,
     "testing.declared_grain_untested": 1,
     "testing.key_not_null_missing": 2,
     "testing.key_uniqueness_missing": 1,
@@ -163,6 +163,8 @@ class TestFixtureAlignment:
             "designed_and_delivered": 4,
             "designed_not_started": 1,
         }
+        # Six designed entities: four built, one switched off, one not started.
+        assert sum(counts.values()) == 8
 
     def test_coverage(self, result: RunResult) -> None:
         coverage = result.alignment.coverage

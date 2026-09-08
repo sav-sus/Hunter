@@ -45,7 +45,7 @@ FR7d makes this a first-class output: on a client engagement it shows how far th
 
 | Setting | Change | House says | This project says | Reason given |
 |---|---|---|---|---|
-| rules.structure.model_too_long.enabled | disabled | True | False | this fixture has no long models, so the rule adds nothing here |
+| rules.structure.model_too_long.enabled | disabled | True | False | this example has no long models, so the rule adds nothing here |
 
 
 ## Every rule
@@ -88,7 +88,7 @@ FR7d makes this a first-class output: on a client engagement it shows how far th
 | `droughty.description_orphaned` | What is written down | Tidy up | 0.1 | yes | droughty |
 | `droughty.description_undefined` | What is written down | Worth fixing | 0.6 | yes | droughty |
 | `droughty.generated_test_missing` | Do the reports still match the data | Worth fixing | 0.8 | yes | manifest, droughty |
-| `droughty.introspected_column_undesigned` | Does what was built match the design | Tidy up | 0.4 | no | droughty, dbml |
+| `droughty.introspected_column_undesigned` | Does what was built match the design | Tidy up | 0.4 | yes | droughty, dbml |
 | `droughty.model_not_covered` | Do the reports still match the data | Worth fixing | 0.8 | yes | manifest, droughty |
 | `droughty.override_dropped` | Do the reports still match the data | Needs attention | 1.5 | yes | droughty |
 | `droughty.schema_stale` | Do the reports still match the data | Worth fixing | 1 | yes | droughty |
@@ -134,7 +134,7 @@ FR7d makes this a first-class output: on a client engagement it shows how far th
 
 | Rule | Reason given |
 |---|---|
-| `structure.model_too_long` | this fixture has no long models, so the rule adds nothing here |
+| `structure.model_too_long` | this example has no long models, so the rule adds nothing here |
 
 
 

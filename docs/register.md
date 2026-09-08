@@ -3,9 +3,10 @@
 `.hunter/register.yml` is the file people actually edit. It records what the
 team has decided about particular tables.
 
-`hunter.yml` says what correct looks like and changes rarely. The register
-records decisions about individual tables and changes constantly. Different
-owners, different rates of change, so two files.
+`hunter.yml` says what correct looks like, extending the Rittman Analytics
+house standard, and changes rarely. The register records decisions about
+individual tables and changes constantly. Different owners, different rates of
+change, so two files.
 
 ## What it is for
 

@@ -21,22 +21,22 @@ Plus `wh_shop__forecast_fact`, which is built and switched off, and `wh_shop__su
 
 ## What it scores
 
-**87.1 out of 100**, grade A. Well maintained. Safe to build on.
+**88.2 out of 100**, grade A. Well maintained. Safe to build on.
 
 | Area | Score | Grade |
 |---|---|---|
-| What is checked automatically | 78.2 | B |
-| Does what was built match the design | 96 | A |
-| How the tables fit together | 86.3 | A |
-| What is written down | 95.8 | A |
-| Do the reports still match the data | 64.3 | C |
+| What is checked automatically | 76.9 | B |
+| Does what was built match the design | 95.6 | A |
+| How the tables fit together | 88.1 | A |
+| What is written down | 96.1 | A |
+| Do the reports still match the data | 72.2 | B |
 | Are the house rules followed | 98.5 | A |
 | Are the tables the shape they claim | 96.4 | A |
 | What it costs to run | not measured | - |
 
-34 open findings, 1 suggestion Hunter is not confident enough to count, and 1 silenced with a recorded reason.
+36 open findings, 1 suggestion Hunter is not confident enough to count, and 1 silenced with a recorded reason.
 
-No rule failed on everything it examined, so there are no systemic gaps to report.
+Systemic gaps: droughty.generated_test_missing (3 of 3), crosslayer.exposure_missing (3 of 3).
 
 ## Try it yourself
 

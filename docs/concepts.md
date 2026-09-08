@@ -40,7 +40,7 @@ reconciliation row that reads as fact.
 A layer is a stage in the pipeline. Data moves through them, and reading past a
 stage means the checks in that stage do not apply.
 
-The shipped standard:
+The Rittman Analytics house standard, shipped as `ra-house@1`:
 
 | Layer | Prefix | Stage | Temporary or permanent | May read |
 |---|---|---|---|---|

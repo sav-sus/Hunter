@@ -1,5 +1,7 @@
 # Roadmap
 
+Ordered by what unblocks the most for Rittman Analytics delivery.
+
 ## Built: M0
 
 Complete. Version 0.1.0.dev0, unreleased.

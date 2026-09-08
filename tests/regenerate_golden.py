@@ -13,11 +13,11 @@ import json
 
 from hunter.emit.report import stable_payload
 from hunter.run import run
-from tests.test_golden import AS_OF, FIXTURE, GOLDEN
+from tests.test_golden import AS_OF, EXAMPLE, GOLDEN
 
 
 def main() -> None:
-    result = run(FIXTURE, as_of=AS_OF)
+    result = run(EXAMPLE, as_of=AS_OF)
     payload = json.loads(json.dumps(stable_payload(result), sort_keys=True, default=str))
     GOLDEN.parent.mkdir(parents=True, exist_ok=True)
     GOLDEN.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

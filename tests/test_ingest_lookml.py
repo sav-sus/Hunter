@@ -98,13 +98,36 @@ class TestRefinements:
         assert [measure.name for measure in view.measures] == ["order_count"]
         assert data.issues == []
 
-    def test_a_refinement_field_replaces_the_base_field(self, tmp_path: Path) -> None:
+    def test_a_refinement_field_replaces_what_it_sets(self, tmp_path: Path) -> None:
         (tmp_path / "a_base.lkml").write_text(BASE_VIEW, encoding="utf-8")
         (tmp_path / "b_agg.lkml").write_text(REFINEMENT, encoding="utf-8")
 
         view = load_lookml(resolve_paths(tmp_path, ["*.lkml"])).views["orders_fact"]
         status = next(field for field in view.fields if field.name == "order_status")
         assert status.referenced_columns == ["order_status_renamed"]
+
+    def test_a_refinement_keeps_what_it_does_not_set(self, tmp_path: Path) -> None:
+        """The standard layered structure refines generated dimensions purely to
+        add a label. Replacing the whole field drops its column reference, and
+        the cross-layer check then has nothing to check. On the pilot that hid
+        629 of 4,314 field references."""
+        (tmp_path / "a_base.lkml").write_text(BASE_VIEW, encoding="utf-8")
+        (tmp_path / "b_stg.lkml").write_text(
+            "view: +orders_fact {\n"
+            "  dimension: order_pk {\n"
+            '    label: "Order Key"\n'
+            '    group_label: "Identifiers"\n'
+            "  }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        view = load_lookml(resolve_paths(tmp_path, ["*.lkml"])).views["orders_fact"]
+        key = next(field for field in view.fields if field.name == "order_pk")
+
+        assert key.label == "Order Key"
+        assert key.referenced_columns == ["order_pk"]
+        assert key.sql is not None
+        assert key.description == "Surrogate key."
 
     def test_the_base_view_keeps_its_table_mapping(self, tmp_path: Path) -> None:
         (tmp_path / "a_base.lkml").write_text(BASE_VIEW, encoding="utf-8")

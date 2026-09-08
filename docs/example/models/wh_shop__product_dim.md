@@ -2,7 +2,7 @@
 
 `wh_shop__product_dim`
 
-One row per product sold in the shop, owned by the commerce team.
+Warehouse product dimension. Grain is one row per product. Carries the current list price.
 
 |  |  |
 |---|---|
@@ -12,7 +12,7 @@ One row per product sold in the shop, owned by the commerce team.
 | Enabled | yes |
 | Temporary or permanent | persistent |
 | Decided by | layer persistence |
-| One row means | One row per product. It holds last year's categories too |
+| One row means | One row per product |
 | Owner | commerce |
 | Named as | dimension |
 | Behaves like | not clear from its columns (closest guess fact, confidence 0.3, below the 0.7 needed to say) |
@@ -53,14 +53,15 @@ flowchart LR
 
 | How serious | What is wrong | Why it matters | Where |
 |---|---|---|---|
-| Needs attention | Nothing tests that product_pk is unique on wh_shop__product_dim | Nothing checks that products holds one row per one row per product. it holds last year's categories too. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
+| Needs attention | Nothing tests that product_pk is unique on wh_shop__product_dim | Nothing checks that products holds one row per one row per product. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Needs attention | Nothing tests that product_pk is always populated on wh_shop__product_dim | Rows with no key can appear in products. They drop out of joins silently, so figures come out low with no error to explain why. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
-| Worth fixing | The declared grain of wh_shop__product_dim is not tested | The design says products holds one row per product. it holds last year's categories too, and nothing checks that it does. If the grain is wrong, figures double-count with no test to catch it. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
+| Worth fixing | The declared grain of wh_shop__product_dim is not tested | The design says products holds one row per product, and nothing checks that it does. If the grain is wrong, figures double-count with no test to catch it. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Worth fixing | wh_shop__product_dim is built and stored but nothing reads it | products is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Worth fixing | wh_shop__product_dim has 1 test but none of them prove a key | The tests on products check that columns are not entirely empty. None of them check that it has one row per thing, or that its references resolve. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Worth fixing | 2 tests in the generated schema for wh_shop__product_dim are not in the project: product_pk: not_null; product_pk: unique | The generated schema says these tests should exist on products, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Worth fixing | wh_shop__product_dim is named as a dimension but carries 1 numeric column | products is named as a lookup table but holds figures. Anyone joining it and summing those figures will multiply them by however many rows the join returns. Columns: product_list_price_amount. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
 | Tidy up | wh_shop__product_dim has 1 column the design does not include: product_list_price_amount | products holds columns nobody designed, so they are undocumented and their business meaning is not recorded anywhere. | models/warehouse/wh_shop/wh_shop__product_dim.sql |
+| Tidy up | wh_shop__product_dim holds 1 column in the warehouse that the design does not include: product_list_price_amount | The warehouse picture taken by Droughty shows columns on products that nobody designed, so their business meaning is not recorded. | analytics_warehouse/docs/data_model_design/physical_model.dbml |
 
 
 _Table read as at 2026-09-08._

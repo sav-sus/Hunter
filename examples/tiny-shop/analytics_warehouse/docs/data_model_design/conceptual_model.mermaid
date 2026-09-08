@@ -1,0 +1,50 @@
+---
+title: "Tiny Shop Conceptual Data Model"
+config:
+  theme: neutral
+---
+
+%% Mermaid block diagram documentation
+%% https://docs.mermaidchart.com/mermaid-oss/syntax/block.html
+
+block-beta
+  %% Set width of conceptual model
+  columns 2
+
+  block:header:2
+  title("Tiny Shop Conceptual Data Model")
+  end
+
+  block:legend:2
+    columns 20
+    legend__label("Legend:")
+    legend__built("built")
+    legend__planned("planned")
+    legend__flagged("⚠ deviates")
+    space:16
+  end
+
+  block:wh_shop:1
+    columns 4
+    space:1
+    wh_shop__label("Shop")
+    wh_shop__orders("orders")
+    wh_shop__customers("customers")
+    wh_shop__products("products")
+    wh_shop__daily_sales("daily sales")
+    wh_shop__forecasts("forecasts ⚠")
+    wh_shop__suppliers("suppliers")
+    wh_shop__returns("returns")
+  end
+
+style wh_shop fill:#BAD7E9,stroke:#BAD7E9,stroke-width:2px,stroke-dasharray: 0
+style wh_shop__label fill:#BAD7E9,stroke:#BAD7E9,stroke-width:0px
+
+style legend__label fill:none,stroke:none,font-size:11px
+style legend__built fill:#EFEFEF,stroke:#666,stroke-width:1px,font-size:11px
+style legend__planned fill:#EFEFEF,stroke:#666,stroke-width:1px,stroke-dasharray:4 3,opacity:0.6,font-size:11px
+style legend__flagged fill:#EFEFEF,stroke:#c0392b,stroke-width:2px,font-size:11px
+
+style wh_shop__suppliers stroke-dasharray:4 3,opacity:0.6
+style wh_shop__returns stroke-dasharray:4 3,opacity:0.6
+style wh_shop__forecasts stroke:#c0392b,stroke-width:2px

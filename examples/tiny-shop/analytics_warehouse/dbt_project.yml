@@ -1,0 +1,34 @@
+name: tiny_shop
+version: "1.0.0"
+config-version: 2
+profile: tiny_shop
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+target-path: "target"
+
+vars:
+  # The forecast models are switched off by default, so they sit in the
+  # manifest's disabled section. Hunter reports them as built and switched off.
+  include_forecast_models: false
+
+models:
+  +persist_docs:
+    relation: true
+    columns: true
+  tiny_shop:
+    staging:
+      +materialized: view
+      +schema: analytics_warehouse_staging
+      +tags: ["daily"]
+    integration:
+      +materialized: view
+      +schema: analytics_warehouse_integration
+      +tags: ["daily"]
+    warehouse:
+      +materialized: table
+      +schema: analytics_warehouse
+      +tags: ["daily"]
+      +required_docs: true
+      +required_tests: { "unique": 1, "not_null": 1 }

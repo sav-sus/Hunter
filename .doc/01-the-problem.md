@@ -1,6 +1,8 @@
 # The problem
 
-Eight problems, stated by the people who have them. Each is a thing nobody can
+Eight problems, stated by the people who have them. All of them turn up on
+Rittman Analytics engagements, and none of them is answerable today without
+reading a repository by hand. Each is a thing nobody can
 answer today without reading the repository by hand.
 
 ## The eight

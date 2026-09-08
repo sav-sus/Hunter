@@ -1,13 +1,18 @@
 # What running it against a real repository found
 
-Every rule was run against a real 280-model repository before it was trusted.
-Nine rules and two framework bugs were wrong, and only real data exposed them.
-This is a record of what, and what changed.
+Every rule was run against a real 280-model Rittman Analytics client
+repository before it was trusted. Twelve rules and two framework bugs were
+wrong, and only real data exposed them. This is a record of what, and what
+changed.
 
-The pattern is worth noting on its own: none of these would have been found by
-the example project, because the example was written by the same person as the
-rules. A rule tested only against a fixture is a rule tested against its own
-assumptions.
+The pattern is worth noting on its own: none of the first nine would have been
+found by the example project, because the example was written by the same person
+as the rules. A rule tested only against a fixture is a rule tested against its
+own assumptions.
+
+The last three were found by rebuilding the example to match the real layout,
+which is the same lesson from the other direction: a fixture that does not look
+like the real thing does not behave like it either.
 
 ## Rules that were wrong
 
@@ -196,8 +201,43 @@ Predicted in the plan against what the finished tool reports.
 
 | Measure | Value |
 |---|---|
-| Score | 89.5, grade A |
-| Findings | 761 open, 10 suggestions |
+| Score | 89.6, grade A |
+| Findings | 644 open, 10 suggestions |
 | Run time | 2.1 seconds |
 | Areas scored | 7 of 8 |
 | Systemic gaps | 2: no table names an owner, none declares an exposure |
+
+## Three more, found by rebuilding the example
+
+Rebuilding the example project to match the real layout, with real SQL files
+and the layered LookML structure, found three further faults. That is the
+strongest argument for keeping an example realistic: a fixture that does not
+look like the real thing does not behave like it either.
+
+### A LookML refinement replaced the field it refined
+
+The layered structure refines generated dimensions purely to add a label and a
+group. Hunter replaced the whole field, which dropped the base field's `sql`
+and so its column reference.
+
+The cross-layer check then had nothing to check on any refined field. On the
+real repository that hid 629 of 4,314 field references, and the broken-field
+rule found seven where it should have found more. A refinement now merges
+property by property, which is Looker's own behaviour.
+
+### The star-select rule reported the house pattern
+
+The standard reads a source with `select *` into a CTE, then names and casts
+every column in the next one. Nothing leaks, because the second CTE fixes the
+shape.
+
+Hunter flagged all of it: 109 of 228 models. The rule now fires only where a
+query never names a column anywhere, so the source's shape passes straight
+through. That is 2 of 228, and both are hardcoded tables rather than sources.
+
+### BigQuery quotes each part of a table name separately
+
+`` `project`.`dataset`.`table` `` is three backtick groups, not one, so both the
+hardcoded-reference and star-select rules reported only the first part as the
+table name. A finding that names `` `warehouse` `` instead of the table is a
+finding nobody can act on.

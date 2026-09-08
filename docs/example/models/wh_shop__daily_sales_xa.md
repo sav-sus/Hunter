@@ -2,7 +2,7 @@
 
 `wh_shop__daily_sales_xa`
 
-One row per day, holding order totals for the shop.
+Daily order totals for the shop. Grain is one row per day. Reads staging directly rather than going through the integration layer.
 
 |  |  |
 |---|---|
@@ -38,13 +38,16 @@ One row per day, holding order totals for the shop.
 | What | Count | Names |
 |---|---|---|
 | Other tables | 0 | - |
-| Report views | 0 | - |
+| Report views | 1 | wh_shop__daily_sales_xa |
 
 
 ```mermaid
 flowchart LR
   wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
   style wh_shop__daily_sales_xa fill:#fdf2cc,stroke:#9a8330
+  view_wh_shop__daily_sales_xa("wh_shop__daily_sales_xa")
+  style view_wh_shop__daily_sales_xa fill:#e6eefb,stroke:#3b6fb6
+  wh_shop__daily_sales_xa --> view_wh_shop__daily_sales_xa
 ```
 
 
@@ -52,11 +55,11 @@ flowchart LR
 
 | How serious | What is wrong | Why it matters | Where |
 |---|---|---|---|
-| Needs attention | wh_shop__daily_sales_xa has no tests of any kind | Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and nothing downstream depends on it. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
+| Needs attention | wh_shop__daily_sales_xa has no tests of any kind | Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
 | Needs attention | wh_shop__daily_sales_xa is missing 1 column that the design specifies: daily_sales_returned_amount | daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
-| Worth fixing | wh_shop__daily_sales_xa is built and stored but nothing reads it | daily sales is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
 | Worth fixing | wh_shop__daily_sales_xa skips the integration layer to read stg_shop__orders | daily sales reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
 | Worth fixing | wh_shop__daily_sales_xa is not described in the generated schema | daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
+| Tidy up | wh_shop__daily_sales_xa feeds 1 report view but declares no exposure | Nothing in the project records that reports depend on daily sales, so anyone changing it has no way to see what they would break. | models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql |
 
 
 _Table read as at 2026-09-08._

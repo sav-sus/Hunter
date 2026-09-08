@@ -67,17 +67,18 @@ erDiagram
     natural_key order_natural_key
     date order_placed_dt
     measure order_total_amount
-    grain One_row_per_order__Source_system__the_sh
+    grain One_row_per_order
   }
   wh_shop__product_dim {
     key product_pk PK
     natural_key product_natural_key
     attribute product_category_name
     attribute product_name
-    grain One_row_per_product__It_holds_last_year
+    grain One_row_per_product
   }
   wh_shop__supplier_dim {
     key supplier_pk PK
+    natural_key supplier_natural_key
     attribute supplier_country_code
     attribute supplier_name
     grain One_row_per_supplier

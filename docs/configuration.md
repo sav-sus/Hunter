@@ -1,6 +1,7 @@
 # Configuration
 
-Hunter has no built-in opinions beyond its defaults. Every layer name, naming
+Hunter ships with the Rittman Analytics house standard and no opinions of its
+own beyond it. Every layer name, naming
 convention, threshold and weight is declared, which is what makes it portable
 between repositories that disagree with each other.
 
@@ -11,7 +12,7 @@ Each overrides the one above.
 | Level | File | Owned by | Changes |
 |---|---|---|---|
 | Built-in defaults | Shipped in the package | Whoever maintains Hunter | With a release |
-| House standard | `ra-house-1.yml`, version-pinned | Delivery leadership | With a release, and a project has to opt in |
+| House standard | `ra-house-1.yml`, version-pinned | Rittman Analytics delivery leadership | With a release, and a project has to opt in |
 | Project | `.hunter/hunter.yml` | The engagement lead | Rarely |
 | Register | `.hunter/register.yml` | Whoever is doing the work | Constantly |
 | Per model | `meta.hunter` in a schema file | The model's author | With the model |

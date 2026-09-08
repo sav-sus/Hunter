@@ -1,0 +1,54 @@
+---
+title: Tiny Shop Data Flow Diagram (Level 1)
+config:
+  layout: elk
+---
+flowchart LR
+    %% diagram structure
+    %% 1. subgraph groups related data sources in grey containers
+    %% 2. entities are associated with data source class definitions
+    %% 3. data flow follows dependency: source --> staging --> integration --> warehouse
+
+subgraph dfd_container["<b style='font-size: 16px;'>Tiny Shop Analytics Warehouse</b>"]
+
+  %% -------------------------------------------------------------
+  %% 1. Data sources
+  %% -------------------------------------------------------------
+subgraph subgraph__shop_platform["<b>Shop Platform</b>"]
+    data_source__database__shop[(shop orders and customers)]:::classdef__database_sources
+end
+
+subgraph subgraph__purchasing["<b>Purchasing</b>"]
+    data_source__database__purchasing[(supplier master)]:::classdef__database_sources
+end
+
+  %% -------------------------------------------------------------
+  %% 2. Entities
+  %% -------------------------------------------------------------
+    wh_shop__orders["orders"]
+    wh_shop__customers["customers"]
+    wh_shop__products["products"]
+    wh_shop__daily_sales["daily sales"]
+    wh_shop__forecasts["forecasts"]
+    wh_shop__suppliers["suppliers"]
+
+  %% -------------------------------------------------------------
+  %% 3. Consumers
+  %% -------------------------------------------------------------
+    dashboard__shop_performance["Shop performance"]
+
+  %% -------------------------------------------------------------
+  %% 4. Flow
+  %% -------------------------------------------------------------
+    data_source__database__shop --> wh_shop__orders
+    data_source__database__shop --> wh_shop__customers
+    data_source__database__shop --> wh_shop__products
+    data_source__database__purchasing --> wh_shop__suppliers
+    wh_shop__orders --> wh_shop__daily_sales
+    wh_shop__products --> wh_shop__forecasts
+    wh_shop__daily_sales --> dashboard__shop_performance
+    wh_shop__orders --> dashboard__shop_performance
+
+end
+
+classDef classdef__database_sources fill:#e8e8e8,stroke:#999

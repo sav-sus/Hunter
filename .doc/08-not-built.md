@@ -2,6 +2,9 @@
 
 Everything here is absent on purpose. Each entry says what it would take.
 
+Some entries are Rittman Analytics decisions rather than technical limits, and
+those are marked.
+
 ## Needs warehouse access
 
 The largest group. Nothing in it can be built without a read-only credential,

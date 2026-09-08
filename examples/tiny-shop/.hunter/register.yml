@@ -1,10 +1,16 @@
 # The tiny-shop example project's register.
+#
+# hunter.yml says what correct looks like. This records what the team has
+# decided about particular tables.
 version: 1
 
 models:
+  # Plain information. No reason needed.
   wh_shop__legacy_fact:
     owner: commerce
     grain: one row per legacy order
+
+  # Overriding what Hunter inferred, which needs a reason.
   int_shop__orders:
     persistence: temporary
     reason: a working step feeding the order fact, not for reporting from
@@ -13,6 +19,8 @@ models:
 off_plan_approved: []
 
 ignores:
+  # A finding somebody agreed to leave. It still appears on the site with this
+  # reason, and comes back automatically on the expiry date.
   - rule: documentation.model_description_missing
     models: ['wh_shop__customer_dim']
     reason: the description is being written as part of the customer rework

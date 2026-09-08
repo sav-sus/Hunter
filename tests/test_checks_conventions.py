@@ -212,18 +212,75 @@ class TestStructure:
         )
         assert "structure.select_star_from_source" not in rules_fired(structure.run(context))
 
-    def test_selecting_everything_from_a_source_is_reported(self, config) -> None:
+    def test_selecting_everything_from_a_source_and_never_naming_a_column(self, config) -> None:
         context = build_context(
             config,
             models=[
                 model(
                     "stg_x__thing",
                     layer="staging",
-                    sql="select * from {{ source('raw', 'orders') }}\n",
+                    sql=(
+                        "with s_raw as (\n"
+                        "  select * from {{ source('raw', 'orders') }}\n"
+                        ")\n"
+                        "select * from s_raw\n"
+                    ),
                 )
             ],
         )
         assert "structure.select_star_from_source" in rules_fired(structure.run(context))
+
+    def test_reading_a_source_with_a_star_then_naming_the_columns_is_the_standard(
+        self, config
+    ) -> None:
+        """The house pattern: read the source with a star into a step, then
+        name and cast every column. Nothing leaks, and flagging it reported
+        109 of 228 pilot models as a problem."""
+        context = build_context(
+            config,
+            models=[
+                model(
+                    "stg_x__thing",
+                    layer="staging",
+                    sql=(
+                        "with s_raw as (\n"
+                        "  select * from {{ source('raw', 'orders') }}\n"
+                        "),\n"
+                        "rename_and_cast as (\n"
+                        "  select\n"
+                        "    cast(id as string) as thing_natural_key,\n"
+                        "    cast(total as numeric) as thing_total_amount\n"
+                        "  from s_raw\n"
+                        ")\n"
+                        "select * from rename_and_cast\n"
+                    ),
+                )
+            ],
+        )
+        assert "structure.select_star_from_source" not in rules_fired(structure.run(context))
+
+    def test_a_star_from_a_bare_name_is_a_step_not_a_table(self, config) -> None:
+        """A bare single-token name is one of the query's own steps or an
+        alias. Relying on CTE detection instead produced false positives on
+        queries that assemble their steps inside a Jinja loop, where the
+        pattern that finds a step declaration does not match."""
+        context = build_context(
+            config,
+            models=[
+                model(
+                    "wh_a__thing_fact",
+                    columns=[column("thing_pk")],
+                    sql=(
+                        "{% for part in parts %}\n"
+                        "select cast(id as string) as thing_pk\n"
+                        "from {{ source('raw', part) }}\n"
+                        "{% endfor %}\n"
+                        "select * from assembled\n"
+                    ),
+                )
+            ],
+        )
+        assert "structure.select_star_from_source" not in rules_fired(structure.run(context))
 
     def test_selecting_everything_from_an_internal_step_is_fine(self, config) -> None:
         context = build_context(

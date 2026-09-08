@@ -1,5 +1,8 @@
 # Installing
 
+Hunter is a Rittman Analytics tool. It is proprietary and installed from
+this repository rather than from a public index.
+
 ## What you need
 
 | Requirement | Notes |

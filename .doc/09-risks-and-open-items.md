@@ -2,6 +2,9 @@
 
 ## Needs a decision before anything ships
 
+Each of these needs someone at Rittman Analytics to decide, not someone to
+build.
+
 | Item | Why it blocks | Who decides |
 |---|---|---|
 | Repository visibility | The repository is public. The planned support model assumes it is not, and Hunter is developed by running it against client repositories | Owner |

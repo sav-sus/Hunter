@@ -309,13 +309,17 @@ class TestShowcase:
 
 
 class TestScaffold:
-    def test_detection_finds_the_fixture_layout(self) -> None:
+    def test_detection_finds_the_example_layout(self) -> None:
+        """The example mirrors the standard: an analytics_warehouse directory
+        with the design documents under docs/data_model_design."""
         found = detect(EXAMPLE)
-        assert found.dbt_project_dir == "."
+        assert found.dbt_project_dir == "analytics_warehouse"
         assert found.manifest_found
-        assert found.dbml == ["models/_model/*.dbml"]
-        assert found.conceptual == "docs/conceptual_model.mermaid"
+        assert found.dbml == ["docs/data_model_design/*.dbml"]
+        assert found.conceptual == "docs/data_model_design/conceptual_model.mermaid"
+        assert found.logical == "docs/data_model_design/logical_model.mermaid"
         assert found.lookml
+        assert found.droughty_dbml == ["docs/db_docs/*.dbml"]
 
     def test_detection_of_an_empty_directory_reports_what_is_missing(self, tmp_path: Path) -> None:
         found = detect(tmp_path)

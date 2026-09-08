@@ -1,0 +1,116 @@
+project tiny_shop_physical_model {
+    database_type: 'bigquery'
+    access_level: 'private'
+    note: '''
+        # The tiny shop analytics warehouse
+
+        ## dbml instructions
+        - Warehouse entity names use wh_<entity_group>__<entity_name>_<fact|dim|xa>,
+          for example wh_shop__order_fact.
+        - fact is a fact table, dim a dimension, xa an extended aggregate.
+        - Columns are ordered by role: primary key, foreign keys, natural keys,
+          attributes, metrics, booleans, then dates and timestamps.
+        - Primary and foreign keys carry the _pk and _fk suffixes. Natural keys
+          from a source system carry _natural_key, to keep them apart from
+          surrogate keys.
+        - Dates carry _dt and timestamps _ts. A timestamp outside UTC names its
+          zone, for example created_cet_ts.
+        - Every column carries a note.
+        - A table note states the grain, the source system, and anything else
+          needed to build it.
+
+        ## Definition of done
+        - Every requirement gathered is captured here.
+        - Field definitions carry a clear name, a type and a description.
+        - Primary and foreign keys are declared.
+        - A description and the data sources are recorded for each table.
+        - Reviewed and signed off by the analytics lead or the domain owner.
+    '''
+}
+
+//=============================================================================
+// Shop
+//=============================================================================
+
+TableGroup wh_shop {
+  wh_shop__order_fact
+  wh_shop__customer_dim
+  wh_shop__product_dim
+  wh_shop__daily_sales_xa
+  wh_shop__forecast_fact
+  wh_shop__supplier_dim
+}
+
+table wh_shop__order_fact [headercolor: #BAD7E9] {
+  order_pk varchar [pk, note: 'Surrogate key for the order.']
+  customer_fk varchar [note: 'The customer who placed the order.', ref: > wh_shop__customer_dim.customer_pk]
+  order_natural_key varchar [note: 'The order reference from the shop platform.']
+  order_total_amount numeric [note: 'Order value before returns, in the order''s own currency.']
+  order_placed_dt date [note: 'Date the order was placed.']
+
+  Note: '''
+    Table Grain: One row per order.
+    Source System: the shop platform's daily export.
+  '''
+}
+
+table wh_shop__customer_dim [headercolor: #BAD7E9] {
+  customer_pk varchar [pk, note: 'Surrogate key for the customer.']
+  customer_natural_key varchar [note: 'The customer reference from the shop platform.']
+  customer_name varchar [note: 'Customer name, as the platform holds it.']
+  customer_joined_dt date [note: 'Date of the customer''s first order, not the account creation date.']
+
+  Note: '''
+    Table Grain: One row per customer.
+    Source System: the shop platform's daily export.
+  '''
+}
+
+table wh_shop__product_dim [headercolor: #BAD7E9] {
+  product_pk varchar [pk, note: 'Surrogate key for the product.']
+  product_natural_key varchar [note: 'The product reference from the shop platform.']
+  product_name varchar [note: 'Product name.']
+  product_category_name varchar [note: 'Category the product sits in. Last year''s categories are kept here too.']
+
+  Note: '''
+    Table Grain: One row per product.
+    Source System: the shop platform's daily export.
+  '''
+}
+
+table wh_shop__daily_sales_xa [headercolor: #B4D4E7] {
+  daily_sales_pk varchar [pk, note: 'Surrogate key for the day.']
+  daily_sales_order_count numeric [note: 'Orders placed that day.']
+  daily_sales_total_amount numeric [note: 'Order value that day, before returns.']
+  daily_sales_returned_amount numeric [note: 'Value returned that day. Designed and not yet built.']
+  daily_sales_dt date [note: 'The day summarised.']
+
+  Note: '''
+    Table Grain: One row per day.
+    Source System: derived from wh_shop__order_fact.
+  '''
+}
+
+table wh_shop__forecast_fact [headercolor: #BAD7E9] {
+  forecast_pk varchar [pk, note: 'Surrogate key for the product and week.']
+  product_fk varchar [note: 'The product forecast.', ref: > wh_shop__product_dim.product_pk]
+  forecast_units numeric [note: 'Units expected to sell that week.']
+  forecast_week_dt date [note: 'Monday of the week forecast.']
+
+  Note: '''
+    Table Grain: One row per product per week.
+    Source System: the forecasting service.
+  '''
+}
+
+table wh_shop__supplier_dim [headercolor: #BAD7E9] {
+  supplier_pk varchar [pk, note: 'Surrogate key for the supplier.']
+  supplier_natural_key varchar [note: 'The supplier reference from the purchasing system.']
+  supplier_name varchar [note: 'Supplier name.']
+  supplier_country_code varchar [note: 'Two-letter country code the supplier ships from.']
+
+  Note: '''
+    Table Grain: One row per supplier.
+    Source System: the purchasing system. Designed, not yet built.
+  '''
+}

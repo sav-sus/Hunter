@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: shop_source
+    database: pj-tiny-shop-ingestion-dev
+    schema: shop
+    description: >
+      The shop platform's daily export. Grain is one row per order and one row
+      per customer. Amounts are in the order's own currency.
+    tables:
+      - name: orders
+        description: >
+          One row per order placed. order_id is the platform's own reference.
+          total is the order value before returns.
+      - name: customers
+        description: >
+          One row per registered customer. joined_at is the first order date,
+          not the account creation date.

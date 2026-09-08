@@ -1,14 +1,22 @@
 # The tiny-shop example project's ruleset.
+#
+# The layout mirrors the Rittman Analytics standard: an analytics_warehouse
+# directory holding models, lookml and docs, with the design documents under
+# docs/data_model_design and the introspected picture under docs/db_docs.
 extends: ra-house@1
 
 paths:
-  dbt_project_dir: .
+  dbt_project_dir: analytics_warehouse
   manifest: target/manifest.json
+  models_dir: models
   dbml:
-    - models/_model/*.dbml
-  conceptual_diagram: docs/conceptual_model.mermaid
+    - docs/data_model_design/*.dbml
+  conceptual_diagram: docs/data_model_design/conceptual_model.mermaid
+  logical_diagram: docs/data_model_design/logical_model.mermaid
   lookml:
-    - lookml/*.lkml
+    - lookml/**/*.lkml
+  droughty_dbml:
+    - docs/db_docs/*.dbml
 
 pull_request:
   mode: advisory
@@ -18,4 +26,4 @@ pull_request:
 rules:
   structure.model_too_long:
     enabled: false
-    reason: this fixture has no long models, so the rule adds nothing here
+    reason: this example has no long models, so the rule adds nothing here

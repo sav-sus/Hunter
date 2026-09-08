@@ -9,7 +9,9 @@ site_url: https://rittman-hunter.readthedocs.io/
 repo_url: https://github.com/sav-sus/Hunter
 repo_name: sav-sus/Hunter
 edit_uri: edit/main/docs/
-copyright: Copyright Rittman Analytics. All rights reserved.
+copyright: >-
+  Rittman Hunter is a Rittman Analytics product.
+  Copyright Rittman Analytics. All rights reserved. Not open source.
 
 use_directory_urls: true
 
@@ -69,9 +71,16 @@ plugins:
   - search
 
 extra:
+  # The theme's own "Made with Material for MkDocs" line is switched off, so the
+  # footer carries the Rittman Analytics attribution and nothing else.
+  generator: false
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/sav-sus/Hunter
+      name: Hunter on GitHub
+    - icon: fontawesome/solid/globe
+      link: https://rittmananalytics.com
+      name: Rittman Analytics
 
 # Only the framing pages are listed. The generated example pages under
 # docs/example/models/ are reachable by link and deliberately left out of the

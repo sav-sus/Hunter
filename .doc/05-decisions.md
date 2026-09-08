@@ -48,7 +48,7 @@ runs diverge.
 **Nothing is hardcoded.** Every threshold is a typed field on a configuration
 model. Rules out: a rule nobody can find the number for.
 
-**The house ruleset is version-pinned per project.** A project names
+**The Rittman Analytics house standard is version-pinned per project.** A project names
 `ra-house@1` and stays there until someone bumps it. Rules out: changing the
 standard and moving every client's score at once.
 
@@ -72,7 +72,7 @@ report a failure where there was no measurement, and not silently dropped, which
 would score out of less than 100.
 
 **Systemic gaps reported above the number.** Decided during the build, after
-reading a real result where the score was 89.5 and no table had an owner.
+reading a real result where the score was 89.6 and no table had an owner.
 
 **Key coverage, not test count.** One repository has 3,926 tests, of which 3,492
 are the same weak check and 100 are uniqueness tests. Counting tests scores it

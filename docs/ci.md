@@ -1,6 +1,7 @@
 # In CI
 
-Hunter ships as a composite GitHub Action wrapping the command line. It calls
+Hunter ships as a composite GitHub Action, published by Rittman Analytics and
+wrapping the command line. It calls
 the same commands you would run locally, so CI and local results are the same by
 construction rather than by discipline.
 

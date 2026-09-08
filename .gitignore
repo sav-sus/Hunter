@@ -21,8 +21,12 @@ out/
 report.json
 .hunter/baseline.json
 
-# The built documentation site. The markdown under docs/ is committed,
-# including the generated pages; the HTML is not.
+# The built documentation site.
+#
+# docs-html/ IS committed, so the site can be opened from any checkout without
+# installing anything. That is a deliberate trade: 4 MB in the repository
+# against documentation somebody actually reads. To stop committing it, add
+# /docs-html/ below and delete the folder.
 /site/
 _built/
 

@@ -2,7 +2,7 @@
 
 `stg_shop__orders`
 
-_No description has been written for this table._
+Orders as the shop platform exports them. Grain is one row per order. order_id is used as the natural key; total is the order value before returns.
 
 |  |  |
 |---|---|
@@ -27,8 +27,8 @@ _No description has been written for this table._
 
 | Column | Type | Description | Tests |
 |---|---|---|---|
-| customer_natural_key | not recorded | The customer reference. | none |
-| order_natural_key | not recorded | The order reference from the shop system. | none |
+| customer_natural_key | not recorded | The customer who placed the order. | none |
+| order_natural_key | not recorded | The order reference from the shop platform. | none |
 | order_placed_dt | not recorded | Date the order was placed. | none |
 | order_total_amount | not recorded | Order value before returns. | none |
 
@@ -50,9 +50,9 @@ flowchart LR
   wh_shop__legacy_fact["wh_shop__legacy_fact"]
   wh_shop__order_fact["wh_shop__order_fact"]
   wh_shop__product_dim["wh_shop__product_dim"]
-  stg_shop__orders --> wh_shop__daily_sales_xa
   stg_shop__orders --> int_shop__orders
   int_shop__orders --> wh_shop__product_dim
+  stg_shop__orders --> wh_shop__daily_sales_xa
   int_shop__orders --> wh_shop__legacy_fact
   int_shop__orders --> wh_shop__order_fact
 ```
@@ -62,7 +62,7 @@ flowchart LR
 
 | How serious | What is wrong | Why it matters | Where |
 |---|---|---|---|
-| Tidy up | stg_shop__orders selects every column from a raw source on line 1 | A column added at the source appears in stg_shop__orders without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here. | models/staging/stg_shop/stg_shop__orders.sql:1 |
+| Tidy up | stg_shop__orders selects every column from a raw source on line 13 | A column added at the source appears in stg_shop__orders without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here. | models/staging/stg_shop/stg_shop__orders.sql:13 |
 
 
 _Table read as at 2026-09-08._

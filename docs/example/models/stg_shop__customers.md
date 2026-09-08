@@ -2,7 +2,7 @@
 
 `stg_shop__customers`
 
-_No description has been written for this table._
+Customers as the shop platform exports them. Grain is one row per customer. joined_at is the first order date rather than the account creation date.
 
 |  |  |
 |---|---|
@@ -27,9 +27,9 @@ _No description has been written for this table._
 
 | Column | Type | Description | Tests |
 |---|---|---|---|
-| customer_joined_dt | not recorded | Date the customer first ordered. | none |
+| customer_joined_dt | not recorded | Date of the customer's first order. | none |
 | customer_name | not recorded | Customer name. | none |
-| customer_natural_key | not recorded | The customer reference from the shop. | none |
+| customer_natural_key | not recorded | The customer reference from the shop platform. | none |
 
 
 ## What depends on this
@@ -50,9 +50,9 @@ flowchart LR
   wh_shop__order_fact["wh_shop__order_fact"]
   wh_shop__product_dim["wh_shop__product_dim"]
   stg_shop__customers --> int_shop__orders
+  stg_shop__customers --> wh_shop__customer_dim
   int_shop__orders --> wh_shop__product_dim
   int_shop__orders --> wh_shop__legacy_fact
-  stg_shop__customers --> wh_shop__customer_dim
   int_shop__orders --> wh_shop__order_fact
 ```
 

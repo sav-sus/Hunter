@@ -1,5 +1,8 @@
 # Contributing
 
+Hunter is maintained by Rittman Analytics. The repository is private and the
+licence is proprietary, so this is for maintainers rather than for the public.
+
 ## Getting set up
 
 ```bash
@@ -11,7 +14,7 @@ uv sync --all-extras
 Four gates, all of which CI runs:
 
 ```bash
-uv run pytest                    # 515 tests
+uv run pytest                    # 521 tests
 uv run ruff check .              # lint
 uv run ruff format --check .     # formatting
 uv run mypy                      # types, strict on checks, score and model
@@ -109,18 +112,20 @@ it appears as a gap in the repository, which it is not.
 This is the part that matters most, and it is what the test suite cannot do for
 you.
 
-Nine rules were wrong when first written, and every one was found by running
+Twelve rules were wrong when first written, and every one was found by running
 against a real repository rather than by testing against the example. `select *`
-fired on 226 of 228 models. `is distinct from` was read as a FROM clause. A rule
-tested only against a fixture is a rule tested against its own assumptions,
-because the same person wrote both.
+fired on 226 of 228 models. `is distinct from` was read as a FROM clause. A
+LookML refinement replaced the field it refined, which silently hid 629 field
+references. A rule tested only against a fixture is a rule tested against its
+own assumptions, because the same person wrote both.
 
 Point it at the largest repository you have access to and read the findings.
 Then read them again asking "would I act on this".
 
 ## The example project
 
-`examples/tiny-shop` is eight tables with one deliberate flaw per finding class.
+`examples/tiny-shop` is nine tables with one deliberate flaw per finding class,
+laid out the way a Rittman Analytics engagement lays a repository out.
 It exercises 28 rules across all seven scored areas, including a silenced
 finding, a low-confidence suggestion, a table built and switched off, an
 off-plan build and a dropped generation override.
@@ -165,6 +170,21 @@ uv run python scripts/build_docs_pages.py
 
 CI regenerates and fails on a difference, so neither can go stale. A stale rules
 reference is worse than none, because somebody will act on it.
+
+## The committed HTML
+
+`docs-html/` holds the built site, committed so it can be opened from any
+checkout without installing anything. Read the Docs builds its own copy from
+`mkdocs.yml` and does not use this folder.
+
+```bash
+uv run python scripts/build_docs_site.py            # rebuild
+uv run python scripts/build_docs_site.py --serve    # rebuild and open it
+```
+
+It costs about 4 MB in the repository, most of it theme assets. CI rebuilds it
+and fails on a difference. To stop committing it, add `/docs-html/` to
+`.gitignore` and delete the folder; nothing else depends on it.
 
 ## Client content
 

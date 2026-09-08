@@ -1,0 +1,8 @@
+# Extras the documentation site needs beyond Hunter's own site extra.
+#
+# Pinned below the next major version deliberately. MkDocs 2.0 removes the
+# plugin system and rewrites theming with no migration path, so moving these is
+# a piece of work rather than a bump.
+mkdocs>=1.6,<2
+mkdocs-material>=9.5,<10
+pymdown-extensions>=10.7,<11

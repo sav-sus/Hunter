@@ -73,6 +73,18 @@ jobs:
       - name: The documentation site builds
         run: uv run mkdocs build --site-dir /tmp/docsite
 
+      - name: The committed HTML is current
+        # docs-html/ is committed so the site can be opened from a checkout.
+        # Rebuilding here keeps it from going stale silently.
+        if: matrix.python-version == '3.12'
+        run: |
+          uv run python scripts/build_docs_site.py --skip-regenerate
+          git diff --exit-code docs-html/ || {
+            echo "::error::The committed HTML is out of date. Run"\
+                 "'uv run python scripts/build_docs_site.py' and commit the result."
+            exit 1
+          }
+
       - name: Hunter scores the example project end to end
         run: |
           uv run hunter score examples/tiny-shop --out /tmp/report.json

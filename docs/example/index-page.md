@@ -1,11 +1,20 @@
 # Repository health
 
-# 87.1 / 100
+# 88.2 / 100
 
 !!! abstract "Well maintained. Safe to build on"
     Grade A. No starting point recorded yet.
 
-This repository scores 87.1 out of 100. Well maintained. Safe to build on. The score covers 7 of 8 areas: the rest could not be measured with the information available, and are listed as not checked rather than counted as passing. There is no agreed starting point recorded yet, so there is nothing to compare this against.
+This repository scores 88.2 out of 100. Well maintained. Safe to build on. The score covers 7 of 8 areas: the rest could not be measured with the information available, and are listed as not checked rather than counted as passing. There is no agreed starting point recorded yet, so there is nothing to compare this against.
+
+## Nothing in these areas is done anywhere
+
+Each of these was checked in every place it applies, and was missing in every one. That makes each a single decision nobody has taken, rather than a list of separate faults.
+
+| What is missing | Where | Why it matters |
+|---|---|---|
+| What is tested | 3 of 3 | The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand. |
+| Do the reports still match the data | 3 of 3 | Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break. |
 
 ## What is going well
 
@@ -22,6 +31,10 @@ This repository scores 87.1 out of 100. Well maintained. Safe to build on. The s
 2 of 5 tables have their key checked.
 
 ## What needs a decision
+
+**0 of 3 — What is tested**
+
+Missing everywhere Hunter looked, in all 3 cases. The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.
 
 **1 — Tables built without a design**
 

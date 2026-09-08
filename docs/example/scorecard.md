@@ -1,6 +1,6 @@
 # The score, broken down
 
-# 87.1 / 100
+# 88.2 / 100
 
 !!! abstract "Well maintained. Safe to build on"
     Grade A.
@@ -12,12 +12,12 @@
 
 | Area | Score | Grade | Share of the total | Findings |
 |---|---|---|---|---|
-| What is checked automatically | 78.2 | B | 19.355% | 7 |
-| Does what was built match the design | 96 | A | 16.129% | 7 |
-| How the tables fit together | 86.3 | A | 13.978% | 5 |
-| What is written down | 95.8 | A | 13.978% | 3 |
-| Do the reports still match the data | 64.3 | C | 13.978% | 10 |
-| Are the house rules followed | 98.5 | A | 13.978% | 2 |
+| What is checked automatically | 76.9 | B | 19.355% | 7 |
+| Does what was built match the design | 95.6 | A | 16.129% | 9 |
+| How the tables fit together | 88.1 | A | 13.978% | 4 |
+| What is written down | 96.1 | A | 13.978% | 3 |
+| Do the reports still match the data | 72.2 | B | 13.978% | 10 |
+| Are the house rules followed | 98.5 | A | 13.978% | 3 |
 | Are the tables the shape they claim | 96.4 | A | 8.602% | 2 |
 | What it costs to run | not measured | - | - | 0 |
 
@@ -26,43 +26,43 @@
 
 Whether anything would notice if the data went wrong. A test that only checks a column is not empty does not count as checking a key.
 
-Scored **78.2**, grade B. 12.94 of 54.63 possible points were lost across 7 findings.
+Scored **76.9**, grade B. 16.9 of 64.58 possible points were lost across 7 findings.
 
 ### Does what was built match the design
 
 Whether the tables that exist are the tables that were designed, with the columns, keys and relationships the design specifies.
 
-Scored **96**, grade A. 3.04 of 69.73 possible points were lost across 7 findings.
+Scored **95.6**, grade A. 3.59 of 76.21 possible points were lost across 9 findings.
 
 ### How the tables fit together
 
 Whether the tables depend on each other in ways that are safe to change, and whether anything is being built that nobody reads.
 
-Scored **86.3**, grade A. 6.16 of 65.03 possible points were lost across 5 findings.
+Scored **88.1**, grade A. 7.25 of 73.45 possible points were lost across 4 findings.
 
 ### What is written down
 
 Whether someone new could tell what each table is for, what one row of it means, and who to ask about it.
 
-Scored **95.8**, grade A. 1.83 of 51.25 possible points were lost across 3 findings.
+Scored **96.1**, grade A. 2.17 of 59.91 possible points were lost across 3 findings.
 
 ### Do the reports still match the data
 
 Whether the reporting layer still matches the data underneath it. This is what catches a renamed column before it breaks a dashboard.
 
-Scored **64.3**, grade C. 14.3 of 35.7 possible points were lost across 10 findings.
+Scored **72.2**, grade B. 18.7 of 51.1 possible points were lost across 10 findings.
 
 ### Are the house rules followed
 
 Whether the naming and the layering follow the agreed house rules, so anyone reading a query can tell what they are looking at.
 
-Scored **98.5**, grade A. 2.19 of 111.29 possible points were lost across 2 findings.
+Scored **98.5**, grade A. 2.49 of 133.34 possible points were lost across 3 findings.
 
 ### Are the tables the shape they claim
 
 Whether a table named as something you count behaves like something you count. Getting this wrong is how figures get double counted.
 
-Scored **96.4**, grade A. 0.2 of 31.7 possible points were lost across 2 findings.
+Scored **96.4**, grade A. 0.2 of 40.43 possible points were lost across 2 findings.
 
 ### What it costs to run
 
@@ -76,16 +76,16 @@ Ranked by how much the score would recover, most serious first.
 
 | How serious | Cases | Points to recover | What is wrong |
 |---|---|---|---|
-| Needs attention | 1 | 5.2 | These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact. |
-| Needs attention | 2 | 4.7 | Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why. |
-| Needs attention | 2 | 4.0 | Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and nothing downstream depends on it. |
-| Needs attention | 1 | 3.2 | Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes. |
-| Needs attention | 1 | 2.0 | Nothing checks that products holds one row per one row per product. it holds last year's categories too. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it. |
+| Needs attention | 2 | 7.3 | Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it. |
+| Needs attention | 1 | 5.8 | These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact. |
+| Needs attention | 2 | 5.4 | Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why. |
+| Needs attention | 1 | 3.9 | Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes. |
+| Needs attention | 1 | 2.0 | Nothing checks that products holds one row per one row per product. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it. |
 | Needs attention | 1 | 1.5 | Because legacy does not go through dbt to reach this table, the dependency is invisible: it does not appear in the lineage, it is not built in the right order, and nothing warns you if the table it points at changes. |
-| Needs attention | 1 | 0.2 | daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read. |
-| Worth fixing | 2 | 3.2 | customers reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads. |
-| Worth fixing | 3 | 3.0 | daily sales is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it. |
-| Worth fixing | 1 | 1.7 | There is nobody to ask about customers and nobody to route a problem with it to. It is a persistent table, and 2 report fields depend on it. |
+| Needs attention | 1 | 0.6 | daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read. |
+| Worth fixing | 2 | 5.2 | daily sales reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads. |
+| Worth fixing | 3 | 3.2 | The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand. |
+| Worth fixing | 1 | 2.1 | daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has. |
 
 
 ## How much is covered

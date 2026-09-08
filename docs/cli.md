@@ -1,7 +1,7 @@
 # Commands
 
-Every command is a thin wrapper over one pipeline. The GitHub Action calls these
-and nothing else, so a run in CI and a run on your laptop give the same answer.
+`hunter` is the only entry point. Every command is a thin wrapper over one
+pipeline, and the Rittman Analytics GitHub Action calls these and nothing else, so a run in CI and a run on your laptop give the same answer.
 
 ## Common options
 
@@ -39,7 +39,7 @@ hunter score . --out reports/today.json --quiet
 
 | Option | What it does |
 |---|---|
-| `--house` | Which house standard to measure against, e.g. `ra-house@1` |
+| `--house` | Which Rittman Analytics house standard to measure against, e.g. `ra-house@1` |
 | `--quiet`, `-q` | Write the report and print nothing |
 | `--no-git` | Skip history. Faster, but nothing is attributed |
 

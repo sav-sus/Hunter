@@ -11,7 +11,9 @@ cd your-analytics-repo
 hunter init
 ```
 
-This looks at the repository, works out where things are, and writes two files.
+This looks at the repository, works out where things are, and writes two
+files. The ruleset it writes extends the Rittman Analytics house standard,
+`ra-house@1`.
 
 ```
 note: No target/manifest.json was found. Run `dbt parse` in the project, or
@@ -42,7 +44,7 @@ hunter score
 ```
 
 ```
-  89.5 / 100
+  89.6 / 100
   Well maintained. Safe to build on
 
    90.4  A  What is checked automatically            38 findings
@@ -50,7 +52,7 @@ hunter score
    92.6  A  How the tables fit together              53 findings
    77.2  B  What is written down                    135 findings
    86.7  A  Do the reports still match the data     183 findings
-   97.1  A  Are the house rules followed            155 findings
+   98.3  A  Are the house rules followed              6 findings
    98.3  A  Are the tables the shape they claim       7 findings
       -  -  What it costs to run                  not measured
 
@@ -58,7 +60,7 @@ hunter score
     63 of 63  Who owns what
     54 of 54  Do the reports still match the data
 
-  751 open, 10 suggestions, 0 silenced
+  648 open, 10 suggestions, 0 silenced
 
   Report written to out/report.json
 ```

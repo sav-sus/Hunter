@@ -5,7 +5,7 @@ touches any part of it.
 
 ## The eight areas
 
-Weights live in the house ruleset and total 100. They are published on the
+Weights live in the Rittman Analytics house standard and total 100. They are published on the
 site's conventions page, because a weight nobody can see is a weight nobody
 will accept.
 
@@ -90,7 +90,7 @@ not many separate defects. "No table in the warehouse layer names an owner, 63
 of 63" is a single conversation. A weighted mean is arithmetically right and
 still leaves it looking like a rounding error.
 
-This was added after reading a real result: the repository scored 89.5, grade A,
+This was added after reading a real result: the repository scored 89.6, grade A,
 while no table had an owner and none declared an exposure. Both facts were true.
 Only one of them was visible.
 
@@ -181,7 +181,7 @@ of separating them. Otherwise upgrading Hunter would fail a client's build.
 ## Worked example
 
 The example project in `examples/tiny-shop` is eight tables with one deliberate
-flaw per finding class. It scores 87.1 and triggers 28 rules across all seven
+flaw per finding class. It scores 88.2 and triggers 28 rules across all seven
 scored areas.
 
 Its report is pinned in `tests/golden/tiny-shop.json`. Changing the arithmetic

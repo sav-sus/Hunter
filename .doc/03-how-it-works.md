@@ -193,7 +193,8 @@ reports apart from the timestamp.
 
 ## Configuration
 
-Five levels, each overriding the one above.
+Five levels, each overriding the one above, with the Rittman Analytics house
+standard as the second.
 
 | Level | File | Owned by |
 |---|---|---|

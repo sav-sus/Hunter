@@ -8,14 +8,14 @@ reports on them. It changes nothing: no commits, no pull requests, no writes to
 your warehouse.
 
 ```
-89.5 / 100    Well maintained. Safe to build on
+89.6 / 100    Well maintained. Safe to build on
 
  90.4  A  What is checked automatically            38 findings
  87.3  A  Does what was built match the design    190 findings
  92.6  A  How the tables fit together              53 findings
  77.2  B  What is written down                    135 findings
  86.7  A  Do the reports still match the data     183 findings
- 97.1  A  Are the house rules followed            155 findings
+ 98.3  A  Are the house rules followed             48 findings
  98.3  A  Are the tables the shape they claim       7 findings
     -  -  What it costs to run                  not measured
 
@@ -28,11 +28,15 @@ Two seconds on a 280-model repository. No warehouse credential needed.
 
 | | |
 |---|---|
-| **Documentation** | https://rittman-hunter.readthedocs.io |
+| **Documentation, published** | https://rittman-hunter.readthedocs.io |
+| **Documentation, in this checkout** | [`docs-html/index.html`](docs-html/index.html), built HTML. Source in [`docs/`](docs) |
 | **See real output** | [`docs/example/`](docs/example/index.md), regenerated on every change |
 | **Try it in a minute** | [Below](#try-it-in-a-minute) |
-| **Why it is built this way** | [`.doc/`](.doc/README.md) |
-| **Licence** | Proprietary. Not open source |
+| **Why it is built this way** | [`.doc/`](.doc/README.md), the product record |
+| **A worked example project** | [`examples/tiny-shop/`](examples/tiny-shop/README.md) |
+| **Licence** | Proprietary, Rittman Analytics. Not open source |
+
+Rittman Hunter is a Rittman Analytics product.
 
 ## The problem
 
@@ -118,9 +122,10 @@ uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 open /tmp/example-site/_built/index.html
 ```
 
-[`examples/tiny-shop`](examples/tiny-shop) is a working project of eight tables
-with one deliberate flaw each. It scores 87.1 and exercises 28 of Hunter's 77
-rules.
+[`examples/tiny-shop`](examples/tiny-shop) is a working project laid out the way
+a Rittman Analytics engagement lays one out: nine tables with one deliberate
+flaw each, a design, a business model, a layered LookML project and generated
+schema output. It scores 88.2 and exercises 28 of Hunter's 77 rules.
 
 ## On your own repository
 
@@ -250,7 +255,7 @@ Those are licence terms, not only design intent.
 | Version | 0.1.0.dev0, unreleased |
 | Milestone | M0 complete, plus four additions |
 | Rules | 77 across 7 scored areas |
-| Tests | 515 |
+| Tests | 518 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).
@@ -270,11 +275,12 @@ the arithmetic shows up as a diff on a committed file rather than as a surprise
 in somebody's report. After an intended change:
 
 ```bash
-uv run python -m tests.regenerate_golden
-uv run python scripts/build_docs_pages.py
+uv run python -m tests.regenerate_golden      # the pinned report
+uv run python scripts/build_docs_pages.py     # the rules reference and example
+uv run python scripts/build_docs_site.py      # the browsable HTML
 ```
 
-and both diffs are part of the review.
+and all three diffs are part of the review.
 
 `scripts/check_no_client_content.py` fails on client-identifying strings in
 tracked files. Hunter is developed by running it against real client

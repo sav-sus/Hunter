@@ -253,15 +253,44 @@ def parse_file(path: Path) -> LookmlData:
     return data
 
 
+def _merge_field(base: LookmlField, refinement: LookmlField) -> LookmlField:
+    """Fold a refinement's field into the base field, property by property.
+
+    A refinement that sets only a label keeps the base field's ``sql``. That is
+    Looker's behaviour, and it matters: the standard layered structure refines
+    generated dimensions purely to add labels and grouping, so replacing the
+    whole field drops every column reference and the cross-layer check then
+    finds nothing to check.
+    """
+    return base.model_copy(
+        update={
+            key: value
+            for key, value in {
+                "lookml_type": refinement.lookml_type,
+                "sql": refinement.sql,
+                "label": refinement.label,
+                "description": refinement.description,
+                "referenced_columns": refinement.referenced_columns or None,
+                "file": refinement.file,
+            }.items()
+            if value
+        }
+        | ({"hidden": refinement.hidden} if refinement.hidden else {})
+    )
+
+
 def _merge_refinement(base: LookmlView, refinement: LookmlView) -> None:
     """Fold a ``view: +name`` block into the view it refines.
 
-    Looker's rules: a refinement's field of the same name replaces the base
-    field, other fields are added, and a value set in the refinement wins.
+    Looker's rules: a field of the same name is refined property by property,
+    new fields are added, and a value set in the refinement wins.
     """
     by_name = {existing.name: existing for existing in base.fields}
     for incoming in refinement.fields:
-        by_name[incoming.name] = incoming
+        existing = by_name.get(incoming.name)
+        by_name[incoming.name] = (
+            _merge_field(existing, incoming) if existing is not None else incoming
+        )
     base.fields = sorted(by_name.values(), key=lambda item: (item.field_type, item.name))
 
     if refinement.sql_table_name:

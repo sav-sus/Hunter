@@ -5,6 +5,10 @@ inputs give the same number every time.
 
 ## The eight areas
 
+Weights come from the Rittman Analytics house standard and total 100. They are
+published on the conventions page of whatever Hunter was run against, because a
+weight nobody can see is a weight nobody will accept.
+
 | Area | Weight | What it covers |
 |---|---|---|
 | What is checked automatically | 18 | Key tests, relationship tests, coverage weighted by reach |
@@ -104,7 +108,7 @@ A rule that failed on everything it examined is one decision nobody has taken,
 not many separate defects. "No table names an owner" is a single conversation,
 and a weighted mean leaves it looking like a rounding error.
 
-This exists because of a real result: a repository scored 89.5, grade A, while
+This exists because of a real result: a repository scored 89.6, grade A, while
 no table had an owner and none declared an exposure. Both facts were true. Only
 one was visible.
 
@@ -209,7 +213,7 @@ Everything is in `report.json`:
 ```json
 {
   "score": {
-    "total": 89.5,
+    "total": 89.6,
     "grade": "A",
     "dimensions": [
       {

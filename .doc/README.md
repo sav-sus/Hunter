@@ -1,5 +1,7 @@
 # Rittman Hunter: the product record
 
+A Rittman Analytics product.
+
 Why Hunter exists, what it does, how it is built, what is left to build, and
 what running it against a real repository taught us.
 
@@ -45,7 +47,7 @@ Version 0.1.0.dev0, unreleased.
 | Measure | Value |
 |---|---|
 | Rules | 77 across 7 scored areas |
-| Tests | 515 |
-| Source | 14,253 lines across 45 modules |
+| Tests | 518 |
+| Source | 14,300 lines across 45 modules |
 | Run time | 2 seconds on a 280-model repository |
 | Requires a warehouse credential | No |

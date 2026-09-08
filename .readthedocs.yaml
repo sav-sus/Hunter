@@ -1,4 +1,6 @@
-# Read the Docs build configuration.
+# Read the Docs build configuration for the Rittman Hunter documentation.
+#
+# Rittman Hunter is a Rittman Analytics product. Proprietary.
 #
 # The generated pages (the rules reference and the worked example) are
 # committed, so a docs build needs no dbt project and no manifest. It installs

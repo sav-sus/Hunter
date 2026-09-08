@@ -40,7 +40,7 @@ you already run them, keep running them.
 
 That happens, and it is worth understanding rather than dismissing.
 
-An area's score is the share of its checks that passed. A repository with 761
+An area's score is the share of its checks that passed. A repository with 644
 findings across tens of thousands of checks genuinely passes most of them.
 
 What a mean hides is a rule that failed on *everything*. So those are reported
@@ -51,7 +51,7 @@ separately, above the number:
     63 of 63  Who owns what
 ```
 
-Read those first. "89.5, and no table has an owner" is the honest reading, and
+Read those first. "89.6, and no table has an owner" is the honest reading, and
 both halves are true.
 
 ## Can I change the weights?
@@ -195,7 +195,12 @@ Enterprise Cloud, note that the site is **public** and its files are
 downloadable by anyone. A browser-side password check is not access control. See
 [In CI](ci.md).
 
+## Who makes it?
+
+Rittman Analytics. It is used on client engagements and offered with a support
+plan.
+
 ## Is it open source?
 
-No. Proprietary, all rights reserved. See
+No. Proprietary, all rights reserved, Rittman Analytics. See
 [LICENSE](https://github.com/sav-sus/Hunter/blob/main/LICENSE).

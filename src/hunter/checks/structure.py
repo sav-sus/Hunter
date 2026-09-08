@@ -107,9 +107,14 @@ _JINJA = re.compile(r"\{\{.*?\}\}|\{%.*?%\}|\{#.*?#\}", re.DOTALL)
 _STAR = re.compile(
     r"\bselect\s+(?:distinct\s+)?(?P<form>\*|[A-Za-z_][A-Za-z0-9_]*\.\*)"
     r"(?P<between>(?:\s|\bexcept\s*\([^)]*\)|\breplace\s*\([^)]*\))*)"
-    r"from\s+(?P<target>`[^`]+`|\x00\w+\x00|[A-Za-z_][A-Za-z0-9_.]*)",
+    r"from\s+(?P<target>(?:`[^`]+`)(?:\.`[^`]+`)*|\x00\w+\x00|[A-Za-z_][A-Za-z0-9_.]*)",
     re.I,
 )
+
+#: A projection that names a column, e.g. ``cast(x as string) as order_pk,``.
+#: Its presence means the query reshapes what it read rather than passing the
+#: source's shape straight through.
+_NAMED_PROJECTION = re.compile(r"\bas\s+[A-Za-z_][A-Za-z0-9_]*\s*(?:,|$)", re.I | re.M)
 
 #: SQL where ``from`` is not a FROM clause: ``is distinct from``,
 #: ``extract(day from x)``, ``trim(both 'x' from y)``.
@@ -117,10 +122,19 @@ _NOT_A_FROM_CLAUSE = frozenset({"distinct", "both", "leading", "trailing"})
 _EXTRACTORS = frozenset({"extract", "trim", "substring", "position", "overlay"})
 _JOIN = re.compile(r"\bjoin\b", re.I)
 _CTE = re.compile(r"(?:\bwith\b|,)\s*(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s+as\s*\(", re.I)
+#: A table named directly. BigQuery quotes each part separately, so
+#: `project`.`dataset`.`table` is three backtick groups, not one.
 _TABLE_REF = re.compile(
-    r"\b(?:from|join)\s+(?P<ref>`[^`]+`|[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+)",
+    r"\b(?:from|join)\s+"
+    r"(?P<ref>(?:`[^`]+`)(?:\.`?[A-Za-z_][A-Za-z0-9_]*`?)*"
+    r"|[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+)",
     re.I,
 )
+
+
+def _is_bare_name(target: str) -> bool:
+    """Whether a FROM target is a single unqualified identifier."""
+    return bool(re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", target))
 
 
 def strip_noise(sql: str) -> str:
@@ -227,13 +241,27 @@ def run(context: CheckContext) -> Findings:
 
         if spec.forbid_select_star:
             context.examine(SELECT_STAR.id, model.name)
+            # A query that names its columns anywhere has reshaped what it
+            # read, so a star select feeding into it lets nothing through. The
+            # house pattern is exactly this: read the source with a star into a
+            # CTE, then name and cast every column in the next one. Only a
+            # query that never names a column passes the source's shape on.
+            reshapes = bool(_NAMED_PROJECTION.search(sql))
             for match in _STAR.finditer(sql):
                 target = match.group("target")
-                if target == REF_MARKER or target.lower() in lowered_steps:
-                    # Selecting every column from your own model, or from one of
-                    # this query's own steps, is ordinary dbt style.
+                if target in (REF_MARKER, JINJA_MARKER):
+                    # Selecting every column from your own model is ordinary
+                    # dbt style, and that model's own columns are checked.
                     continue
-                if target == JINJA_MARKER:
+                if target == SOURCE_MARKER and reshapes:
+                    continue
+                if target != SOURCE_MARKER and _is_bare_name(target):
+                    # A bare single-token name is one of this query's own steps
+                    # or a table alias, not a table somewhere. The
+                    # hardcoded-reference rule below takes the same view, and
+                    # relying on CTE detection being perfect instead produced
+                    # false positives on queries that build their steps inside
+                    # a Jinja loop.
                     continue
                 described = "a raw source" if target == SOURCE_MARKER else f"{target!r}"
                 findings.add(

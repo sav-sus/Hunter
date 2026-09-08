@@ -26,8 +26,8 @@ One row per entity. Read across to see whether the business asked for it, whethe
 | daily sales | yes | yes | yes | not checked | Designed and delivered | One row per day | commerce |
 | forecasts | yes | yes | switched off | not checked | Built, switched off | One row per product per week | commerce |
 | legacy | no | no | yes | not checked | Built off-plan | not stated | commerce |
-| orders | yes | yes | yes | not checked | Designed and delivered | One row per order. Source system: the shop platform | commerce |
-| products | yes | yes | yes | not checked | Designed and delivered | One row per product. It holds last year's categories too | commerce |
+| orders | yes | yes | yes | not checked | Designed and delivered | One row per order | commerce |
+| products | yes | yes | yes | not checked | Designed and delivered | One row per product | commerce |
 | returns | yes | no | no | not checked | On the business model only | not stated | nobody named |
 | suppliers | yes | yes | no | not checked | Designed, not started | One row per supplier | nobody named |
 

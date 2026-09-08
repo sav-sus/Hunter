@@ -8,14 +8,14 @@ reports on them. It changes nothing: no commits, no pull requests, no writes to
 your warehouse.
 
 ```
-89.5 / 100    Well maintained. Safe to build on
+89.6 / 100    Well maintained. Safe to build on
 
  90.4  A  What is checked automatically            38 findings
  87.3  A  Does what was built match the design    190 findings
  92.6  A  How the tables fit together              53 findings
  77.2  B  What is written down                    135 findings
  86.7  A  Do the reports still match the data     183 findings
- 97.1  A  Are the house rules followed            155 findings
+ 98.3  A  Are the house rules followed             48 findings
  98.3  A  Are the tables the shape they claim       7 findings
     -  -  What it costs to run                  not measured
 

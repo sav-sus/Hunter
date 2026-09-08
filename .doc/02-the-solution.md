@@ -2,6 +2,9 @@
 
 Hunter reads a repository and reports on it. It changes nothing.
 
+It is a Rittman Analytics tool, used on engagements and offered with a support
+plan.
+
 ## What it produces
 
 **A score out of 100**, with a grade for each of eight areas, every deduction
