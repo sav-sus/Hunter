@@ -49,10 +49,14 @@ class LookmlData:
     #: Refinements awaiting their base view, keyed by the base view name.
     refinements: dict[str, list[LookmlView]] = field(default_factory=dict)
 
+    #: The same for explores, which LookML also allows to be refined.
+    explore_refinements: dict[str, list[Explore]] = field(default_factory=dict)
 
-#: Liquid expressions inside a sql_table_name. The pilot templates the project
-#: and dataset from user attributes while leaving the table name literal.
-LIQUID = re.compile(r"\{\{.*?\}\}|\{%.*?%\}", re.DOTALL)
+
+#: Liquid expressions and LookML constants inside a sql_table_name. The pilot
+#: uses both: Liquid ``{{ _user_attributes[...] }}`` for the project and
+#: dataset, and LookML ``@{constant}`` in the vendored Snowplow views.
+LIQUID = re.compile(r"\{\{.*?\}\}|\{%.*?%\}|@\{[^}]*\}", re.DOTALL)
 
 #: What a resolved table name must look like to be usable.
 IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -232,10 +236,15 @@ def parse_file(path: Path) -> LookmlData:
             data.views[view.name] = view
 
     for spec in parsed.get("explores") or []:
-        if isinstance(spec, dict):
-            explore = _explore_from_spec(spec, file)
-            if explore.name:
-                data.explores[explore.name] = explore
+        if not isinstance(spec, dict):
+            continue
+        explore = _explore_from_spec(spec, file)
+        if not explore.name:
+            continue
+        if is_refinement(explore.name):
+            data.explore_refinements.setdefault(refinement_target(explore.name), []).append(explore)
+        else:
+            data.explores[explore.name] = explore
 
     for spec in parsed.get("datagroups") or []:
         if isinstance(spec, dict) and spec.get("name"):
@@ -303,6 +312,9 @@ def load_lookml(paths: list[Path]) -> LookmlData:
         for name, explore in result.explores.items():
             combined.explores.setdefault(name, explore)
 
+        for target, explore_refinements in result.explore_refinements.items():
+            combined.explore_refinements.setdefault(target, []).extend(explore_refinements)
+
     # Apply refinements once every base view has been read, since a refinement
     # may sit in a file that sorts before its base.
     for target in sorted(combined.refinements):
@@ -324,8 +336,47 @@ def load_lookml(paths: list[Path]) -> LookmlData:
         for refinement in sorted(refinements, key=lambda item: item.file or ""):
             _merge_refinement(base, refinement)
 
+    # Explore refinements, same rules as view refinements: a value set in the
+    # refinement wins, and joins accumulate. An explore refined with a caching
+    # policy has one, and reporting it as having none would be wrong.
+    for target in sorted(combined.explore_refinements):
+        base_explore = combined.explores.get(target)
+        pending = combined.explore_refinements[target]
+        if base_explore is None:
+            combined.issues.append(
+                ParseIssue(
+                    source=pending[0].file or "lookml",
+                    subject=target,
+                    message=(
+                        f"explore: +{target} refines an explore that is not defined "
+                        "anywhere Hunter looked."
+                    ),
+                    recoverable=True,
+                )
+            )
+            continue
+        for explore_refinement in sorted(pending, key=lambda item: item.file or ""):
+            _merge_explore_refinement(base_explore, explore_refinement)
+
     combined.datagroups = sorted(set(combined.datagroups))
     return combined
+
+
+def _merge_explore_refinement(base: Explore, refinement: Explore) -> None:
+    """Fold an ``explore: +name`` block into the explore it refines."""
+    if refinement.view_name and refinement.view_name != refinement.name:
+        base.view_name = refinement.view_name
+    if refinement.label:
+        base.label = refinement.label
+    if refinement.datagroup:
+        base.datagroup = refinement.datagroup
+    if refinement.persist_for:
+        base.persist_for = refinement.persist_for
+    if refinement.joins:
+        by_name = {join.name: join for join in base.joins}
+        for join in refinement.joins:
+            by_name[join.name] = join
+        base.joins = sorted(by_name.values(), key=lambda join: join.name)
 
 
 def resolve_paths(root: Path, patterns: list[str]) -> list[Path]:

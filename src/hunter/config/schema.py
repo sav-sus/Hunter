@@ -130,7 +130,10 @@ class LineageSpec(Strict):
 class DocumentationSpec(Strict):
     """Documentation expectations. FR2.4, FR2.5."""
 
+    #: Applies to table descriptions. Columns are held to the placeholder list
+    #: only: "Order date" is a useful column description and a poor table one.
     min_description_words: int = 3
+    min_column_description_words: int = 1
     placeholder_patterns: list[str] = Field(
         default_factory=lambda: [
             "tbd",

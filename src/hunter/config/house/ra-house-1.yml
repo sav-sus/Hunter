@@ -196,6 +196,7 @@ lineage:
 # ---------------------------------------------------------------------------
 documentation:
   min_description_words: 3
+  min_column_description_words: 1
   require_owner_in_meta: true
   owner_meta_keys: [owner, team]
   stale_after_days: 180

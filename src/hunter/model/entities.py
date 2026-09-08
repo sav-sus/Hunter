@@ -464,6 +464,7 @@ class Project(Node):
     tests: list[DbtTest] = Field(default_factory=list)
     disabled_models: dict[str, Model] = Field(default_factory=dict)
     designed: dict[str, DesignedEntity] = Field(default_factory=dict)
+    designed_refs: list[DesignedRef] = Field(default_factory=list)
     conceptual: dict[str, ConceptualEntity] = Field(default_factory=dict)
     lookml_views: dict[str, LookmlView] = Field(default_factory=dict)
     explores: dict[str, Explore] = Field(default_factory=dict)
@@ -520,6 +521,22 @@ class Project(Node):
 
     def sorted_designed(self) -> list[DesignedEntity]:
         return [self.designed[name] for name in sorted(self.designed)]
+
+    def refs_from(self, table: str) -> list[DesignedRef]:
+        return [ref for ref in self.designed_refs if ref.from_table == table]
+
+    def has_column_types(self) -> bool:
+        """Whether enough column types are known to compare them.
+
+        Types come from ``catalog.json``, not the manifest. Where they are
+        absent the type comparison reports that it could not run, rather than
+        reporting no drift.
+        """
+        total = sum(len(model.columns) for model in self.models.values())
+        typed = sum(
+            1 for model in self.models.values() for column in model.columns if column.data_type
+        )
+        return total > 0 and typed >= total * 0.5
 
 
 # ---------------------------------------------------------------------------

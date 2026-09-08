@@ -215,6 +215,7 @@ class ManifestData:
         self.dbt_version: str | None = None
         self.schema_version: str | None = None
         self.project_name: str | None = None
+        self.has_catalog: bool = False
 
     def vendored_counts(self) -> dict[str, int]:
         """How many models each installed package contributed."""
@@ -247,6 +248,64 @@ def load_manifest(path: Path) -> ManifestData:
         raise ManifestError(f"{path} does not look like a dbt manifest")
 
     return parse_manifest(raw, source=str(path))
+
+
+def load_catalog(path: Path, data: ManifestData) -> int:
+    """Fill in column data types from ``catalog.json``, if it exists.
+
+    A manifest carries almost no column types: the pilot has 164 of 5,251.
+    Types come from ``dbt docs generate``, which writes ``catalog.json``
+    alongside the manifest. Without them, entity inference rests on naming
+    alone and type-drift comparison cannot run at all, so this is read when
+    present and its absence is reported rather than worked around silently.
+
+    Returns how many columns gained a type.
+    """
+    if not path.exists():
+        return 0
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        data.issues.append(
+            ParseIssue(
+                source=str(path),
+                message=f"could not read the catalogue, so column types are unavailable: {exc}",
+                recoverable=True,
+            )
+        )
+        return 0
+
+    if not isinstance(raw, dict):
+        return 0
+
+    by_name: dict[str, Model] = {}
+    for collection in (data.models, data.disabled_models):
+        by_name.update({model.unique_id: model for model in collection.values()})
+
+    filled = 0
+    for unique_id, node in (raw.get("nodes") or {}).items():
+        model = by_name.get(unique_id)
+        if model is None or not isinstance(node, dict):
+            continue
+        catalog_columns = node.get("columns") or {}
+        for column in model.columns:
+            entry = catalog_columns.get(column.name)
+            if not isinstance(entry, dict):
+                # Catalogue keys can differ in case from the schema file.
+                entry = next(
+                    (
+                        value
+                        for key, value in catalog_columns.items()
+                        if isinstance(value, dict) and key.lower() == column.name.lower()
+                    ),
+                    None,
+                )
+            if isinstance(entry, dict) and entry.get("type") and not column.data_type:
+                column.data_type = str(entry["type"])
+                filled += 1
+
+    data.has_catalog = True
+    return filled
 
 
 def parse_manifest(raw: dict[str, Any], *, source: str = "manifest.json") -> ManifestData:

@@ -167,6 +167,7 @@ def build_project(
 
     if dbml is not None:
         project.designed = dict(dbml.entities)
+        project.designed_refs = list(dbml.refs)
         project.has_dbml = bool(dbml.entities)
         project.parse_issues.extend(dbml.issues)
 

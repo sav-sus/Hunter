@@ -195,7 +195,7 @@ def run(context: CheckContext) -> Findings:
                 or _is_placeholder(
                     column.description or "",
                     spec.placeholder_patterns,
-                    spec.min_description_words,
+                    spec.min_column_description_words,
                 )
             ]
             if undocumented:
