@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the tiny-project fixture.
+"""Build the tiny-shop example project.
 
 Eight models with deliberate flaws, one per finding class that matters, plus a
 design, a business model, a reporting layer and generated schema output. Small

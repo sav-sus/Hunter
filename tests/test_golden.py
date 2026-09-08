@@ -1,4 +1,4 @@
-"""Golden-file tests: the fixture's score, and that it never moves by accident.
+"""Golden-file tests: the example project's score, and that it never moves.
 
 Section 11.9. Two runs of the same commit must produce an identical payload, and
 any deliberate change to the arithmetic must show up as a diff on a committed
@@ -8,7 +8,7 @@ Regenerate after an intended change:
 
     python -m tests.regenerate_golden
 
-and the diff on ``tests/golden/tiny-project.json`` is then part of the review.
+and the diff on ``tests/golden/tiny-shop.json`` is then part of the review.
 """
 
 from __future__ import annotations
@@ -23,8 +23,8 @@ import pytest
 from hunter.emit.report import build_report, stable_payload
 from hunter.run import RunResult, run
 
-FIXTURE = Path(__file__).parent / "fixtures" / "tiny-project"
-GOLDEN = Path(__file__).parent / "golden" / "tiny-project.json"
+EXAMPLE = Path(__file__).parent.parent / "examples" / "tiny-shop"
+GOLDEN = Path(__file__).parent / "golden" / "tiny-shop.json"
 
 #: Pinned so expiry dates, staleness windows and ages never drift with the
 #: calendar. Every date in the fixture is chosen relative to this.
@@ -69,7 +69,7 @@ EXPECTED_FINDINGS: dict[str, int] = {
 
 @pytest.fixture(scope="module")
 def result() -> RunResult:
-    return run(FIXTURE, as_of=AS_OF)
+    return run(EXAMPLE, as_of=AS_OF)
 
 
 class TestFixtureScore:
@@ -191,8 +191,8 @@ class TestDeterminism:
     """FR7.7 and NFR3: the same inputs give the same output, every time."""
 
     def test_two_runs_produce_an_identical_payload(self) -> None:
-        first = stable_payload(run(FIXTURE, as_of=AS_OF))
-        second = stable_payload(run(FIXTURE, as_of=AS_OF))
+        first = stable_payload(run(EXAMPLE, as_of=AS_OF))
+        second = stable_payload(run(EXAMPLE, as_of=AS_OF))
         assert json.dumps(first, sort_keys=True, default=str) == json.dumps(
             second, sort_keys=True, default=str
         )

@@ -1,4 +1,4 @@
-# The tiny-project fixture's ruleset.
+# The tiny-shop example project's ruleset.
 extends: ra-house@1
 
 paths:

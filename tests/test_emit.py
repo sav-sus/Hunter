@@ -20,13 +20,13 @@ from hunter.emit.scaffold import detect, register_text, ruleset_text, scaffold, 
 from hunter.emit.showcase import Window, build_showcase, showcase_page
 from hunter.run import RunResult, run
 
-FIXTURE = Path(__file__).parent / "fixtures" / "tiny-project"
+EXAMPLE = Path(__file__).parent.parent / "examples" / "tiny-shop"
 AS_OF = dt.date(2026, 9, 8)
 
 
 @pytest.fixture(scope="module")
 def result() -> RunResult:
-    return run(FIXTURE, as_of=AS_OF)
+    return run(EXAMPLE, as_of=AS_OF)
 
 
 class TestReportContract:
@@ -310,7 +310,7 @@ class TestShowcase:
 
 class TestScaffold:
     def test_detection_finds_the_fixture_layout(self) -> None:
-        found = detect(FIXTURE)
+        found = detect(EXAMPLE)
         assert found.dbt_project_dir == "."
         assert found.manifest_found
         assert found.dbml == ["models/_model/*.dbml"]
@@ -323,7 +323,7 @@ class TestScaffold:
         assert any("dbt_project.yml" in note for note in found.notes)
 
     def test_the_ruleset_is_valid_yaml_naming_a_house_version(self) -> None:
-        loaded = yaml.safe_load(ruleset_text(detect(FIXTURE)))
+        loaded = yaml.safe_load(ruleset_text(detect(EXAMPLE)))
         assert loaded["extends"] == "ra-house@1"
         assert loaded["pull_request"]["mode"] == "advisory"
 
@@ -331,7 +331,7 @@ class TestScaffold:
         from hunter.config import resolve
 
         path = tmp_path / "hunter.yml"
-        path.write_text(ruleset_text(detect(FIXTURE)), encoding="utf-8")
+        path.write_text(ruleset_text(detect(EXAMPLE)), encoding="utf-8")
         assert resolve(path).config.extends == "ra-house@1"
 
     def test_the_register_is_prefilled_with_what_hunter_would_flag(self) -> None:

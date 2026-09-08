@@ -19,8 +19,12 @@ htmlcov/
 # in scripts/check_no_client_content.py
 out/
 report.json
-site/
 .hunter/baseline.json
+
+# The built documentation site. The markdown under docs/ is committed,
+# including the generated pages; the HTML is not.
+/site/
+_built/
 
 # Local scratch
 scratch/

@@ -1,0 +1,109 @@
+# The Hunter documentation site, published on Read the Docs.
+#
+# Not to be confused with the mkdocs.yml Hunter generates for the site it
+# builds about a repository. This one documents the tool; that one is output.
+site_name: Rittman Hunter
+site_description: >-
+  Repository intelligence for analytics repositories containing dbt and LookML
+site_url: https://rittman-hunter.readthedocs.io/
+repo_url: https://github.com/sav-sus/Hunter
+repo_name: sav-sus/Hunter
+edit_uri: edit/main/docs/
+copyright: Copyright Rittman Analytics. All rights reserved.
+
+use_directory_urls: true
+
+theme:
+  name: material
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.action.edit
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/sav-sus/Hunter
+
+# Only the framing pages are listed. The generated example pages under
+# docs/example/models/ are reachable by link and deliberately left out of the
+# navigation, which would otherwise carry one entry per table.
+nav:
+  - Home: index.md
+  - Getting started:
+      - Installing: install.md
+      - First run: quickstart.md
+  - Understanding it:
+      - Concepts: concepts.md
+      - How the score works: scoring.md
+  - Using it:
+      - Configuration: configuration.md
+      - The register: register.md
+      - Commands: cli.md
+      - In CI: ci.md
+  - See it working:
+      - Overview: example/index.md
+      - 'Output: overview': example/index-page.md
+      - 'Output: designed against built': example/reconciliation.md
+      - 'Output: the business model': example/conceptual-model.md
+      - 'Output: the data model': example/data-model.md
+      - 'Output: the score': example/scorecard.md
+      - 'Output: what is built': example/physical-model.md
+      - 'Output: how it fits together': example/lineage.md
+      - 'Output: what needs doing': example/debt.md
+      - 'Output: do the layers agree': example/sync.md
+      - 'Output: the rules': example/conventions.md
+      - 'Output: what was not checked': example/not-checked.md
+      - 'Output: words used here': example/glossary.md
+  - Reference:
+      - Every rule: reference/rules.md
+      - Questions: faq.md
+      - Contributing: contributing.md

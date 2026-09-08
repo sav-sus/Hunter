@@ -59,8 +59,26 @@ jobs:
             exit 1
           }
 
-      - name: Hunter scores its own fixture end to end
+      - name: The generated documentation pages are current
+        # The rules reference and the worked example are generated. A stale
+        # rules reference is worse than none, because somebody will act on it.
         run: |
-          uv run hunter score tests/fixtures/tiny-project --out /tmp/report.json
-          uv run hunter align tests/fixtures/tiny-project
-          uv run hunter docs build tests/fixtures/tiny-project --out /tmp/site
+          uv run python scripts/build_docs_pages.py
+          git diff --exit-code docs/ || {
+            echo "::error::The generated documentation is out of date. Run"\
+                 "'uv run python scripts/build_docs_pages.py' and commit the result."
+            exit 1
+          }
+
+      - name: The documentation site builds
+        run: uv run mkdocs build --site-dir /tmp/docsite
+
+      - name: Hunter scores the example project end to end
+        run: |
+          uv run hunter score examples/tiny-shop --out /tmp/report.json
+          uv run hunter align examples/tiny-shop
+          uv run hunter explain wh_shop__customer_dim examples/tiny-shop
+          uv run hunter showcase examples/tiny-shop --days 14
+          uv run hunter docs build examples/tiny-shop --out /tmp/site
+          uv run hunter rules
+          uv run hunter version
