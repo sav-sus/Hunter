@@ -1,0 +1,187 @@
+# LookML sync, as a composite GitHub Action.
+#
+# One question, one check: does the reporting layer still match the tables?
+#
+# This wraps `hunter sync lookml` and nothing else, so the answer here and the
+# answer on a laptop are the same by construction. The full score is a separate
+# action at the repository root; this one exists because a team will make a
+# small, specific check required long before it accepts a whole score as one.
+#
+# A check whose sources are missing reports skipped, never passed. Adding a
+# source turns the check on rather than being a breaking change.
+name: LookML sync
+description: >-
+  Check that the LookML reporting layer still matches the tables dbt builds. Fails a pull request that renames a column a report reads.
+author: Rittman Analytics
+
+branding:
+  icon: bar-chart-2
+  color: blue
+
+inputs:
+  fail-on:
+    description: >-
+      never (report only), high (fail on a high-severity drift) or any (fail on
+      any drift). Start on never: a check that fails builds in its first week
+      gets switched off in its second.
+    required: false
+    default: never
+
+  working-directory:
+    description: The repository root to read. Defaults to the checkout.
+    required: false
+    default: "."
+
+  config:
+    description: Path to hunter.yml. Found automatically if omitted.
+    required: false
+    default: ""
+
+  manifest:
+    description: >-
+      Path to manifest.json. Set this when the manifest comes from wherever
+      your own dbt job puts it rather than from target/.
+    required: false
+    default: ""
+
+  comment:
+    description: Post or update a pull request comment with the result.
+    required: false
+    default: "true"
+
+  hunter-version:
+    description: >-
+      The Hunter version to install. Pinned on purpose: never reference this
+      action at @main, because a result must not change because somebody pushed
+      a commit.
+    required: false
+    default: "0.1.0"
+
+  python-version:
+    description: Python version to run under.
+    required: false
+    default: "3.12"
+
+outputs:
+  verdict:
+    description: in sync, drifted, skipped, or nothing to compare.
+    value: ${{ steps.run.outputs.verdict }}
+  checked:
+    description: How many checks ran.
+    value: ${{ steps.run.outputs.checked }}
+  failed:
+    description: How many of them failed.
+    value: ${{ steps.run.outputs.failed }}
+  result:
+    description: Path to the JSON result.
+    value: ${{ steps.run.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Hunter
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --quiet --upgrade pip
+        python -m pip install --quiet \
+          "rittman-hunter @ git+https://github.com/sav-sus/Hunter@v${{ inputs.hunter-version }}"
+
+    - name: Check lookml sync
+      id: run
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -uo pipefail
+        args=()
+        [ -n "${{ inputs.config }}" ] && args+=(--config "${{ inputs.config }}")
+        [ -n "${{ inputs.manifest }}" ] && args+=(--manifest "${{ inputs.manifest }}")
+
+        # --fail-on never here on purpose. The gate is applied in a later step
+        # so the summary and the comment are still written when a build fails.
+        hunter sync lookml "${args[@]}" \
+          --out out/sync-lookml.json \
+          --summary out/sync-lookml.md \
+          --fail-on never
+
+        python - <<'PY' >> "$GITHUB_OUTPUT"
+        import json, pathlib
+        entry = json.loads(pathlib.Path("out/sync-lookml.json").read_text())["checks"][0]
+        print(f"verdict={entry['verdict']}")
+        print(f"checked={entry['checked']}")
+        print(f"failed={entry['failed']}")
+        print("result=out/sync-lookml.json")
+        PY
+
+    - name: Write the run summary
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: cat out/sync-lookml.md >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Post or update the comment
+      if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+        marker="<!-- rittman-hunter-sync-lookml -->"
+        { echo "$marker"; cat out/sync-lookml.md; } > out/comment-lookml.md
+
+        # One comment per check, edited in place. A new comment on every push is
+        # how a tool gets muted. The marker is what finds the previous one.
+        existing=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+          --jq "map(select(.body | contains(\"$marker\"))) | .[0].id // empty")
+
+        if [ -n "$existing" ]; then
+          gh api --method PATCH "repos/$REPO/issues/comments/$existing" \
+            -F body=@out/comment-lookml.md > /dev/null
+        else
+          gh api --method POST "repos/$REPO/issues/$PR/comments" \
+            -F body=@out/comment-lookml.md > /dev/null
+        fi
+
+    - name: Upload the result
+      uses: actions/upload-artifact@v4
+      with:
+        name: hunter-sync-lookml
+        path: |
+          ${{ inputs.working-directory }}/out/sync-lookml.json
+          ${{ inputs.working-directory }}/out/sync-lookml.md
+        if-no-files-found: warn
+
+    - name: Apply the gate
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        mode="${{ inputs.fail-on }}"
+        if [ "$mode" = "never" ]; then
+          echo "fail-on is never: this check reports and never fails a build."
+          exit 0
+        fi
+        python - <<'PY'
+        import json, os, pathlib, sys
+        entry = json.loads(pathlib.Path("out/sync-lookml.json").read_text())["checks"][0]
+        mode = os.environ["MODE"]
+        if not entry["ran"]:
+            print("::notice::LookML sync was skipped, so it cannot fail. "
+                  + entry["headline"])
+            sys.exit(0)
+        by = entry["by_severity"]
+        bad = entry["failed"] > 0 if mode == "any" else by.get("high", 0) > 0
+        if bad:
+            print(f"::error::LookML sync: {entry['headline']}")
+            sys.exit(1)
+        print(f"::notice::LookML sync: {entry['headline']}")
+        PY
+      env:
+        MODE: ${{ inputs.fail-on }}

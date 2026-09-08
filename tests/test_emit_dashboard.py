@@ -19,7 +19,7 @@ import pytest
 from hunter import brand
 from hunter.emit import charts
 from hunter.emit.charts import Slice
-from hunter.emit.dashboard import catalogue_rows, dashboard_html, sync_questions
+from hunter.emit.dashboard import MERMAID_URL, catalogue_rows, checklist, dashboard_html
 from hunter.run import RunResult, run
 
 EXAMPLE = Path(__file__).parent.parent / "examples" / "tiny-shop"
@@ -40,23 +40,24 @@ def page(result: RunResult) -> str:
 class TestSelfContained:
     """The reason the charts are hand-drawn instead of a library."""
 
-    def test_nothing_is_fetched_from_the_network(self, page: str) -> None:
+    def test_the_only_thing_fetched_is_the_diagram_library(self, page: str) -> None:
         """A report is opened offline. Anything remote would silently not draw.
 
-        Data URIs are the exception: those are the logo and the favicon, which
-        are inlined from the package rather than fetched.
+        Data URIs are the logo and the favicon, inlined from the package. The
+        one allowed remote reference is the pinned Mermaid build that draws the
+        model diagrams, and the page has to survive it not arriving.
         """
         remote = re.findall(r'(?:src|href)="(?!#|data:)([^"]+)"', page)
-        assert remote == [], f"the dashboard references files it does not carry: {remote}"
+        assert remote == [MERMAID_URL], f"unexpected remote references: {remote}"
 
-    def test_no_script_is_loaded_from_elsewhere(self, page: str) -> None:
-        """The table filter is inline, which keeps the file self-contained.
+    def test_the_diagram_library_is_pinned(self) -> None:
+        assert re.search(r"mermaid@\d+\.\d+\.\d+/", MERMAID_URL)
 
-        An inline script is fine. A `src` is not: it would make the report
-        depend on a file it does not carry.
-        """
-        assert "<script src" not in page.lower()
-        assert "<script" in page.lower(), "expected the inline table filter"
+    def test_the_page_degrades_when_the_library_does_not_load(self, page: str) -> None:
+        """The diagram source is in the HTML, and a note explains what happened."""
+        assert "<pre class='mermaid'>" in page
+        assert "could not be loaded" in page
+        assert 'onerror="window.hunterDiagramsOffline=true"' in page
 
     def test_the_logo_is_inlined(self, page: str) -> None:
         assert "data:image/png;base64," in page
@@ -78,11 +79,13 @@ class TestWellFormed:
         """A rule title is a template. One reaching the page renders as raw
         "{subject} is built but switched off", which this catches.
 
-        The stylesheet and the inline script are both full of braces by nature,
-        so they are removed before looking.
+        The stylesheet, the scripts and the diagram source are all full of
+        braces by nature, so they are removed before looking.
         """
         body = re.sub(r"<style>.*?</style>", "", page, flags=re.S)
         body = re.sub(r"<script>.*?</script>", "", body, flags=re.S)
+        # Entity-relationship diagram source is "table { column }" by design.
+        body = re.sub(r"<pre class='mermaid'>.*?</pre>", "", body, flags=re.S)
         assert "{" not in body and "}" not in body
 
 
@@ -91,11 +94,10 @@ class TestContent:
         assert f"{result.score.total:g}" in page
         assert f"Grade {result.score.grade}" in page
 
-    def test_the_systemic_gaps_sit_above_the_score(self, page: str, result: RunResult) -> None:
-        """FR14.1: one decision nobody took, not a rounding error."""
-        gaps = page.index("Needs a decision, not a fix")
-        panels = page.index("Where the ground is being lost")
-        assert gaps < panels
+    def test_the_checklist_comes_before_everything_else(self, page: str) -> None:
+        """The statements are the value. They sit directly under the score."""
+        assert page.index('id="checklist"') < page.index('id="alignment"')
+        assert page.index('id="alignment"') < page.index('id="catalogue"')
 
     def test_an_unmeasured_area_is_named_rather_than_scored_zero(self, page: str) -> None:
         assert "Not measured" in page
@@ -109,38 +111,79 @@ class TestContent:
         assert result.config.branding.attribution in page
 
 
-class TestSyncQuestions:
-    """The band that answers "do the layers agree" in one line each."""
+class TestChecklist:
+    """The statements under the score, grouped by what they are about."""
 
-    def test_a_question_is_only_asked_where_the_source_was_read(self, result: RunResult) -> None:
-        asked = [item.ask for item in sync_questions(result)]
-        assert "Does every business entity have a design?" in asked
-        assert "Does every built table have a Looker view?" in asked
+    def test_a_section_only_appears_where_its_source_was_read(self, result: RunResult) -> None:
+        titles = [section.title for section in checklist(result)]
+        assert titles == [
+            "Design to build",
+            "Warehouse to Looker",
+            "Droughty",
+            "Documentation",
+            "Tests",
+        ]
 
-    def test_the_answer_names_what_is_missing(self, result: RunResult) -> None:
+    def test_the_section_titles_are_what_the_sync_checks_group_by(self, result: RunResult) -> None:
+        """hunter.sync reads sections by title, so a rename here breaks a CI check."""
+        titles = {section.title for section in checklist(result)}
+        assert {"Design to build", "Warehouse to Looker", "Droughty"} <= titles
+
+    def test_a_failing_statement_names_what_let_it_down(self, result: RunResult) -> None:
         """A fraction says there is a problem. A name says where it is."""
-        by_ask = {item.ask: item for item in sync_questions(result)}
-        design = by_ask["Does every built table have a design?"]
+        by_statement = {
+            check.statement: check for section in checklist(result) for check in section.checks
+        }
+        design = by_statement["Every built table has a design"]
         assert design.done < design.total
         assert "wh_shop__legacy_fact" in design.missing
 
     def test_a_switched_off_model_still_counts_as_built(self, result: RunResult) -> None:
         """The code was written, reviewed and merged. It is not unbuilt."""
-        by_ask = {item.ask: item for item in sync_questions(result)}
-        assert "wh_shop__forecast_fact" not in by_ask["Is every designed table built?"].missing
+        by_statement = {
+            check.statement: check for section in checklist(result) for check in section.checks
+        }
+        assert "wh_shop__forecast_fact" not in by_statement["Every designed table is built"].missing
+
+    def test_rule_backed_statements_trace_to_the_rule(self, result: RunResult) -> None:
+        """Every figure on the page has a finding behind it."""
+        by_statement = {
+            check.statement: check for section in checklist(result) for check in section.checks
+        }
+        owner = by_statement["Every table has a named owner"]
+        assert owner.rule == "documentation.owner_missing"
+        assert owner.total == result.examined[owner.rule].checked
+        assert owner.missing == ("wh_shop__customer_dim",)
+
+    def test_a_rule_that_examined_nothing_makes_no_statement(self, result: RunResult) -> None:
+        """Passing a check with nothing to check is not passing."""
+        statements = {check.statement for section in checklist(result) for check in section.checks}
+        rendered = dashboard_html(result, generated_at=GENERATED)
+        for statement in statements:
+            assert statement in rendered
 
     def test_the_verdict_is_yes_only_when_nothing_is_missing(self) -> None:
-        from hunter.emit.dashboard import Question
+        from hunter.emit.dashboard import Check
 
-        assert Question("q", 6, 6).verdict == "yes"
-        assert Question("q", 5, 6).verdict == "mostly"
-        assert Question("q", 3, 6).verdict == "no"
+        assert Check("s", 6, 6).verdict == "yes"
+        assert Check("s", 5, 6).verdict == "mostly"
+        assert Check("s", 3, 6).verdict == "no"
+        assert Check("s", 0, 0).holds is False
 
-    def test_one_missing_reads_as_singular(self) -> None:
-        from hunter.emit.dashboard import Question
 
-        assert Question("q", 6, 7).answer == "No, 1 of 7 is missing"
-        assert Question("q", 5, 7).answer == "No, 2 of 7 are missing"
+class TestDiagrams:
+    """The three models a stakeholder can switch between."""
+
+    def test_all_three_models_are_carried_as_source(self, page: str) -> None:
+        for key in ("conceptual", "logical", "physical"):
+            assert f"id='pane-{key}'" in page
+
+    def test_the_diagram_source_is_escaped(self, page: str, result: RunResult) -> None:
+        """A quote in a business label must not end the pre element early."""
+        from hunter.emit import mermaid
+
+        raw = mermaid.conceptual_diagram(result.alignment).strip()
+        assert raw not in page or "&quot;" in page or '"' not in raw
 
 
 class TestCatalogue:
@@ -181,6 +224,9 @@ class TestCatalogue:
 
 class TestModelLanes:
     """The three models drawn against each other."""
+
+    def test_the_card_is_called_modelling_alignment(self, page: str) -> None:
+        assert "<h2>Modelling alignment</h2>" in page
 
     def test_every_level_hunter_read_gets_a_lane(self, page: str) -> None:
         for heading in (

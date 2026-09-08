@@ -6,25 +6,24 @@ This is the front page of a Hunter report: the whole of [`examples/tiny-shop`](h
 
 ## What is on it
 
-| Band | The question it answers |
+| Band | What it shows |
 |---|---|
 | The number | How healthy is this repository |
-| Do the layers agree | Is every business entity designed, every designed table built, every built table in the warehouse and in Looker |
-| Needs a decision | What has nobody decided, as opposed to not fixed |
-| The three models | The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked |
+| Checklist | Statements that should hold, grouped: design to build, warehouse to Looker, Droughty, documentation, tests. Each says how many hold and names what does not |
+| Modelling alignment | The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked |
+| Model diagrams | The conceptual, logical and physical models drawn with Mermaid, with tabs and zoom |
 | Every table | One row per table, searchable: what is in the design, the repository, the warehouse and Looker |
-| Where the ground is being lost | Which area is costing the most points |
-| How much of the plan is real | How much of the business model exists |
-| Every rule at once | Is this a few bad tables or a habit |
 | What everything else is built on | Which tables are load-bearing and unchecked |
 | Do these first | What to fix, ranked by what closing it recovers |
 | What this is not based on | What Hunter could not read |
 
 ## How it is built
 
-One HTML file. The stylesheet, every chart and the logo are inlined, so it opens with no network and nothing beside it: from a build artifact, a shared drive or an email attachment.
+One HTML file. The stylesheet, every chart and the logo are inlined, so it needs nothing installed and nothing beside it: it opens from a build artifact, a shared drive or an email attachment.
 
-There is one inline script, and it filters the table list as you type. Every row is already in the HTML, so with scripting off the page still reads in full.
+The one thing fetched from anywhere is the diagram library, at a pinned version. Where it does not arrive, the diagram source is shown as text with a note saying why, and nothing else on the page depends on it.
+
+Two scripts run on the page. One filters the table list as you type; every row is already in the HTML, so with scripting off the list still reads in full. The other draws the model diagrams with Mermaid, which is the one thing the page fetches (pinned by version). Without a connection the diagram source is shown as text and the rest of the page is unaffected.
 
 Every chart is SVG generated in Python rather than drawn by a charting library. That keeps the file self-contained, and it keeps the output byte-identical between runs, which is what lets the whole site be compared against a committed file in review.
 

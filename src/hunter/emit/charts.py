@@ -3,9 +3,11 @@
 No charting library and no JavaScript. Three reasons, in order of how much they
 matter:
 
-1. A report has to render with no network. It gets opened from a build
-   artifact, a laptop with no connection and an email attachment, and a chart
-   that silently fails to draw is worse than a table.
+1. Every one of these has to render with no network. A report gets opened from
+   a build artifact, a laptop with no connection and an email attachment, and a
+   chart that silently fails to draw is worse than a table. The model diagrams
+   are the one exception on the page: they need Mermaid, they are fetched at a
+   pinned version, and they degrade to source text where it does not arrive.
 2. The output has to be byte-identical between runs, because the whole site is
    compared against a committed golden file. A library that lays out at draw
    time cannot promise that.

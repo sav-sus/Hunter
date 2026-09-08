@@ -45,6 +45,12 @@ commits, no pull requests, no writes to your warehouse.
     <p>Ordered by how many points closing it recovers, each item saying what
     breaks if it is left.</p>
   </a>
+  <a href="sync-checks/">
+    <span class="tag">Three CI checks</span>
+    <b>LookML, Droughty and Modelling sync</b>
+    <p>Has one layer drifted from another? Three small gates a team will
+    actually make required, each its own GitHub Action.</p>
+  </a>
   <a href="ci/">
     <span class="tag">On every change</span>
     <b>A pull request comment</b>
@@ -135,7 +141,7 @@ the score rather than being a prerequisite.
   <a href="cli/">
     <span class="tag">Reference</span>
     <b>Commands and rules</b>
-    <p>Ten commands, 77 rules, and what each one costs.</p>
+    <p>Thirteen commands, 77 rules, and what each one costs.</p>
   </a>
 </div>
 

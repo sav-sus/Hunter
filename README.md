@@ -35,8 +35,9 @@ hunter dashboard          # one self-contained HTML file, ~75 KB
 ```
 
 Every chart is SVG generated in Python, so the file carries its own stylesheet,
-charts and logo. It opens with no network and nothing beside it, and two runs of
-one commit produce identical bytes.
+charts and logo, and two runs of one commit produce identical bytes. The one
+thing fetched is the diagram library, pinned by version; where it does not
+arrive the diagram source is shown as text and a note says why.
 
 | | |
 |---|---|
@@ -91,6 +92,11 @@ item saying what breaks if it is left.
 answering one question, every figure traceable to a rule and a finding. Behind
 it sit twelve detail pages, readable by an engineer and by someone who has never
 seen SQL.
+
+**Three CI checks that can actually fail a build.** LookML sync, Droughty sync
+and Modelling sync, each its own GitHub Action, each answering one question
+about whether one layer has drifted from another. A team will make a small,
+specific check required long before it accepts a whole score as one.
 
 **A pull request comment**, short, specific to the change, with what it reaches.
 
@@ -187,6 +193,7 @@ rather than being a prerequisite.
 | `hunter explain <table>` | Everything known about one table |
 | `hunter showcase --days 14` | What changed in a window, and what it cost |
 | `hunter dashboard` | Write the dashboard as one self-contained HTML file |
+| `hunter sync` | Has one layer drifted from another. Three checks |
 | `hunter docs build` | Generate and build the site, dashboard included |
 | `hunter diagram --level conceptual` | Print one Mermaid diagram |
 | `hunter baseline` | Record the starting score |
@@ -229,6 +236,23 @@ the default shallow checkout has none.
 Advisory mode never fails a build, and it is the default. A tool that fails
 builds in its first week gets switched off in its second.
 
+For a check that can fail, use the three sync actions instead. They are small,
+specific and separately installable:
+
+```yaml
+jobs:
+  lookml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sav-sus/Hunter/actions/lookml-sync@v0.1.0
+        with:
+          fail-on: high
+```
+
+Also `actions/droughty-sync` and `actions/modelling-sync`. A check whose sources
+are missing reports skipped, never passed.
+
 ## Two files in your repository
 
 **`.hunter/hunter.yml`** says what correct looks like: layers, naming, weights.
@@ -253,8 +277,9 @@ the site with its reason and its review date.
 | [`examples/tiny-shop/`](examples/tiny-shop) | A working example project |
 | [`docs/`](docs) | The published documentation |
 | [`.doc/`](.doc/README.md) | Why it is built this way: problem, decisions, roadmap, what is not built |
-| [`tests/`](tests) | 544 tests, including a golden file pinning the example's score |
-| [`action.yml`](action.yml) | The composite GitHub Action |
+| [`tests/`](tests) | 601 tests, including a golden file pinning the example's score |
+| [`action.yml`](action.yml) | The composite GitHub Action for the full score |
+| [`actions/`](actions) | LookML sync, Droughty sync and Modelling sync, one action each |
 
 ## What it will never do
 
@@ -271,8 +296,8 @@ Those are licence terms, not only design intent.
 |---|---|
 | Version | 0.1.0.dev0, unreleased |
 | Milestone | M0 complete, plus four additions |
-| Rules | 77 across 7 scored areas |
-| Tests | 544 |
+| Rules | 77 across 7 scored areas, 32 of them in the three sync checks |
+| Tests | 601 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).

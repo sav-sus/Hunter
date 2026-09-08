@@ -111,6 +111,7 @@ nav:
   - Set it up:
       - Configuration: configuration.md
       - The register: register.md
+      - The three sync checks: sync-checks.md
       - In CI: ci.md
   - Reference:
       - Commands: cli.md

@@ -35,7 +35,7 @@ The README and the published documentation both link to it.
 | `src/hunter/config/house/ra-house-1.yml` | The Rittman Analytics standard, version-pinned |
 | `examples/tiny-shop/` | A working example project, eight tables with one deliberate flaw each |
 | `docs/` | The published documentation |
-| `tests/` | 544 tests, including a golden file that pins the example's score |
+| `tests/` | 601 tests, including a golden file that pins the example's score |
 | `action.yml` | The composite GitHub Action |
 | `scripts/check_no_client_content.py` | Fails if client-identifying text reaches a tracked file |
 
@@ -47,7 +47,7 @@ Version 0.1.0.dev0, unreleased.
 | Measure | Value |
 |---|---|
 | Rules | 77 across 7 scored areas |
-| Tests | 544 |
+| Tests | 601 |
 | Source | 14,300 lines across 45 modules |
 | Run time | 2 seconds on a 280-model repository |
 | Requires a warehouse credential | No |

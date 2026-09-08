@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/contributing/">
+        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/sync-checks/">
       
       
-        <link rel="prev" href="../faq/">
+        <link rel="prev" href="../register/">
       
       
-        <link rel="next" href="../example/">
+        <link rel="next" href="../ci/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Contributing - Rittman Hunter</title>
+        <title>The three sync checks - Rittman Hunter</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#the-three-sync-checks" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              The three sync checks
             
           </span>
         </div>
@@ -398,64 +398,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    <a href="../configuration/" class="md-nav__link">
-      
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Set it up
-  
-
-    
-  </span>
-  
-  
-
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -481,17 +423,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Reference
+    Set it up
   
 
     
@@ -502,12 +444,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Reference
+    Set it up
   
 
           </label>
@@ -520,14 +462,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Commands
+    Configuration
   
 
     
@@ -548,42 +490,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/rules/" class="md-nav__link">
+      <a href="../register/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Every rule
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../faq/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Questions
+    The register
   
 
     
@@ -620,7 +534,7 @@
   <span class="md-ellipsis">
     
   
-    Contributing
+    The three sync checks
   
 
     
@@ -638,7 +552,7 @@
   <span class="md-ellipsis">
     
   
-    Contributing
+    The three sync checks
   
 
     
@@ -664,10 +578,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-set-up" class="md-nav__link">
+  <a href="#why-three-and-not-one" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting set up
+        Why three, and not one
       
     </span>
   </a>
@@ -675,22 +589,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-a-rule" class="md-nav__link">
+  <a href="#what-each-one-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a rule
+        What each one reads
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Adding a rule">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In CI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="In CI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rules-to-follow" class="md-nav__link">
+  <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rules to follow
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
       
     </span>
   </a>
@@ -703,10 +639,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-it-against-something-real" class="md-nav__link">
+  <a href="#on-the-command-line" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run it against something real
+        On the command line
       
     </span>
   </a>
@@ -714,10 +650,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-example-project" class="md-nav__link">
+  <a href="#where-they-show-up-in-the-report" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The example project
+        Where they show up in the report
       
     </span>
   </a>
@@ -725,76 +661,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-golden-file" class="md-nav__link">
+  <a href="#what-they-do-not-do" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The golden file
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#generated-documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Generated documentation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-committed-html" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The committed HTML
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#client-content" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Client content
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#third-party-parsers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Third-party parsers
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#where-things-are" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Where things are
+        What they do not do
       
     </span>
   </a>
@@ -810,8 +680,94 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    In CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../cli/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
       
     </li>
   
@@ -922,10 +878,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#getting-set-up" class="md-nav__link">
+  <a href="#why-three-and-not-one" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting set up
+        Why three, and not one
       
     </span>
   </a>
@@ -933,22 +889,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#adding-a-rule" class="md-nav__link">
+  <a href="#what-each-one-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Adding a rule
+        What each one reads
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Adding a rule">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In CI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="In CI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#rules-to-follow" class="md-nav__link">
+  <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rules to follow
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
       
     </span>
   </a>
@@ -961,10 +939,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-it-against-something-real" class="md-nav__link">
+  <a href="#on-the-command-line" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run it against something real
+        On the command line
       
     </span>
   </a>
@@ -972,10 +950,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-example-project" class="md-nav__link">
+  <a href="#where-they-show-up-in-the-report" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The example project
+        Where they show up in the report
       
     </span>
   </a>
@@ -983,76 +961,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-golden-file" class="md-nav__link">
+  <a href="#what-they-do-not-do" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The golden file
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#generated-documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Generated documentation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-committed-html" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The committed HTML
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#client-content" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Client content
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#third-party-parsers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Third-party parsers
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Style
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#where-things-are" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Where things are
+        What they do not do
       
     </span>
   </a>
@@ -1076,7 +988,7 @@
 
 
   
-    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/contributing.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/sync-checks.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1084,70 +996,36 @@
   
 
 
-<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
-<p class="lede">For maintainers. Hunter is maintained by Rittman Analytics; the
-repository is private and the licence is proprietary.</p>
+<h1 id="the-three-sync-checks">The three sync checks<a class="headerlink" href="#the-three-sync-checks" title="Permanent link">&para;</a></h1>
+<p class="lede">Three small CI checks, each answering one question about
+whether one layer has drifted from another. Separate from the score, and
+separate from each other.</p>
 
-<h2 id="getting-set-up">Getting set up<a class="headerlink" href="#getting-set-up" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sav-sus/Hunter
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>Hunter
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
-</code></pre></div>
-<p>Four gates, all of which CI runs:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w">                    </span><span class="c1"># the suite</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.<span class="w">              </span><span class="c1"># lint</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>--check<span class="w"> </span>.<span class="w">     </span><span class="c1"># formatting</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w">                      </span><span class="c1"># types, strict on checks, score and model</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/check_no_client_content.py
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>tests.regenerate_golden<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>diff<span class="w"> </span>--exit-code<span class="w"> </span>tests/golden/
-</code></pre></div>
-<div class="key">
-<p><strong>Every reader writes into one normalised model</strong> in <code>model/entities.py</code>, and
-no check ever reads a raw source. A check that opens <code>manifest.json</code> is a bug,
-however convenient. The point is replaceability: adding Snowflake, or a
-semantic layer other than LookML, touches one file in <code>ingest/</code> and nothing
-else.</p>
+<div class="cards">
+  <div>
+    <span class="tag">crosslayer rules</span>
+    <b>LookML sync</b>
+    <p><em>Does the reporting layer still match the tables?</em><br>
+    A field reading a column that no longer exists breaks in a client's
+    dashboard, not in the pull request that removed it.</p>
+  </div>
+  <div>
+    <span class="tag">droughty rules</span>
+    <b>Droughty sync</b>
+    <p><em>Has the generated schema been applied, and is it current?</em><br>
+    A generated test that never reached dbt is a test everyone believes is
+    running. Nothing is checking what they think is checked.</p>
+  </div>
+  <div>
+    <span class="tag">alignment + conformance rules</span>
+    <b>Modelling sync</b>
+    <p><em>Does what exists match what was designed and asked for?</em><br>
+    A table built with no design has no agreed grain and no owner. A design
+    nobody built is a promise the business is still waiting on.</p>
+  </div>
 </div>
-<h2 id="adding-a-rule">Adding a rule<a class="headerlink" href="#adding-a-rule" title="Permanent link">&para;</a></h2>
-<p>Declare it, then use it. Three steps.</p>
-<p><strong>1. Declare it in the check module</strong>, everything in one place:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">KEY_UNIQUENESS_MISSING</span> <span class="o">=</span> <span class="n">rule</span><span class="p">(</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="s2">"testing.key_uniqueness_missing"</span><span class="p">,</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">dimension</span><span class="o">=</span><span class="n">Dimension</span><span class="o">.</span><span class="n">TESTING</span><span class="p">,</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">HIGH</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">points</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">title</span><span class="o">=</span><span class="s2">"Nothing tests that </span><span class="si">{key}</span><span class="s2"> is unique on </span><span class="si">{subject}</span><span class="s2">"</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">consequence</span><span class="o">=</span><span class="p">(</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="s2">"Nothing checks that </span><span class="si">{label}</span><span class="s2"> holds one row per </span><span class="si">{grain}</span><span class="s2">. If duplicates "</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="s2">"appear, every total built from it is overstated and nobody is told. "</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="s2">"</span><span class="si">{consumers}</span><span class="s2">."</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="p">),</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">plain_heading</span><span class="o">=</span><span class="s2">"What is tested"</span><span class="p">,</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="n">REQ_MANIFEST</span><span class="p">,),</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">)</span>
-</code></pre></div>
-<p><strong>2. Examine every candidate, and report the failures:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">sorted_models</span><span class="p">():</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">is_scoreable</span><span class="p">:</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="k">continue</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">context</span><span class="o">.</span><span class="n">examine</span><span class="p">(</span><span class="n">KEY_UNIQUENESS_MISSING</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># every candidate</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_unique_test</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">findings</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>            <span class="n">context</span><span class="o">.</span><span class="n">finding</span><span class="p">(</span>  <span class="c1"># only the failures</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                <span class="n">KEY_UNIQUENESS_MISSING</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                <span class="n">subject</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                <span class="n">file</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                <span class="n">evidence</span><span class="o">=</span><span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">"grain"</span><span class="p">:</span> <span class="n">grain</span><span class="p">,</span> <span class="s2">"consumers"</span><span class="p">:</span> <span class="n">consumers</span><span class="p">},</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>            <span class="p">)</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="p">)</span>
-</code></pre></div>
-<p>Calling <code>examine</code> only when a rule fires makes the denominator equal the
-numerator, and the area then scores 0 whenever anything fails. That bug shipped
-once.</p>
-<p><strong>3. Write both cases into the example project</strong>, a passing one and a failing
-one.</p>
-<h3 id="rules-to-follow">Rules to follow<a class="headerlink" href="#rules-to-follow" title="Permanent link">&para;</a></h3>
+
+<h2 id="why-three-and-not-one">Why three, and not one<a class="headerlink" href="#why-three-and-not-one" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1157,198 +1035,281 @@ one.</p>
 </thead>
 <tbody>
 <tr>
-<td><strong>No numbers in check code</strong></td>
-<td>Every threshold is a configuration field. A rule with a hardcoded number is a rule nobody can tune</td>
+<td><strong>They fail for different reasons</strong></td>
+<td>A renamed column is an analytics engineer's morning. An undesigned table is a conversation with whoever owns the design</td>
 </tr>
 <tr>
-<td><strong>The consequence says what breaks</strong></td>
-<td>Not what is missing, and never how severe it is. A test asserts no consequence line contains the word "severity"</td>
+<td><strong>They become available at different times</strong></td>
+<td>A repository with no DBML can run LookML sync on day one. Modelling sync has nothing to read yet</td>
 </tr>
 <tr>
-<td><strong>Build findings through <code>context.finding</code></strong></td>
-<td>It applies rule overrides, register silences, exposure weighting and the confidence floor. Constructing a <code>Finding</code> directly bypasses all of it</td>
-</tr>
-<tr>
-<td><strong>Use <code>plural()</code> for counts in prose</strong></td>
-<td>"1 columns" is not acceptable output</td>
-</tr>
-<tr>
-<td><strong>Scale a partial gap</strong></td>
-<td>Pass <code>points_scale</code> where a rule reports once per table but counts many things inside it</td>
-</tr>
-<tr>
-<td><strong>Mark a coverage rule as one</strong></td>
-<td>Set <code>about_coverage=True</code> where the rule reports what Hunter could not check. Otherwise it appears as a gap in the repository, which it is not</td>
+<td><strong>Small gates get adopted</strong></td>
+<td>A team will make one specific check required long before it accepts a whole score as one. One large gate gets an exemption</td>
 </tr>
 </tbody>
 </table>
-<h2 id="run-it-against-something-real">Run it against something real<a class="headerlink" href="#run-it-against-something-real" title="Permanent link">&para;</a></h2>
-<p>The part that matters most, and the part the test suite cannot do for you.
-Point it at the largest repository you have access to, read the findings, then
-read them again asking "would I act on this".</p>
-<details class="note">
-<summary>Twelve rules were wrong when first written. None was caught by a test</summary>
-<p>Every one was found by running against a real repository.</p>
+<div class="key">
+<p><strong>A sync check and the score can never disagree.</strong> Each check is a slice of
+the same rules the score already runs, reading the same findings. Nothing here
+computes a second opinion.</p>
+</div>
+<h2 id="what-each-one-reads">What each one reads<a class="headerlink" href="#what-each-one-reads" title="Permanent link">&para;</a></h2>
+<p>A check whose sources are missing reports <strong>skipped</strong>, never <strong>passed</strong>.
+Adding the source turns the check on; it is not a breaking change.</p>
 <table>
 <thead>
 <tr>
-<th>What went wrong</th>
-<th>Scale</th>
+<th>Check</th>
+<th>Needs</th>
+<th>Rules</th>
+<th>Sharper with</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>select *</code> fired on almost everything</td>
-<td>226 of 228 models</td>
+<td>LookML sync</td>
+<td><code>manifest.json</code>, LookML files</td>
+<td>6 <code>crosslayer.*</code></td>
+<td></td>
 </tr>
 <tr>
-<td><code>is distinct from</code> read as a FROM clause</td>
-<td>Silent wrong findings</td>
+<td>Droughty sync</td>
+<td><code>manifest.json</code>, committed Droughty output</td>
+<td>8 <code>droughty.*</code></td>
+<td></td>
 </tr>
 <tr>
-<td>A LookML refinement replaced the field it refined</td>
-<td>Hid 629 field references</td>
+<td>Modelling sync</td>
+<td><code>manifest.json</code>, DBML design files</td>
+<td>8 <code>alignment.*</code>, 10 <code>conformance.*</code></td>
+<td>A business model diagram</td>
 </tr>
 </tbody>
 </table>
-<p>A rule tested only against a fixture is a rule tested against its own
-assumptions, because the same person wrote both.</p>
-</details>
-<h2 id="the-example-project">The example project<a class="headerlink" href="#the-example-project" title="Permanent link">&para;</a></h2>
-<p><code>examples/tiny-shop</code> is nine tables with one deliberate flaw per finding class,
-laid out the way a Rittman Analytics engagement lays a repository out.
-It exercises 28 rules across all seven scored areas, including a silenced
-finding, a low-confidence suggestion, a table built and switched off, an
-off-plan build and a dropped generation override.</p>
-<p>Adding a table or a flaw:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Edit examples/tiny-shop/build.py, saying in a comment what the table is for</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>examples/tiny-shop/build.py<span class="w">     </span><span class="c1"># rewrite the manifest</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>tests.regenerate_golden<span class="w">      </span><span class="c1"># rewrite the pinned report</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_pages.py<span class="w">     </span><span class="c1"># rewrite the documented example</span>
+<p>That is 32 of the 77 rules. The rest belong to the score rather than to drift
+between layers.</p>
+<h2 id="in-ci">In CI<a class="headerlink" href="#in-ci" title="Permanent link">&para;</a></h2>
+<p>Each check is its own composite action, so you can add one without the others.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Layer sync</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">on</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">permissions</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">pull-requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">jobs</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">lookml</span><span class="p">:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter/actions/lookml-sync@v0.1.0</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">          </span><span class="nt">fail-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">high</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">  </span><span class="nt">droughty</span><span class="p">:</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter/actions/droughty-sync@v0.1.0</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">  </span><span class="nt">modelling</span><span class="p">:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter/actions/modelling-sync@v0.1.0</span>
 </code></pre></div>
-<p>Then review all three diffs.</p>
-<h2 id="the-golden-file">The golden file<a class="headerlink" href="#the-golden-file" title="Permanent link">&para;</a></h2>
-<p><code>tests/golden/tiny-shop.json</code> is the example's whole report, minus its
-timestamp. Every change to the arithmetic changes it, and CI fails if it has
-drifted.</p>
-<p>That is the mechanism that stops a score moving without anybody deciding it
-should. When you regenerate it, the diff is the review.</p>
-<p>If the arithmetic changed in a way that moves numbers, bump
-<code>SCORE_MODEL_VERSION</code> in <code>src/hunter/__init__.py</code>. That is what lets a client's
-next run report the movement as caused by the upgrade rather than by their
-repository.</p>
-<h2 id="generated-documentation">Generated documentation<a class="headerlink" href="#generated-documentation" title="Permanent link">&para;</a></h2>
-<p>Two pages are generated and must not be edited by hand:</p>
+<p>Three separate jobs on purpose. One drifted check then does not hide the other
+two, and each shows as its own line in the pull request.</p>
+<div class="key">
+<p><strong>Start every one on <code>fail-on: never</code>.</strong> It reports and never fails. A check
+that fails builds in its first week gets switched off in its second, and then
+none of the rest of this matters.</p>
+</div>
 <table>
 <thead>
 <tr>
-<th>Page</th>
-<th>From</th>
+<th><code>fail-on</code></th>
+<th>Behaviour</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>docs/reference/rules.md</code></td>
-<td>The rule registry</td>
+<td><code>never</code></td>
+<td>Reports only. The default</td>
 </tr>
 <tr>
-<td><code>docs/example/</code></td>
-<td>A real run against <code>examples/tiny-shop</code></td>
+<td><code>high</code></td>
+<td>Fails on a high-severity drift, such as a report field reading a column that no longer exists</td>
+</tr>
+<tr>
+<td><code>any</code></td>
+<td>Fails on any drift, including tidy-ups</td>
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_pages.py
-</code></pre></div>
-<p>CI regenerates and fails on a difference, so neither can go stale. A stale rules
-reference is worse than none, because somebody will act on it.</p>
-<h2 id="the-committed-html">The committed HTML<a class="headerlink" href="#the-committed-html" title="Permanent link">&para;</a></h2>
-<p><code>docs-html/</code> holds the built site, committed so it can be opened from any
-checkout without installing anything. Read the Docs builds its own copy from
-<code>mkdocs.yml</code> and does not use this folder.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w">            </span><span class="c1"># rebuild</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w"> </span>--serve<span class="w">    </span><span class="c1"># rebuild and open it</span>
-</code></pre></div>
-<p>It costs about 4 MB in the repository, most of it theme assets. CI rebuilds it
-and fails on a difference. To stop committing it, add <code>/docs-html/</code> to
-<code>.gitignore</code> and delete the folder; nothing else depends on it.</p>
-<h2 id="client-content">Client content<a class="headerlink" href="#client-content" title="Permanent link">&para;</a></h2>
-<p><code>scripts/check_no_client_content.py</code> fails on client-identifying strings in
-tracked files, and CI runs it.</p>
-<p>Hunter is developed by running it against real client repositories, so the rule
-is enforced rather than remembered. Names in the example project are invented
-and resemble no client's.</p>
-<h2 id="third-party-parsers">Third-party parsers<a class="headerlink" href="#third-party-parsers" title="Permanent link">&para;</a></h2>
-<p><code>pydbml</code> and <code>lkml</code> are pinned exactly, not to a range: both are
-small-maintainer projects parsing formats that shift, so a break surfaces at
-upgrade rather than in a client run. Both are wrapped behind Hunter's own
-interface, so nothing outside <code>ingest/dbml.py</code> and <code>ingest/lookml.py</code> knows
-they exist.</p>
-<p>MkDocs and its theme are pinned below their next major version. MkDocs 2.0 will
-remove the plugin system and rewrite theming with no migration path, so moving
-those pins is a piece of work rather than a bump.</p>
-<h2 id="style">Style<a class="headerlink" href="#style" title="Permanent link">&para;</a></h2>
-<p>Match the surrounding code. Beyond that:</p>
+<h3 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h3>
+<p>The same seven on all three.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Input</th>
+<th>Default</th>
+<th>What it does</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Say why, not what</strong></td>
-<td>The code says what it does. A comment earns its place by explaining a decision, a constraint, or something that was tried and failed</td>
+<td><code>fail-on</code></td>
+<td><code>never</code></td>
+<td><code>never</code>, <code>high</code> or <code>any</code></td>
 </tr>
 <tr>
-<td><strong>Docstrings name the requirement</strong></td>
-<td><code>FR7.9</code> or <code>section 11.4</code>, so behaviour links back to the reason it exists</td>
+<td><code>working-directory</code></td>
+<td><code>.</code></td>
+<td>The repository root to read</td>
 </tr>
 <tr>
-<td><strong>Type <code>checks/</code>, <code>score/</code> and <code>model/</code></strong></td>
-<td>Strict under mypy, because a wrong type there is a wrong number in somebody's report</td>
+<td><code>config</code></td>
+<td></td>
+<td>Path to <code>hunter.yml</code>. Found automatically if omitted</td>
+</tr>
+<tr>
+<td><code>manifest</code></td>
+<td></td>
+<td>Path to <code>manifest.json</code>, if not where the ruleset says</td>
+</tr>
+<tr>
+<td><code>comment</code></td>
+<td><code>true</code></td>
+<td>Post or update a pull request comment</td>
+</tr>
+<tr>
+<td><code>hunter-version</code></td>
+<td><code>0.1.0</code></td>
+<td>Which Hunter version to install. Never use <code>@main</code></td>
+</tr>
+<tr>
+<td><code>python-version</code></td>
+<td><code>3.12</code></td>
+<td>Which Python to run under</td>
 </tr>
 </tbody>
 </table>
-<h2 id="where-things-are">Where things are<a class="headerlink" href="#where-things-are" title="Permanent link">&para;</a></h2>
+<h3 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Path</th>
+<th>Output</th>
 <th>What it is</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>src/hunter/run.py</code></td>
-<td>The pipeline. Start here</td>
+<td><code>verdict</code></td>
+<td><code>in sync</code>, <code>drifted</code>, <code>skipped</code> or <code>nothing to compare</code></td>
 </tr>
 <tr>
-<td><code>src/hunter/checks/base.py</code></td>
-<td>Rules, context, the one way a finding is made</td>
+<td><code>checked</code></td>
+<td>How many checks ran</td>
 </tr>
 <tr>
-<td><code>src/hunter/model/entities.py</code></td>
-<td>The normalised model everything reads</td>
+<td><code>failed</code></td>
+<td>How many of them failed</td>
 </tr>
 <tr>
-<td><code>src/hunter/model/align.py</code></td>
-<td>The five-point chain</td>
-</tr>
-<tr>
-<td><code>src/hunter/score/engine.py</code></td>
-<td>The arithmetic</td>
-</tr>
-<tr>
-<td><code>src/hunter/config/house/ra-house-1.yml</code></td>
-<td>The standard</td>
-</tr>
-<tr>
-<td><code>.doc/</code></td>
-<td>Why it is built this way</td>
+<td><code>result</code></td>
+<td>Path to the JSON result</td>
 </tr>
 </tbody>
 </table>
+<p>Each action writes a step summary, posts one comment per check edited in place,
+and uploads its JSON and Markdown as an artifact.</p>
+<h2 id="on-the-command-line">On the command line<a class="headerlink" href="#on-the-command-line" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>hunter<span class="w"> </span>sync<span class="w">                  </span><span class="c1"># all three</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>hunter<span class="w"> </span>sync<span class="w"> </span>lookml<span class="w">           </span><span class="c1"># one</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>hunter<span class="w"> </span>sync<span class="w"> </span>modelling<span class="w"> </span>--fail-on<span class="w"> </span>any
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>hunter<span class="w"> </span>sync<span class="w"> </span>--out<span class="w"> </span>out/sync.json<span class="w"> </span>--summary<span class="w"> </span>out/sync.md
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>  LookML sync: drifted
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  Does the reporting layer still match the tables?
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  Drifted. 5 of 14 checks failed.
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    --    3 of 6   Every built table has a LookML view
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>           wh_shop__forecast_fact, wh_shop__legacy_fact, wh_shop__product_dim
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    ok    3 of 3   Every LookML view points at a table that exists
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    --    2 of 3   Every LookML field points at a real column
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>           wh_shop__order_fact
+</code></pre></div>
+<p>The statements come before the findings on purpose. "3 of 6 tables have a view"
+is what a reader wants first; the rule names are how they fix it.</p>
+<details class="note">
+<summary>The JSON result</summary>
+<p>One entry per check, carrying the same version stamp every Hunter report
+does: a result compared against one from a different Hunter version is not
+a comparison.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"checks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lookml"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LookML sync"</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">"verdict"</span><span class="p">:</span><span class="w"> </span><span class="s2">"drifted"</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">"headline"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Drifted. 5 of 14 checks failed."</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">"ran"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="nt">"checked"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">"passed"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">      </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">      </span><span class="nt">"in_sync_percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">64.3</span><span class="p">,</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">      </span><span class="nt">"by_severity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"high"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"low"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">      </span><span class="nt">"statements"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">          </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Every built table has a LookML view"</span><span class="p">,</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">          </span><span class="nt">"held"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">          </span><span class="nt">"of"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">          </span><span class="nt">"let_down_by"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"wh_shop__forecast_fact"</span><span class="p">]</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">      </span><span class="p">],</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="w">      </span><span class="nt">"findings"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">"rule"</span><span class="p">:</span><span class="w"> </span><span class="s2">"crosslayer.field_references_missing_column"</span><span class="w"> </span><span class="p">}]</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">  </span><span class="p">]</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="p">}</span>
+</code></pre></div>
+</details>
+<h2 id="where-they-show-up-in-the-report">Where they show up in the report<a class="headerlink" href="#where-they-show-up-in-the-report" title="Permanent link">&para;</a></h2>
+<p>The dashboard groups the same statements under the same headings, so the
+report and the CI check cannot tell you different things.</p>
+<table>
+<thead>
+<tr>
+<th>Sync check</th>
+<th>Dashboard section</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LookML sync</td>
+<td>Warehouse to Looker</td>
+</tr>
+<tr>
+<td>Droughty sync</td>
+<td>Droughty</td>
+</tr>
+<tr>
+<td>Modelling sync</td>
+<td>Design to build</td>
+</tr>
+</tbody>
+</table>
+<p><a href="../example/dashboard/">See it on the example dashboard</a>.</p>
+<h2 id="what-they-do-not-do">What they do not do<a class="headerlink" href="#what-they-do-not-do" title="Permanent link">&para;</a></h2>
+<p>These check drift between layers. They are not the score, and they are not a
+substitute for it: naming, testing, documentation, lineage and entity modelling
+all sit outside them.</p>
+<p>Run <a href="../ci/">the full action</a> as well, on <code>advisory</code>, and let these three be the
+checks that can fail.</p>
 
 
 

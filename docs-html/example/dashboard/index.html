@@ -572,6 +572,8 @@
       
         
       
+        
+      
     
     
     
@@ -830,7 +832,7 @@
 <thead>
 <tr>
 <th>Band</th>
-<th>The question it answers</th>
+<th>What it shows</th>
 </tr>
 </thead>
 <tbody>
@@ -839,32 +841,20 @@
 <td>How healthy is this repository</td>
 </tr>
 <tr>
-<td>Do the layers agree</td>
-<td>Is every business entity designed, every designed table built, every built table in the warehouse and in Looker</td>
+<td>Checklist</td>
+<td>Statements that should hold, grouped: design to build, warehouse to Looker, Droughty, documentation, tests. Each says how many hold and names what does not</td>
 </tr>
 <tr>
-<td>Needs a decision</td>
-<td>What has nobody decided, as opposed to not fixed</td>
-</tr>
-<tr>
-<td>The three models</td>
+<td>Modelling alignment</td>
 <td>The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked</td>
+</tr>
+<tr>
+<td>Model diagrams</td>
+<td>The conceptual, logical and physical models drawn with Mermaid, with tabs and zoom</td>
 </tr>
 <tr>
 <td>Every table</td>
 <td>One row per table, searchable: what is in the design, the repository, the warehouse and Looker</td>
-</tr>
-<tr>
-<td>Where the ground is being lost</td>
-<td>Which area is costing the most points</td>
-</tr>
-<tr>
-<td>How much of the plan is real</td>
-<td>How much of the business model exists</td>
-</tr>
-<tr>
-<td>Every rule at once</td>
-<td>Is this a few bad tables or a habit</td>
 </tr>
 <tr>
 <td>What everything else is built on</td>
@@ -881,8 +871,9 @@
 </tbody>
 </table>
 <h2 id="how-it-is-built">How it is built<a class="headerlink" href="#how-it-is-built" title="Permanent link">&para;</a></h2>
-<p>One HTML file. The stylesheet, every chart and the logo are inlined, so it opens with no network and nothing beside it: from a build artifact, a shared drive or an email attachment.</p>
-<p>There is one inline script, and it filters the table list as you type. Every row is already in the HTML, so with scripting off the page still reads in full.</p>
+<p>One HTML file. The stylesheet, every chart and the logo are inlined, so it needs nothing installed and nothing beside it: it opens from a build artifact, a shared drive or an email attachment.</p>
+<p>The one thing fetched from anywhere is the diagram library, at a pinned version. Where it does not arrive, the diagram source is shown as text with a note saying why, and nothing else on the page depends on it.</p>
+<p>Two scripts run on the page. One filters the table list as you type; every row is already in the HTML, so with scripting off the list still reads in full. The other draws the model diagrams with Mermaid, which is the one thing the page fetches (pinned by version). Without a connection the diagram source is shown as text and the rest of the page is unaffected.</p>
 <p>Every chart is SVG generated in Python rather than drawn by a charting library. That keeps the file self-contained, and it keeps the output byte-identical between runs, which is what lets the whole site be compared against a committed file in review.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>hunter<span class="w"> </span>dashboard<span class="w">                 </span><span class="c1"># one self-contained file</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w">                </span><span class="c1"># the dashboard plus the detail pages</span>

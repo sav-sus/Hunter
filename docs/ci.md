@@ -4,6 +4,13 @@
 command line. It calls the same commands you would run locally, so CI and local
 results agree by construction rather than by discipline.</p>
 
+<div class="key" markdown>
+**Looking for a check that can fail a build?** This action scores the whole
+repository and is best left on advisory. The
+[three sync checks](sync-checks.md) are small, specific and separately
+installable, and they are what a team will accept as required.
+</div>
+
 ## The workflow
 
 ```yaml

@@ -1,23 +1,25 @@
 """The report front page, as a self-contained dashboard.
 
-One HTML file with the stylesheet, the charts and the logo inlined. No network
-request, nothing to install. It opens from a build artifact, a shared drive or
-an email attachment and looks the same in all three.
+One HTML file with the stylesheet, the charts and the logo inlined. It opens
+from a build artifact, a shared drive or an email attachment and looks the same
+in all three.
 
-There is one inline script, and it does one thing: filter the table list as
-somebody types. Every row is already in the HTML, so with scripting switched
-off the whole page still reads. Nothing else on the page depends on it.
+Two scripts run on the page, and the page reads in full without either:
 
-The page is built to be read in this order, and each band answers one question:
+* A filter over the table list. Every row is already in the HTML.
+* The model diagrams. These need the Mermaid library, which is the one thing
+  fetched from anywhere (pinned by version). If it does not arrive, the
+  diagram source is shown as text and a note says why. Nothing else on the
+  page depends on it.
+
+The page is built to be read in this order:
 
     the number        how healthy is this repository
-    the questions     do the layers agree with each other
-    the alert strip   what has nobody decided
-    the lanes         the same entities at every model level
+    the checklist     which statements about the repository hold, by area
+    the alignment     the same entities at every model level, side by side
+    the diagrams      the conceptual, logical and physical models, drawn
     the table list    what have we got, and what stands behind each one
-    the areas         where is the ground being lost
-    the funnel        how much of the plan is real
-    the grid          is this a few bad tables or a habit
+    the load-bearing  which tables everything else depends on, and are they checked
     the queue         what should be done first
 
 Everything drawn here traces to a rule and a finding. There is no panel whose
@@ -32,14 +34,9 @@ from dataclasses import dataclass
 
 from hunter import brand
 from hunter.emit import charts
-from hunter.emit.charts import LaneCell, LaneRow, Slice, esc
-from hunter.emit.plain import (
-    DIMENSION_HEADINGS,
-    severity_label,
-    state_summary,
-    top_fixes,
-)
-from hunter.enums import AlignmentState, Dimension, Presence, Severity
+from hunter.emit.charts import LaneCell, LaneRow, esc
+from hunter.emit.plain import DIMENSION_HEADINGS, severity_label, top_fixes
+from hunter.enums import Presence, Severity
 from hunter.model.align import AlignmentRow
 from hunter.run import RunResult
 
@@ -121,27 +118,6 @@ body {{
   letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-top: 3px; font-weight: 600;
 }}
 
-/* ---- alert strip ---- */
-.alerts {{ background: {brand.PEACH_LIGHT}; border-bottom: 1px solid #f0a99f; padding: 26px 0; }}
-.alerts h2 {{
-  margin: 0 0 4px; font-size: 12px; text-transform: uppercase;
-  letter-spacing: 0.09em; color: #8a2f1c; font-weight: 700;
-}}
-.alerts .lead {{ margin: 0 0 18px; font-size: 14px; color: #7c3a2a; max-width: 74ch; }}
-.alert-grid {{
-  display: grid; gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
-}}
-.alert {{
-  background: #fff; border-radius: var(--radius); padding: 18px 20px;
-  border-left: 5px solid var(--peach);
-}}
-.alert .count {{
-  font-size: 25px; font-weight: 700; letter-spacing: -0.02em; display: block;
-}}
-.alert .what {{ font-weight: 600; margin: 3px 0 7px; font-size: 14.5px; }}
-.alert .why {{ margin: 0; font-size: 13px; color: #52525b; }}
-
 /* ---- cards ---- */
 main {{ padding: 30px 0 12px; }}
 .grid {{ display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }}
@@ -213,32 +189,84 @@ code {{
 }}
 .objects {{ color: #6b7280; font-size: 12px; }}
 
-/* ---- the sync questions ---- */
-.sync {{ background: #fff; border-bottom: 1px solid var(--border); padding: 26px 0; }}
-.sync h2 {{
-  margin: 0 0 14px; font-size: 12px; text-transform: uppercase;
-  letter-spacing: 0.09em; color: #6b7280; font-weight: 700;
+/* ---- the checklist ---- */
+.checklist {{ background: #fff; border-bottom: 1px solid var(--border); padding: 26px 0 28px; }}
+.cl-grid {{
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
 }}
-.sync-grid {{
-  display: grid; gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+.cl {{ border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px 8px; }}
+.cl header {{
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 8px;
 }}
-.q {{
-  border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px;
-  border-top: 4px solid var(--border);
+.cl h3 {{ margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }}
+.badge {{
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  white-space: nowrap; font-family: {brand.MONO_STACK};
 }}
-.q.yes {{ border-top-color: #16a34a; }}
-.q.mostly {{ border-top-color: #d97706; }}
-.q.no {{ border-top-color: {brand.DESTRUCTIVE}; }}
-.q .answer {{ font-size: 15px; font-weight: 700; margin: 0 0 2px; }}
-.q.yes .answer {{ color: #15803d; }}
-.q.mostly .answer {{ color: #b45309; }}
-.q.no .answer {{ color: {brand.DESTRUCTIVE}; }}
-.q .ask {{ margin: 0 0 8px; font-size: 14px; font-weight: 600; }}
-.q .count {{
-  margin: 0; font-size: 12.5px; color: #6b7280; font-family: {brand.MONO_STACK};
+.badge.yes {{ background: {brand.GREEN_LIGHT}; color: #15803d; }}
+.badge.mostly {{ background: #fdebc8; color: #92400e; }}
+.badge.no {{ background: {brand.PEACH_LIGHT}; color: #9f1d1d; }}
+.cl ul {{ list-style: none; margin: 0; padding: 0; }}
+.cl li {{
+  display: flex; align-items: flex-start; gap: 10px; padding: 9px 0;
+  border-top: 1px solid #f1f2f6; font-size: 13.5px;
 }}
-.q .miss {{ margin: 6px 0 0; font-size: 12.5px; color: #52525b; }}
+.cl .tick {{
+  flex: 0 0 auto; width: 18px; height: 18px; border-radius: 50%; margin-top: 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}}
+.cl li.yes .tick {{ background: #16a34a; }}
+.cl li.yes .tick::before {{ content: "\2713"; }}
+.cl li.mostly .tick {{ background: #d97706; }}
+.cl li.mostly .tick::before {{ content: "!"; }}
+.cl li.no .tick {{ background: {brand.DESTRUCTIVE}; }}
+.cl li.no .tick::before {{ content: "\2717"; }}
+.cl .say {{ flex: 1; font-weight: 500; }}
+.cl .miss {{
+  display: block; font-weight: 400; font-size: 12px; color: #6b7280; margin-top: 2px;
+  font-family: {brand.MONO_STACK};
+}}
+.cl .n {{
+  flex: 0 0 auto; font-family: {brand.MONO_STACK}; font-size: 12.5px; font-weight: 700;
+  color: #6b7280; padding-top: 1px;
+}}
+.cl li.no .n {{ color: {brand.DESTRUCTIVE}; }}
+.cl li.mostly .n {{ color: #b45309; }}
+
+/* ---- model diagrams ---- */
+.tabs {{
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 14px;
+}}
+.tab {{
+  font: 600 13.5px/1 {brand.FONT_STACK}; color: #52525b; background: none; border: 0;
+  padding: 9px 13px; border-radius: 8px; cursor: pointer;
+}}
+.tab:hover {{ background: var(--muted); }}
+.tab.on {{ background: var(--ink); color: #fff; }}
+.zoom {{ margin-left: auto; display: flex; gap: 4px; }}
+.zoom button {{
+  font: 600 13px/1 {brand.FONT_STACK}; color: var(--ink); background: #fff;
+  border: 1px solid var(--border); border-radius: 7px; padding: 7px 11px; cursor: pointer;
+}}
+.zoom button:hover {{ border-color: var(--primary); color: var(--primary); }}
+.pane .blurb {{ margin: 0 0 12px; font-size: 13px; color: #6b7280; }}
+.canvas {{
+  overflow: auto; max-height: 720px; border: 1px solid var(--border); border-radius: 10px;
+  background: #fafbfe; padding: 18px;
+}}
+.canvas pre.mermaid {{
+  margin: 0; font: 12px/1.5 {brand.MONO_STACK}; color: #52525b; white-space: pre;
+}}
+.canvas pre.mermaid[data-processed] {{ font: inherit; color: inherit; }}
+.canvas svg {{ display: block; height: auto; }}
+.offline {{
+  margin: 0 0 12px; padding: 10px 14px; border-radius: 9px; font-size: 13px;
+  background: #fdebc8; color: #92400e;
+}}
 
 /* ---- model lanes ---- */
 .lanes {{ display: block; }}
@@ -319,40 +347,49 @@ def _card(
     )
 
 
-# ------------------------------------------------- the questions in the band
+# ---------------------------------------------------------------- checklist
 
 
 @dataclass(frozen=True)
-class Question:
-    """One plain question about whether two levels agree.
+class Check:
+    """One statement about the repository, and whether it holds.
 
     ``done`` of ``total`` is the whole answer. ``missing`` names the ones that
-    do not, because a fraction tells a reader there is a problem and a name
-    tells them where it is.
+    let it down, because a fraction tells a reader there is a problem and a
+    name tells them where it is. ``rule`` is the rule the numbers came from,
+    where there is one, so every figure here can be traced to a finding.
     """
 
-    ask: str
+    statement: str
     done: int
     total: int
     missing: tuple[str, ...] = ()
+    rule: str | None = None
+
+    @property
+    def holds(self) -> bool:
+        return self.total > 0 and self.done == self.total
 
     @property
     def verdict(self) -> str:
         """Green, amber or red. Amber is "nearly", which is 4 in 5 or better."""
-        if self.total == 0:
-            return "mostly"
-        if self.done == self.total:
+        if self.holds:
             return "yes"
-        return "mostly" if self.done >= 0.8 * self.total else "no"
+        if self.total and self.done >= 0.8 * self.total:
+            return "mostly"
+        return "no"
+
+
+@dataclass(frozen=True)
+class Section:
+    """A group of related statements, with a heading a stakeholder would use."""
+
+    title: str
+    checks: tuple[Check, ...]
 
     @property
-    def answer(self) -> str:
-        short = self.total - self.done
-        if self.total == 0:
-            return "Nothing to compare"
-        if short == 0:
-            return "Yes, all of them"
-        return f"No, {short} of {self.total} " + ("is" if short == 1 else "are") + " missing"
+    def passed(self) -> int:
+        return sum(1 for check in self.checks if check.holds)
 
 
 def _in_repo(row: AlignmentRow) -> bool:
@@ -364,34 +401,60 @@ def _in_repo(row: AlignmentRow) -> bool:
     return row.repo in (Presence.PRESENT, Presence.DISABLED)
 
 
-def sync_questions(result: RunResult) -> list[Question]:
-    """The layer-by-layer agreement questions, in reading order.
+def _from_rule(result: RunResult, statement: str, *rules: str) -> Check | None:
+    """A statement backed by one or more rules, counted from what they examined.
 
-    Each one is asked only where Hunter read the source it needs. A question
-    nobody could answer is left off rather than answered "no".
+    A rule that examined nothing is left out rather than reported as passing:
+    there was nothing for it to pass.
+    """
+    checked = sum(result.examined[rule].checked for rule in rules if rule in result.examined)
+    if checked == 0:
+        return None
+    failing = sorted({finding.subject for finding in result.open_findings if finding.rule in rules})
+    # Several rules can fail on the same object. Counting it once is what
+    # makes "5 of 6" mean six objects rather than six checks.
+    failed = (
+        len(failing)
+        if len(rules) > 1
+        else sum(1 for finding in result.open_findings if finding.rule in rules)
+    )
+    return Check(statement, max(0, checked - failed), checked, tuple(failing), rules[0])
+
+
+def checklist(result: RunResult) -> list[Section]:
+    """Everything the dashboard asserts about the repository, grouped.
+
+    A section is only shown where Hunter read the source it needs, and a
+    statement is only made where there was something to check. A statement
+    nobody could test is left off rather than shown as failing.
     """
     rows = result.alignment.rows
     built = [row for row in rows if _in_repo(row)]
     project = result.project
-    out: list[Question] = []
+    sections: list[Section] = []
 
+    def add(title: str, *checks: Check | None) -> None:
+        kept = tuple(check for check in checks if check is not None)
+        if kept:
+            sections.append(Section(title, kept))
+
+    # ---- design to build
+    design: list[Check | None] = []
     if project.has_conceptual:
         wanted = [row for row in rows if row.conceptual is Presence.PRESENT]
-        designed = [row for row in wanted if row.designed is Presence.PRESENT]
-        out.append(
-            Question(
-                "Does every business entity have a design?",
-                len(designed),
+        design.append(
+            Check(
+                "Every business entity has a design",
+                sum(1 for row in wanted if row.designed is Presence.PRESENT),
                 len(wanted),
                 tuple(sorted(row.label for row in wanted if row.designed is not Presence.PRESENT)),
             )
         )
-
     if project.has_dbml:
         planned = [row for row in rows if row.designed is Presence.PRESENT]
-        out.append(
-            Question(
-                "Is every designed table built?",
+        design.append(
+            Check(
+                "Every designed table is built",
                 sum(1 for row in planned if _in_repo(row)),
                 len(planned),
                 tuple(
@@ -399,9 +462,9 @@ def sync_questions(result: RunResult) -> list[Question]:
                 ),
             )
         )
-        out.append(
-            Question(
-                "Does every built table have a design?",
+        design.append(
+            Check(
+                "Every built table has a design",
                 sum(1 for row in built if row.designed is Presence.PRESENT),
                 len(built),
                 tuple(
@@ -413,12 +476,73 @@ def sync_questions(result: RunResult) -> list[Question]:
                 ),
             )
         )
+        design.append(
+            _from_rule(
+                result,
+                "Every built column is in the design",
+                "conformance.column_missing_from_design",
+            )
+        )
+        design.append(
+            _from_rule(
+                result,
+                "Every designed column is built",
+                "conformance.column_missing_from_model",
+            )
+        )
+    claimed = [row for row in rows if row.claim_matches_reality is not None]
+    if claimed:
+        design.append(
+            Check(
+                "The business diagram matches what is built",
+                sum(1 for row in claimed if row.claim_matches_reality),
+                len(claimed),
+                tuple(sorted(row.label for row in claimed if not row.claim_matches_reality)),
+            )
+        )
+    add("Design to build", *design)
 
-    if project.has_droughty and project.droughty and project.droughty.introspected:
-        live = {name.lower() for name in project.droughty.introspected}
-        out.append(
-            Question(
-                "Is every built table live in the warehouse?",
+    # ---- warehouse to Looker
+    if project.has_lookml:
+        add(
+            "Warehouse to Looker",
+            Check(
+                "Every built table has a LookML view",
+                sum(1 for row in built if project.views_for_model(row.model_name or "")),
+                len(built),
+                tuple(
+                    sorted(
+                        row.model_name or row.label
+                        for row in built
+                        if not project.views_for_model(row.model_name or "")
+                    )
+                ),
+            ),
+            _from_rule(
+                result,
+                "Every LookML view points at a table that exists",
+                "crosslayer.view_model_missing",
+            ),
+            _from_rule(
+                result,
+                "Every LookML field points at a real column",
+                "crosslayer.field_references_missing_column",
+            ),
+            _from_rule(
+                result,
+                "Every table reports read from is declared as an exposure",
+                "crosslayer.exposure_missing",
+            ),
+        )
+
+    # ---- Droughty
+    if project.has_droughty:
+        live_check = None
+        introspected = project.droughty.introspected if project.droughty else {}
+        if introspected:
+            live = {name.lower() for name in introspected}
+            live_check = Check(
+                "Every built table is live in the warehouse",
                 sum(1 for row in built if (row.model_name or "").lower() in live),
                 len(built),
                 tuple(
@@ -429,62 +553,87 @@ def sync_questions(result: RunResult) -> list[Question]:
                     )
                 ),
             )
+        add(
+            "Droughty",
+            live_check,
+            _from_rule(
+                result,
+                "Every built table is covered by Droughty tests",
+                "droughty.model_not_covered",
+            ),
+            _from_rule(
+                result,
+                "Every Droughty test is applied in dbt",
+                "droughty.generated_test_missing",
+            ),
+            _from_rule(
+                result,
+                "Every warehouse column is in the design",
+                "droughty.introspected_column_undesigned",
+            ),
         )
 
-    if project.has_lookml:
-        out.append(
-            Question(
-                "Does every built table have a Looker view?",
-                sum(1 for row in built if project.views_for_model(row.model_name or "")),
-                len(built),
-                tuple(
-                    sorted(
-                        row.model_name or row.label
-                        for row in built
-                        if not project.views_for_model(row.model_name or "")
-                    )
-                ),
-            )
-        )
+    # ---- documentation
+    add(
+        "Documentation",
+        _from_rule(
+            result,
+            "Every table carries a description",
+            "documentation.model_description_missing",
+        ),
+        _from_rule(
+            result,
+            "Every column carries a description",
+            "documentation.column_description_missing",
+        ),
+        _from_rule(result, "Every table has a named owner", "documentation.owner_missing"),
+    )
 
-    claimed = [row for row in rows if row.claim_matches_reality is not None]
-    if claimed:
-        agree = [row for row in claimed if row.claim_matches_reality]
-        out.append(
-            Question(
-                "Does the business diagram match what is built?",
-                len(agree),
-                len(claimed),
-                tuple(sorted(row.label for row in claimed if not row.claim_matches_reality)),
-            )
-        )
-
-    return out
+    # ---- tests
+    add(
+        "Tests",
+        _from_rule(result, "Every table has at least one test", "testing.no_tests_at_all"),
+        _from_rule(result, "Every key is tested for uniqueness", "testing.key_uniqueness_missing"),
+        _from_rule(result, "Every key is tested for nulls", "testing.key_not_null_missing"),
+    )
+    return sections
 
 
-def _sync(result: RunResult) -> str:
-    questions = sync_questions(result)
-    if not questions:
+def _named(missing: tuple[str, ...], limit: int = 3) -> str:
+    if not missing:
+        return ""
+    shown = ", ".join(missing[:limit])
+    if len(missing) > limit:
+        shown += f" and {len(missing) - limit} more"
+    return shown
+
+
+def _checklist(result: RunResult) -> str:
+    sections = checklist(result)
+    if not sections:
         return ""
     cards = []
-    for item in questions:
-        miss = ""
-        if item.missing:
-            named = ", ".join(item.missing[:3])
-            if len(item.missing) > 3:
-                named += f" and {len(item.missing) - 3} more"
-            miss = f"<p class='miss'>{esc(named)}</p>"
+    for section in sections:
+        total = len(section.checks)
+        tone = "yes" if section.passed == total else "mostly" if section.passed else "no"
+        items = []
+        for check in section.checks:
+            names = _named(check.missing)
+            miss = f"<span class='miss'>{esc(names)}</span>" if names else ""
+            items.append(
+                f"<li class='{check.verdict}'>"
+                f"<span class='tick'></span>"
+                f"<span class='say'>{esc(check.statement)}{miss}</span>"
+                f"<span class='n'>{check.done} of {check.total}</span></li>"
+            )
         cards.append(
-            f"<div class='q {item.verdict}'>"
-            f"<p class='ask'>{esc(item.ask)}</p>"
-            f"<p class='answer'>{esc(item.answer)}</p>"
-            f"<p class='count'>{item.done} of {item.total}</p>"
-            f"{miss}</div>"
+            f"<section class='cl'><header><h3>{esc(section.title)}</h3>"
+            f"<span class='badge {tone}'>{section.passed} of {total} hold</span></header>"
+            f"<ul>{''.join(items)}</ul></section>"
         )
-    return f"""<div class="sync" id="sync">
+    return f"""<div class="checklist" id="checklist">
   <div class="wrap">
-    <h2>Do the layers agree</h2>
-    <div class="sync-grid">{"".join(cards)}</div>
+    <div class="cl-grid">{"".join(cards)}</div>
   </div>
 </div>"""
 
@@ -528,173 +677,6 @@ def _hero(result: RunResult, generated: dt.datetime) -> str:
     </div>
   </div>
 </div>"""
-
-
-def _alerts(result: RunResult) -> str:
-    """Systemic gaps and off-plan builds, above everything else.
-
-    These are the entries where the answer is a decision rather than a task, so
-    they sit above the score. A weighted mean turns "nobody owns anything" into
-    a rounding error.
-    """
-    cards: list[str] = []
-    for gap in result.score.systemic_gaps[:4]:
-        cards.append(
-            f"<div class='alert'><span class='count'>{gap.failed} of {gap.checked}</span>"
-            f"<p class='what'>{esc(gap.plain_heading or DIMENSION_HEADINGS[gap.dimension])}</p>"
-            f"<p class='why'>{esc(gap.consequence)}</p></div>"
-        )
-
-    off_plan = result.alignment.by_state(AlignmentState.BUILT_OFF_PLAN)
-    if off_plan and len(cards) < 4:
-        names = ", ".join(sorted(row.technical_name or row.label for row in off_plan)[:3])
-        cards.append(
-            f"<div class='alert'><span class='count'>{len(off_plan)}</span>"
-            f"<p class='what'>Built with no design behind it</p>"
-            f"<p class='why'>{esc(names)}. Either the design is out of date or these "
-            f"were never agreed. Somebody has to say which.</p></div>"
-        )
-
-    if not cards:
-        return ""
-    return f"""<div class="alerts">
-  <div class="wrap">
-    <h2>Needs a decision, not a fix</h2>
-    <p class="lead">Each of these was missing everywhere Hunter looked. One decision
-       nobody has taken, not a list of separate defects.</p>
-    <div class="alert-grid">{"".join(cards)}</div>
-  </div>
-</div>"""
-
-
-def _areas(result: RunResult) -> str:
-    rows = [
-        Slice(
-            label=DIMENSION_HEADINGS[entry.dimension],
-            value=round(entry.score, 1),
-            colour=brand.grade_colour(entry.grade),
-            note=(
-                f"carries {entry.effective_weight:.0f} of the 100 points"
-                f" · {entry.finding_count} findings"
-            ),
-        )
-        for entry in result.score.dimensions
-        if entry.scored
-    ]
-    rows.sort(key=lambda row: row.value)
-    if not rows:
-        return ""
-
-    skipped = [
-        DIMENSION_HEADINGS[entry.dimension] for entry in result.score.dimensions if not entry.scored
-    ]
-    foot = ""
-    if skipped:
-        foot = (
-            f"Not measured: {esc(', '.join(skipped))}. Excluded from the score rather "
-            "than counted as zero, with its weight shared across the areas above."
-        )
-    return _card(
-        "Where the ground is being lost",
-        "Each area out of 100, weakest first. The weight is how much of the total it can move.",
-        charts.bars(rows, maximum=100.0, width=700, label_width=260),
-        span="two-thirds",
-        foot=foot,
-        anchor="areas",
-    )
-
-
-def _severity_mix(result: RunResult) -> str:
-    order = [Severity.HIGH, Severity.MEDIUM, Severity.LOW, Severity.INFO]
-    counts = dict.fromkeys(order, 0)
-    for finding in result.open_findings:
-        if finding.severity in counts:
-            counts[finding.severity] += 1
-    slices = [
-        Slice(severity_label(level), counts[level], brand.severity_colour(str(level)))
-        for level in order
-        if counts[level]
-    ]
-    if not slices:
-        return ""
-    total = sum(item.value for item in slices)
-    return _card(
-        "What kind of problem this is",
-        "Open findings, by how much each one matters.",
-        "<div class='split'>"
-        f"<div class='chart'>{charts.donut(slices, centre_label=f'{total:g}')}</div>"
-        f"<div class='side'>{charts.legend(slices)}</div>"
-        "</div>",
-        span="third",
-        anchor="severity",
-    )
-
-
-def _funnel(result: RunResult) -> str:
-    coverage = result.alignment.coverage
-    stages = [
-        Slice(
-            "Asked for by the business",
-            coverage.conceptual_entities,
-            brand.PRIMARY,
-            "never designed",
-        ),
-        Slice("Designed", coverage.designed_entities, brand.ACCENT, "designed, not built"),
-        Slice("Built in the repository", coverage.built_entities, brand.SKY, "built, not deployed"),
-    ]
-    if result.alignment.warehouse_known:
-        stages.append(Slice("Live in the warehouse", coverage.deployed_entities, "#16a34a"))
-    stages = [stage for stage in stages if stage.value > 0]
-    if len(stages) < 2:
-        return ""
-
-    foot = "The warehouse stage needs read access and is milestone M2, so it is not drawn."
-    if result.alignment.warehouse_known:
-        foot = ""
-    return _card(
-        "How much of the plan is real",
-        "Every entity, from what the business asked for to what exists.",
-        charts.funnel(stages, band=92),
-        span="half",
-        foot=foot,
-        anchor="funnel",
-    )
-
-
-def _states(result: RunResult) -> str:
-    summary = state_summary(result)
-    if not summary:
-        return ""
-    palette = {
-        "Designed and delivered": "#16a34a",
-        "Built, not deployed": brand.SKY,
-        "Built, switched off": brand.MUTED_INK,
-        "Approved off-plan": brand.ACCENT,
-        "Built off-plan": brand.PEACH,
-        "Off-plan, not deployed": brand.PEACH,
-        "Designed, not started": "#d97706",
-        "On the business model only": brand.PRIMARY,
-        "On the data flow diagram only": brand.BLUE_LIGHT,
-    }
-    slices = [
-        Slice(label, count, palette.get(label, brand.MUTED_INK)) for label, count, _ in summary
-    ]
-    rows = "".join(
-        f"<tr><td><span class='pill' style='background:{esc(item.colour)}'>"
-        f"{esc(item.label)}</span></td>"
-        f"<td class='num'>{item.value:g}</td>"
-        f"<td class='objects'>{esc(meaning)}</td></tr>"
-        for item, (_, _, meaning) in zip(slices, summary, strict=True)
-    )
-    return _card(
-        "Every entity, and where it stands",
-        "One state per entity.",
-        charts.stacked(slices)
-        + "<table><thead><tr><th>State</th><th>Count</th><th>What it means</th></tr></thead>"
-        f"<tbody>{rows}</tbody></table>",
-        span="half",
-        anchor="states",
-    )
 
 
 #: The chain, in the order a table travels along it. Each entry is the lane
@@ -758,12 +740,81 @@ def _three_models(result: RunResult) -> str:
     if hidden > 0:
         foot += f" {hidden} more entities are in the searchable table below."
     return _card(
-        "The three models, and what was built",
-        "Read across one band to follow a single table from what the business asked "
-        "for to what exists.",
+        "Modelling alignment",
+        "The conceptual, logical and physical models against what is built. Read "
+        "across one band to follow a single table.",
         charts.model_lanes([lane[0] for lane in lanes], rows),
         foot=foot,
-        anchor="models",
+        anchor="alignment",
+    )
+
+
+#: The library that draws the model diagrams, pinned to one version so the same
+#: source renders the same way next year. This is the only thing on the page
+#: fetched from anywhere. Without it the diagram source is shown as text and
+#: everything else on the page is unaffected.
+MERMAID_URL = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
+
+#: The three diagrams, in the order a stakeholder reads them.
+DIAGRAMS: tuple[tuple[str, str, str], ...] = (
+    ("conceptual", "Conceptual", "The business entities, grouped by area, coloured by state."),
+    ("logical", "Logical", "The designed tables from the DBML, with their keys and attributes."),
+    ("physical", "Physical", "The tables as built, with their real columns and types."),
+)
+
+
+def _diagrams(result: RunResult) -> str:
+    """The three models as diagrams a stakeholder can switch between and zoom."""
+    from hunter.emit import mermaid
+
+    sources = {
+        "conceptual": mermaid.conceptual_diagram(result.alignment)
+        if result.project.has_conceptual
+        else "",
+        "logical": mermaid.logical_diagram(result.project, result.alignment)
+        if result.project.has_dbml
+        else "",
+        "physical": mermaid.physical_diagram(result.project, result.alignment),
+    }
+    available = [
+        (key, label, blurb)
+        for key, label, blurb in DIAGRAMS
+        if sources[key].strip() and sources[key].strip() not in ("erDiagram", "flowchart TB")
+    ]
+    if not available:
+        return ""
+
+    tabs = "".join(
+        f"<button type='button' class='tab{' on' if index == 0 else ''}' "
+        f"data-pane='{key}' aria-selected='{'true' if index == 0 else 'false'}'>"
+        f"{esc(label)}</button>"
+        for index, (key, label, _) in enumerate(available)
+    )
+    panes = "".join(
+        f"<div class='pane' id='pane-{key}'{'' if index == 0 else ' hidden'}>"
+        f"<p class='blurb'>{esc(blurb)}</p>"
+        f"<div class='canvas'><pre class='mermaid'>{esc(sources[key].strip())}</pre></div>"
+        "</div>"
+        for index, (key, _, blurb) in enumerate(available)
+    )
+    controls = (
+        "<div class='zoom' hidden>"
+        "<button type='button' data-zoom='out' aria-label='Zoom out'>&minus;</button>"
+        "<button type='button' data-zoom='reset'>Fit</button>"
+        "<button type='button' data-zoom='in' aria-label='Zoom in'>+</button>"
+        "</div>"
+    )
+    offline = (
+        "<p class='offline' id='diagram-offline' hidden>The diagram library could not be "
+        "loaded, so the diagram source is shown as text. Open this page with a "
+        "connection to see it drawn.</p>"
+    )
+    return _card(
+        "Model diagrams",
+        "Switch between the three models. Drag to scroll, use the buttons to zoom. "
+        "Colour follows the state in the catalogue below.",
+        f"<div class='tabs' role='tablist'>{tabs}{controls}</div>{offline}{panes}",
+        anchor="diagrams",
     )
 
 
@@ -942,94 +993,6 @@ def _catalogue(result: RunResult) -> str:
     )
 
 
-def _rule_grid(result: RunResult) -> str:
-    """One square per rule, shaded by how much of what it checked it passed."""
-    from hunter.checks.base import REGISTRY
-
-    failures: dict[str, int] = {}
-    for finding in result.open_findings:
-        failures[finding.rule] = failures.get(finding.rule, 0) + 1
-
-    cells: list[Slice] = []
-    clean = amber = bad = unchecked = 0
-    for rule in REGISTRY.all():
-        if rule.about_coverage:
-            continue
-        rule_id = rule.id
-        denominator = result.examined.get(rule_id)
-        checked = denominator.checked if denominator else 0
-        failed = failures.get(rule_id, 0)
-        if checked == 0:
-            colour, note = "#e8eaf0", "not applicable here"
-            unchecked += 1
-        else:
-            share = 1.0 - (failed / checked)
-            if share >= 0.999:
-                colour, note = "#16a34a", f"passed all {checked}"
-                clean += 1
-            elif share >= 0.9:
-                colour, note = "#a3d977", f"{failed} of {checked} failed"
-                amber += 1
-            elif share >= 0.5:
-                colour, note = "#d97706", f"{failed} of {checked} failed"
-                amber += 1
-            else:
-                colour, note = brand.DESTRUCTIVE, f"{failed} of {checked} failed"
-                bad += 1
-        # The rule id, not rule.title: a title is a template carrying
-        # placeholders like {subject}, filled from a finding's own evidence.
-        # There is no finding behind a square that passed, so a title here
-        # would render as raw "{subject} is built but switched off".
-        cells.append(Slice(rule_id, 1, colour, note))
-
-    if not cells:
-        return ""
-    key = (
-        "<div class='heat-key'>"
-        f"<span><i class='swatch' style='background:#16a34a'></i>passed everything ({clean})</span>"
-        f"<span><i class='swatch' style='background:#d97706'></i>failed somewhere ({amber})</span>"
-        f"<span><i class='swatch' style='background:{brand.DESTRUCTIVE}'></i>"
-        f"failed more than half ({bad})</span>"
-        f"<span><i class='swatch' style='background:#e8eaf0'></i>"
-        f"nothing to check ({unchecked})</span>"
-        "</div>"
-    )
-    return _card(
-        "Every rule at once",
-        f"One square per rule, {len(cells)} of them. Hover a square for its numbers.",
-        charts.heat_grid(cells, columns=16) + key,
-        span="two-thirds",
-        anchor="rules",
-    )
-
-
-def _findings_by_area(result: RunResult) -> str:
-    counts: dict[Dimension, int] = {}
-    for finding in result.open_findings:
-        counts[finding.dimension] = counts.get(finding.dimension, 0) + 1
-    grades = {entry.dimension: brand.grade_colour(entry.grade) for entry in result.score.dimensions}
-    rows = sorted(
-        (
-            Slice(
-                DIMENSION_HEADINGS[dimension],
-                count,
-                grades.get(dimension, brand.MUTED_INK),
-            )
-            for dimension, count in sorted(counts.items())
-        ),
-        key=lambda row: row.value,
-    )
-    if not rows:
-        return ""
-    return _card(
-        "Where the findings are",
-        "Open findings per area. A large count on a well-scored area means many small things.",
-        charts.bars(rows, width=440, label_width=250, row_height=34),
-        span="third",
-        anchor="by-area",
-    )
-
-
 def _load_bearing(result: RunResult) -> str:
     """The tables most is built on, and whether anything checks them.
 
@@ -1126,11 +1089,17 @@ def _not_checked(result: RunResult) -> str:
     from hunter.emit.markdown import UNAVAILABLE_REASONS
 
     missing = sorted(set(UNAVAILABLE_REASONS) - set(result.available))
-    if not missing:
+    skipped = [DIMENSION_HEADINGS[dimension] for dimension in result.score.dimensions_skipped]
+    if not missing and not skipped:
         return ""
     rows = "".join(
         f"<tr><td><code>{esc(item)}</code></td><td>{esc(UNAVAILABLE_REASONS[item])}</td></tr>"
         for item in missing
+    )
+    rows += "".join(
+        f"<tr><td>{esc(heading)}</td><td>Not measured. Left out of the score, with its "
+        "weight shared across the areas that were.</td></tr>"
+        for heading in skipped
     )
     return _card(
         "What this score is not based on",
@@ -1159,10 +1128,10 @@ def _sources(result: RunResult) -> str:
 
 
 NAV = [
-    ("#sync", "Do the layers agree"),
-    ("#models", "The models"),
+    ("#checklist", "Checklist"),
+    ("#alignment", "Modelling alignment"),
+    ("#diagrams", "Diagrams"),
     ("#catalogue", "Every table"),
-    ("#areas", "Areas"),
     ("#queue", "Do first"),
     ("scorecard/", "Full report"),
 ]
@@ -1197,6 +1166,81 @@ SEARCH_JS = """
 })();
 """
 
+#: Tabs and zoom for the model diagrams. Each diagram is drawn the first time
+#: its tab is opened, because the library measures text and a hidden element
+#: measures as nothing. If the library never arrived the source stays as text
+#: and a note says so.
+DIAGRAM_JS = """
+(function () {
+  var card = document.getElementById('diagrams');
+  if (!card) { return; }
+  var tabs = card.querySelectorAll('.tab');
+  var zoom = card.querySelector('.zoom');
+  var note = document.getElementById('diagram-offline');
+  var scale = {};
+  var ready = typeof window.mermaid !== 'undefined' && !window.hunterDiagramsOffline;
+  if (ready) {
+    window.mermaid.initialize({ startOnLoad: false, theme: 'neutral',
+      themeVariables: { fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' } });
+  } else if (note) {
+    note.hidden = false;
+  }
+  function pane(key) { return document.getElementById('pane-' + key); }
+  function svgOf(key) { var p = pane(key); return p ? p.querySelector('svg') : null; }
+  function apply(key) {
+    var svg = svgOf(key);
+    if (!svg) { return; }
+    var base = parseFloat(svg.getAttribute('data-base') || '0');
+    if (!base) {
+      base = svg.getBoundingClientRect().width || 800;
+      svg.setAttribute('data-base', String(base));
+    }
+    svg.style.maxWidth = 'none';
+    svg.style.width = (base * (scale[key] || 1)) + 'px';
+  }
+  function draw(key) {
+    var p = pane(key);
+    if (!ready || !p) { return; }
+    var pre = p.querySelector('pre.mermaid');
+    if (!pre || pre.getAttribute('data-processed')) { apply(key); return; }
+    window.mermaid.run({ nodes: [pre] }).then(function () {
+      scale[key] = 1; apply(key);
+      if (zoom) { zoom.hidden = false; }
+    }).catch(function () { if (note) { note.hidden = false; } });
+  }
+  var current = null;
+  function show(key) {
+    current = key;
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute('data-pane') === key;
+      tabs[i].classList.toggle('on', on);
+      tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+      var p = pane(tabs[i].getAttribute('data-pane'));
+      if (p) { p.hidden = !on; }
+    }
+    draw(key);
+  }
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function (event) {
+      show(event.currentTarget.getAttribute('data-pane'));
+    });
+  }
+  if (zoom) {
+    zoom.addEventListener('click', function (event) {
+      var what = event.target.getAttribute('data-zoom');
+      if (!what || !current) { return; }
+      var s = scale[current] || 1;
+      if (what === 'in') { s = Math.min(4, s * 1.25); }
+      else if (what === 'out') { s = Math.max(0.25, s / 1.25); }
+      else { s = 1; }
+      scale[current] = s;
+      apply(current);
+    });
+  }
+  if (tabs.length) { show(tabs[0].getAttribute('data-pane')); }
+})();
+"""
+
 
 def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None) -> str:
     """The whole dashboard, as one self-contained HTML document."""
@@ -1209,13 +1253,8 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
     panels = "".join(
         [
             _three_models(result),
+            _diagrams(result),
             _catalogue(result),
-            _areas(result),
-            _severity_mix(result),
-            _funnel(result),
-            _states(result),
-            _rule_grid(result),
-            _findings_by_area(result),
             _load_bearing(result),
             _queue(result),
             _not_checked(result),
@@ -1256,8 +1295,7 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
 </div></header>
 
 {_hero(result, generated)}
-{_sync(result)}
-{_alerts(result)}
+{_checklist(result)}
 
 <main><div class="wrap"><div class="grid">{panels}</div></div></main>
 
@@ -1267,6 +1305,8 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
   <span class="meta">{esc(stamp)}</span>
 </div></footer>
 <script>{SEARCH_JS}</script>
+<script src="{MERMAID_URL}" onerror="window.hunterDiagramsOffline=true"></script>
+<script>{DIAGRAM_JS}</script>
 </body>
 </html>
 """

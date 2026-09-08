@@ -1,7 +1,7 @@
 # Commands
 
-<p class="lede">Ten commands. Every one is a thin wrapper over the same
-pipeline, and the Rittman Analytics Action calls these and nothing else, so CI
+<p class="lede">Thirteen commands. Every one is a thin wrapper over the same
+pipeline, and the Rittman Analytics Actions call these and nothing else, so CI
 and your laptop give the same answer.</p>
 
 | Command | What it does |
@@ -9,6 +9,7 @@ and your laptop give the same answer.</p>
 | [`score`](#hunter-score) | Score the repository, write `report.json` |
 | [`dashboard`](#hunter-dashboard) | The report as one self-contained HTML file |
 | [`docs build`](#hunter-docs-build) | The dashboard plus every detail page behind it |
+| [`sync`](#hunter-sync) | Has one layer drifted from another. Three checks |
 | [`align`](#hunter-align) | What was designed against what exists |
 | [`explain`](#hunter-explain) | Everything known about one table |
 | [`check`](#hunter-check) | Build the pull request comment for a change |
@@ -62,9 +63,12 @@ hunter dashboard
 hunter dashboard . --out /tmp/report.html
 ```
 
-The whole report in one screen and one file, about 75 KB. The stylesheet, every
-chart and the logo are inlined, so it opens with no network and nothing beside
-it. Needs nothing installed beyond Hunter itself.
+The whole report in one screen and one file. The stylesheet, every chart and
+the logo are inlined, so it needs nothing installed and nothing beside it.
+
+The one exception is the diagram library, which is fetched from a CDN at a
+pinned version. Where it does not arrive, the diagram source is shown as text
+with a note saying why, and nothing else on the page depends on it.
 
 [See one](example/dashboard.md), or read what is on it.
 
@@ -84,6 +88,33 @@ Twelve pages plus one per table, with `dashboard.html` as the front door.
 
 Needs the `site` extra for the build step. The markdown and the dashboard are
 written either way.
+
+## `hunter sync`
+
+```bash
+hunter sync                  # all three
+hunter sync lookml           # one
+hunter sync modelling --fail-on any
+hunter sync --out out/sync.json --summary out/sync.md
+```
+
+Three drift checks, each a slice of the same rules the score runs.
+
+| Check | The question |
+|---|---|
+| `lookml` | Does the reporting layer still match the tables? |
+| `droughty` | Has the generated schema been applied, and is it current? |
+| `modelling` | Does what exists match what was designed and asked for? |
+
+| Option | What it does |
+|---|---|
+| `--fail-on` | `never` (default), `high` or `any`. A skipped check never fails |
+| `--out`, `-o` | Write the result as JSON |
+| `--summary` | Write a Markdown summary, for a CI step summary |
+| `--root`, `-r` | The repository to read. Default the current directory |
+
+A check whose sources are missing reports "skipped", never "passed". Each has
+its own GitHub Action: [the three sync checks](sync-checks.md).
 
 ## `hunter align`
 

@@ -175,6 +175,38 @@ stylesheet, and both the dashboard and the documentation theme are generated
 from that one module, so the product and its documentation cannot drift apart.
 The logo ships inside the package and is inlined as a data URI.
 
+## The sync checks
+
+**Three separate gates, not one.** The full score is the wrong shape for a
+required check: it moves for reasons unrelated to the change under review, and
+a team asked to make it required will ask for an exemption instead. Three
+narrow checks get adopted.
+
+They are separate from each other for three reasons. They fail for different
+reasons and different people fix them. They become available at different
+times, since a repository with no DBML can run LookML sync on its first day and
+has nothing for modelling sync to read. And each is its own composite action,
+so one can be added without the other two.
+
+**Each is a slice of the rules the score already runs.** Nothing in
+`hunter/sync.py` re-checks anything: it filters the findings and denominators
+the pipeline produced. That is what makes a passing sync check and a falling
+score impossible to hold at the same time. The alternative, a separate set of
+drift rules, would have produced two answers to one question.
+
+**A missing source reports skipped, never passed.** Failing on a missing source
+would make adding a design file a breaking change; passing on one would hand
+out a green tick nobody earned. So a skipped check never fails a build, and the
+summary says "This is not a pass" in as many words.
+
+**The default is `fail-on: never`.** Same reasoning as advisory mode on the
+score. A check that fails builds in its first week gets switched off in its
+second.
+
+**One comment per check, edited in place.** Three checks each posting on every
+push would be three times the reason to mute the tool, so each one finds its own
+previous comment by a marker and edits it.
+
 ## Distribution
 
 **A standalone package, separate from any other framework.** Machine-readable

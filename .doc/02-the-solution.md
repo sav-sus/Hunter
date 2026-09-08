@@ -22,11 +22,17 @@ each item saying what breaks if it is left.
 answering one question: the number, what nobody has decided, where the points
 are going, how much of the plan is real, every rule at once, which tables
 everything is built on, and what to fix first. It is one self-contained HTML
-file, so it opens with no network and can be sent as an attachment.
+file, so it can be sent as an attachment. Everything is inlined except the
+diagram library, which is pinned and degrades to source text.
 
 **A site**, twelve pages behind the dashboard, readable by an engineer and by
 someone who has never seen SQL. Plain language sits above the detail on the same
 page rather than in a separate mode nobody finds.
+
+**Three CI checks that can fail a build.** LookML sync, Droughty sync and
+Modelling sync, each its own GitHub Action, each answering one question about
+whether one layer has drifted from another. Each is a slice of the rules the
+score already runs, so a sync check and the score cannot contradict each other.
 
 **A pull request comment**, short, specific to the change, with what it reaches.
 

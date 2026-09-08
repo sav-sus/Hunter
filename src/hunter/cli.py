@@ -371,6 +371,127 @@ def dashboard(
     typer.echo(f"Open {target}")
 
 
+@app.command("sync")
+def sync_command(
+    which: str = typer.Argument(
+        "all",
+        help="lookml, droughty, modelling, or all. Default all.",
+        metavar="[lookml|droughty|modelling|all]",
+    ),
+    root: Path = typer.Option(Path(), "--root", "-r", help="The repository to read."),
+    config_file: Path | None = typer.Option(None, "--config", "-c"),
+    manifest: Path | None = typer.Option(None, "--manifest", "-m"),
+    fail_on: str = typer.Option(
+        "never",
+        "--fail-on",
+        help=(
+            "never (report only), high (fail on a high-severity drift) or any "
+            "(fail on any drift). A skipped check never fails."
+        ),
+    ),
+    out: Path | None = typer.Option(None, "--out", "-o", help="Write the result as JSON."),
+    summary: Path | None = typer.Option(
+        None, "--summary", help="Write a Markdown summary, for a CI step summary."
+    ),
+) -> None:
+    """Check whether one layer has drifted from another.
+
+    Three checks, each a slice of the same rules the score runs, so a sync
+    check and the score can never contradict each other.
+
+    \b
+    lookml      does the reporting layer still match the tables
+    droughty    has the generated schema been applied, and is it current
+    modelling   does what exists match what was designed and asked for
+
+    A check whose sources are missing reports "skipped", never "passed".
+    """
+    from hunter import sync as sync_module
+
+    if fail_on not in {"never", "high", "any"}:
+        _fail(f"--fail-on must be never, high or any, not {fail_on!r}")
+
+    if which != "all" and which not in sync_module.BY_KEY:
+        known = ", ".join(sync_module.BY_KEY)
+        _fail(f"No sync check named {which!r}. Choose one of: {known}, or all.")
+
+    result = _execute(root, config_file=config_file, manifest=manifest, read_git=False)
+    checks = list(sync_module.SYNC_CHECKS) if which == "all" else [sync_module.BY_KEY[which]]
+    results = [sync_module.evaluate(result, check) for check in checks]
+
+    for item in results:
+        _print_sync(item)
+
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(
+            json.dumps(sync_module.as_payload(results, result), indent=2, default=str),
+            encoding="utf-8",
+        )
+        typer.echo(f"  Written to {out}")
+
+    if summary:
+        summary.parent.mkdir(parents=True, exist_ok=True)
+        summary.write_text(sync_module.as_markdown(results), encoding="utf-8")
+        typer.echo(f"  Summary written to {summary}")
+
+    failing = [item for item in results if item.fails_build(fail_on)]
+    if failing:
+        names = ", ".join(item.check.title for item in failing)
+        typer.secho(f"  Failing: {names}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(EXIT_GATE_FAILED)
+
+
+def _print_sync(item: object) -> None:
+    """One sync result, for a terminal.
+
+    The statements come first and the findings second. A reader wants "5 of 6
+    tables have a view" before they want six rule names.
+    """
+    from hunter import sync as sync_module
+    from hunter.emit.plain import severity_label
+
+    assert isinstance(item, sync_module.SyncResult)
+    colour = {
+        "in sync": typer.colors.GREEN,
+        "drifted": typer.colors.RED,
+        "skipped": typer.colors.BRIGHT_BLACK,
+        "nothing to compare": typer.colors.BRIGHT_BLACK,
+    }[item.verdict]
+
+    typer.echo("")
+    typer.secho(f"  {item.check.title}: {item.verdict}", fg=colour, bold=True)
+    typer.echo(f"  {item.check.question}")
+    typer.echo(f"  {item.headline}")
+
+    if not item.ran:
+        typer.echo("")
+        return
+
+    if item.statements:
+        typer.echo("")
+        for statement, done, total, missing in item.statements:
+            mark = "ok  " if done == total else "--  "
+            typer.echo(f"    {mark}{done:>3} of {total:<3} {statement}")
+            if missing:
+                shown = ", ".join(missing[:4])
+                more = f" and {len(missing) - 4} more" if len(missing) > 4 else ""
+                typer.echo(f"           {shown}{more}")
+
+    if item.findings:
+        typer.echo("")
+        for finding in item.findings[:10]:
+            typer.echo(f"    [{severity_label(finding.severity)}] {finding.summary}")
+        if len(item.findings) > 10:
+            typer.echo(f"    and {len(item.findings) - 10} more.")
+
+    if item.absent_but_useful:
+        names = ", ".join(sync_module.source_name(source) for source in item.absent_but_useful)
+        typer.echo("")
+        typer.echo(f"    Not read, so this check is narrower than it could be: {names}.")
+    typer.echo("")
+
+
 @app.command()
 def diagram(
     root: Path = typer.Argument(Path(), help="The repository to read."),
