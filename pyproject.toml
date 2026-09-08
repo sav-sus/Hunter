@@ -93,3 +93,11 @@ addopts = "-q --strict-markers"
 markers = [
   "pilot: runs against a local client repository; never runs in CI",
 ]
+filterwarnings = [
+  "error",
+  # pydbml 1.2.1 calls deprecated pyparsing methods. Pinned dependency, not
+  # our call site; the pin is deliberate so a break surfaces at upgrade.
+  "default::DeprecationWarning:pydbml.parser.parser",
+  "default:.*addParseAction.*:Warning",
+  "default:.*parseAll.*:Warning",
+]
