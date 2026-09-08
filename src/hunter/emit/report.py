@@ -32,6 +32,7 @@ def build_report(result: RunResult, *, generated_at: dt.datetime | None = None) 
     payload = stable_payload(result)
     payload["meta"] = {
         **result.meta,
+        "attribution": result.config.branding.attribution,
         "report_schema_version": REPORT_SCHEMA_VERSION,
         "generated_at": stamped.isoformat(),
         "as_of": result.as_of.isoformat(),

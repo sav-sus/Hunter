@@ -174,6 +174,7 @@ def build_comment(
         f"Hunter {result.meta.get('hunter_version')}, ruleset "
         f"{result.meta.get('house_ruleset_version')}. "
         f"[Full report]({_site_hint(result)}).</sub>",
+        f"<sub>{config.branding.attribution}.</sub>",
     ]
     if pull_request:
         lines.append(f"<sub>Pull request #{pull_request}.</sub>")

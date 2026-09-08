@@ -70,6 +70,10 @@ class TestReportContract:
         assert text.endswith("\n")
         assert json.loads(text)["score"]["total"] == result.score.total
 
+    def test_the_attribution_is_in_the_report(self, result: RunResult) -> None:
+        """FR15.7: on every published artifact, not only the site."""
+        assert "Rittman" in build_report(result)["meta"]["attribution"]
+
     def test_raw_sql_is_not_in_the_report(self, result: RunResult) -> None:
         """Several megabytes of client SQL has no business in a report."""
         payload = json.dumps(build_report(result))
@@ -260,6 +264,10 @@ class TestPrComment:
         body = build_comment(result, previous_report=path)
         assert "Comparing against the previous run" in body
         assert "No new findings" in body
+
+    def test_the_attribution_is_in_the_comment(self, result: RunResult) -> None:
+        """FR15.7."""
+        assert "Rittman" in build_comment(result)
 
     def test_advisory_mode_says_it_never_fails(self, result: RunResult) -> None:
         """FR11.7."""
