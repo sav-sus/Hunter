@@ -60,6 +60,13 @@ class LayerSpec(Strict):
     )
     expected_entity_kinds: list[EntityKind] = Field(default_factory=list)
 
+    #: Whether models in this layer are modelled entities that belong in the
+    #: alignment chain. Staging and integration models are working steps, not
+    #: entities: counting them would report 129 staging models as built
+    #: off-plan, which is not a finding anyone can act on. Declared explicitly
+    #: rather than inferred, per NFR6.
+    in_alignment: bool = False
+
     def matches_path(self, path: str) -> bool:
         return any(fnmatch.fnmatch(path, pattern) for pattern in self.paths)
 

@@ -142,6 +142,8 @@ class AlignmentState(StrEnum):
     APPROVED_OFF_PLAN = "approved_off_plan"
     OFF_PLAN_NOT_DEPLOYED = "off_plan_not_deployed"
     UNTRACKED_TABLE = "untracked_table"
+    CONCEPTUAL_ONLY = "conceptual_only"
+    LOGICAL_ONLY = "logical_only"
     NOT_PRESENT = "not_present"
 
 
@@ -156,6 +158,8 @@ ALIGNMENT_STATE_LABELS: dict[AlignmentState, str] = {
     AlignmentState.APPROVED_OFF_PLAN: "Built off-plan, approved",
     AlignmentState.OFF_PLAN_NOT_DEPLOYED: "Off-plan, not deployed",
     AlignmentState.UNTRACKED_TABLE: "Untracked table",
+    AlignmentState.CONCEPTUAL_ONLY: "On the business model only",
+    AlignmentState.LOGICAL_ONLY: "On the data flow diagram only",
     AlignmentState.NOT_PRESENT: "Not present anywhere",
 }
 
@@ -179,6 +183,14 @@ ALIGNMENT_STATE_MEANINGS: dict[AlignmentState, str] = {
     ),
     AlignmentState.OFF_PLAN_NOT_DEPLOYED: ("Work in progress outside the plan, or abandoned."),
     AlignmentState.UNTRACKED_TABLE: ("In production, and nobody designed or built it here."),
+    AlignmentState.CONCEPTUAL_ONLY: (
+        "Agreed with the business as something the warehouse should hold, but not "
+        "designed yet. This is the design backlog."
+    ),
+    AlignmentState.LOGICAL_ONLY: (
+        "Named in the data flow diagram, with no design and no model of its own. "
+        "It may be produced by an installed package rather than by this project."
+    ),
     AlignmentState.NOT_PRESENT: "Referenced somewhere but found nowhere.",
 }
 

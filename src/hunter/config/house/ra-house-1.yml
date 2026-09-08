@@ -55,6 +55,7 @@ layers:
     requires_owner: true
     requires_key_tests: true
     expected_entity_kinds: [fact, dimension, aggregate, bridge, snapshot]
+    in_alignment: true
 
   - name: seeds
     paths: ["seeds/**", "data/**"]
@@ -79,6 +80,7 @@ layers:
     requires_column_descriptions: false
     requires_owner: true
     requires_key_tests: false
+    in_alignment: true
 
   - name: ai
     paths: ["models/ai/**"]
@@ -91,6 +93,7 @@ layers:
     requires_column_descriptions: true
     requires_owner: true
     requires_key_tests: false
+    in_alignment: true
 
 # ---------------------------------------------------------------------------
 # Entities

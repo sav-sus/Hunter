@@ -196,7 +196,11 @@ class Coverage(BaseModel):
     designed_not_started: int = 0
     unmanaged_production: int = 0
 
+    #: Model-level and column-level documentation are counted apart. The pilot
+    #: describes 1,615 of 1,615 columns and 0 of 54 warehouse tables, so a
+    #: single figure would report a well-documented project as undocumented.
     documented_entities: int = 0
+    column_documented_entities: int = 0
     tested_entities: int = 0
 
     @staticmethod
@@ -217,7 +221,13 @@ class Coverage(BaseModel):
 
     @property
     def documentation_coverage(self) -> float | None:
+        """Share of built entities carrying a table-level description."""
         return self._percent(self.documented_entities, self.built_entities)
+
+    @property
+    def column_documentation_coverage(self) -> float | None:
+        """Share of built entities with every column described."""
+        return self._percent(self.column_documented_entities, self.built_entities)
 
     @property
     def test_coverage(self) -> float | None:
