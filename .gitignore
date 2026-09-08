@@ -21,6 +21,13 @@ out/
 report.json
 .hunter/baseline.json
 
+# dbt build output and logs, including what the editor's dbt language server
+# writes into the example project.
+target/*
+!examples/tiny-shop/analytics_warehouse/target/manifest.json
+logs/
+*.log
+
 # The built documentation site.
 #
 # docs-html/ IS committed, so the site can be opened from any checkout without
