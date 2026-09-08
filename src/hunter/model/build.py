@@ -116,6 +116,13 @@ def _attach_git(project: Project, git: GitData | None) -> None:
         model.last_modified_by = history.last_modified_by
         model.last_modified_at = history.last_modified_at
 
+        if model.schema_file:
+            docs_key = _find_history(model.schema_file, git, index)
+            if docs_key is not None:
+                docs = git.histories[docs_key] if git else None
+                if docs is not None:
+                    model.docs_modified_at = docs.last_modified_at
+
 
 def _apply_register(project: Project, register: Register) -> None:
     """Fold in what a person has declared. Metadata only; no rule silencing.

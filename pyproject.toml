@@ -97,7 +97,7 @@ filterwarnings = [
   "error",
   # pydbml 1.2.1 calls deprecated pyparsing methods. Pinned dependency, not
   # our call site; the pin is deliberate so a break surfaces at upgrade.
-  "default::DeprecationWarning:pydbml.parser.parser",
-  "default:.*addParseAction.*:Warning",
-  "default:.*parseAll.*:Warning",
+  # Named by class rather than by module: the warning is raised inside
+  # pyparsing, not inside pydbml, so a module filter does not catch it.
+  "default::pyparsing.warnings.PyparsingDeprecationWarning",
 ]

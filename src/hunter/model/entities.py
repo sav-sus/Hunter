@@ -40,7 +40,7 @@ class Node(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-class TestRef(Node):
+class DbtTest(Node):
     """One dbt test, normalised.
 
     ``kind`` matters more than ``name``. A project can reach the same guarantee
@@ -135,6 +135,12 @@ class Model(Node):
     owner: str | None = None
     downstream_models: list[str] = Field(default_factory=list)
     exposure_weight: float = 1.0
+
+    #: The schema.yml that documents this model, from the manifest's
+    #: patch_path. Needed to tell whether the documentation has kept up with
+    #: the SQL. FR2.5.
+    schema_file: str | None = None
+    docs_modified_at: dt.date | None = None
 
     # Git attribution, filled by ingest.git when history is available
     created_by: str | None = None
@@ -455,7 +461,7 @@ class Project(Node):
     models: dict[str, Model] = Field(default_factory=dict)
     sources: dict[str, Source] = Field(default_factory=dict)
     exposures: list[Exposure] = Field(default_factory=list)
-    tests: list[TestRef] = Field(default_factory=list)
+    tests: list[DbtTest] = Field(default_factory=list)
     disabled_models: dict[str, Model] = Field(default_factory=dict)
     designed: dict[str, DesignedEntity] = Field(default_factory=dict)
     conceptual: dict[str, ConceptualEntity] = Field(default_factory=dict)
@@ -486,10 +492,10 @@ class Project(Node):
     def model_names(self) -> set[str]:
         return set(self.models) | set(self.disabled_models)
 
-    def tests_for(self, model_name: str) -> list[TestRef]:
+    def tests_for(self, model_name: str) -> list[DbtTest]:
         return [test for test in self.tests if test.tests_model == model_name]
 
-    def tests_for_column(self, model_name: str, column: str) -> list[TestRef]:
+    def tests_for_column(self, model_name: str, column: str) -> list[DbtTest]:
         lowered = column.lower()
         return [
             test

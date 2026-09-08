@@ -60,6 +60,13 @@ class LayerSpec(Strict):
     )
     expected_entity_kinds: list[EntityKind] = Field(default_factory=list)
 
+    #: Where this layer sits in the pipeline. Declaration order is not
+    #: pipeline order, and using it as a proxy produced findings like "skips
+    #: the seeds layer to read a warehouse table". Declared explicitly, per
+    #: NFR6. Layers sharing a stage are siblings and neither bypasses the
+    #: other; 0 means the layer is not part of the flow.
+    pipeline_stage: int = 0
+
     #: Whether models in this layer are modelled entities that belong in the
     #: alignment chain. Staging and integration models are working steps, not
     #: entities: counting them would report 129 staging models as built

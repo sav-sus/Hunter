@@ -22,11 +22,11 @@ from typing import Any
 
 from hunter.model.entities import (
     Column,
+    DbtTest,
     Exposure,
     Model,
     ParseIssue,
     Source,
-    TestRef,
 )
 
 #: Manifest schema versions this reader is known to handle.
@@ -92,6 +92,13 @@ def _owner_from_meta(meta: dict[str, Any], keys: tuple[str, ...]) -> str | None:
     return None
 
 
+def _patch_path(value: Any) -> str | None:
+    """``package://models/schema.yml`` -> ``models/schema.yml``."""
+    if not isinstance(value, str) or not value:
+        return None
+    return value.split("://", 1)[-1] or None
+
+
 def _model_from_node(node: dict[str, Any], *, enabled: bool) -> Model:
     config = node.get("config") or {}
     meta = dict(node.get("meta") or {}) | dict(config.get("meta") or {})
@@ -120,11 +127,12 @@ def _model_from_node(node: dict[str, Any], *, enabled: bool) -> Model:
             {".".join(ref.split(".")[-2:]) for ref in depends if ref.startswith("source.")}
         ),
         raw_code=str(node.get("raw_code") or ""),
+        schema_file=_patch_path(node.get("patch_path")),
         owner=_owner_from_meta(meta, ("owner", "team")),
     )
 
 
-def _test_from_node(node: dict[str, Any]) -> TestRef:
+def _test_from_node(node: dict[str, Any]) -> DbtTest:
     metadata = node.get("test_metadata") or {}
     kwargs = metadata.get("kwargs") or {}
     config = node.get("config") or {}
@@ -151,7 +159,7 @@ def _test_from_node(node: dict[str, Any]) -> TestRef:
         inner = to_ref.split("ref(", 1)[1]
         to_model = inner.strip(" )'\"").split("'")[0].split('"')[0] or None
 
-    return TestRef(
+    return DbtTest(
         unique_id=str(node.get("unique_id") or ""),
         name=str(test_name or node.get("name") or ""),
         kind=classify_test(test_name if isinstance(test_name, str) else None),
@@ -202,7 +210,7 @@ class ManifestData:
         self.disabled_models: dict[str, Model] = {}
         self.sources: dict[str, Source] = {}
         self.exposures: list[Exposure] = []
-        self.tests: list[TestRef] = []
+        self.tests: list[DbtTest] = []
         self.issues: list[ParseIssue] = []
         self.dbt_version: str | None = None
         self.schema_version: str | None = None

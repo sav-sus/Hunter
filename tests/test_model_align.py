@@ -13,10 +13,10 @@ from hunter.model.align import build_alignment
 from hunter.model.build import build_project
 from hunter.model.entities import (
     ConceptualEntity,
+    DbtTest,
     DesignedColumn,
     DesignedEntity,
     Model,
-    TestRef,
 )
 
 
@@ -54,7 +54,7 @@ def assemble(
     concepts: list[ConceptualEntity] | None = None,
     logical: LogicalData | None = None,
     register: Register | None = None,
-    tests: list[TestRef] | None = None,
+    tests: list[DbtTest] | None = None,
 ):
     manifest = ManifestData()
     manifest.project_name = "my_project"
@@ -284,13 +284,13 @@ class TestCoverage:
         assert coverage.column_documentation_coverage == 100.0
 
     def test_key_tests_count_towards_test_coverage_and_weak_ones_do_not(self, config) -> None:
-        weak = TestRef(
+        weak = DbtTest(
             unique_id="test.1",
             name="at_least_one",
             kind="at_least_one",
             tests_model="wh_a__weak_fact",
         )
-        strong = TestRef(
+        strong = DbtTest(
             unique_id="test.2",
             name="unique",
             kind="unique",

@@ -20,6 +20,7 @@ version: "1"
 # ---------------------------------------------------------------------------
 layers:
   - name: staging
+    pipeline_stage: 1
     paths: ["models/staging/**", "models/stg_*/**"]
     prefix: stg_
     materialisations: [view, ephemeral, incremental]
@@ -32,6 +33,7 @@ layers:
     requires_key_tests: false
 
   - name: integration
+    pipeline_stage: 2
     paths: ["models/integration/**", "models/int_*/**"]
     prefix: int_
     materialisations: [view, ephemeral, table, incremental]
@@ -44,6 +46,7 @@ layers:
     requires_key_tests: false
 
   - name: warehouse
+    pipeline_stage: 3
     paths: ["models/warehouse/**", "models/wh_*/**"]
     prefix: wh_
     materialisations: [table, incremental]
@@ -58,6 +61,7 @@ layers:
     in_alignment: true
 
   - name: seeds
+    pipeline_stage: 0
     paths: ["seeds/**", "data/**"]
     prefix: null
     materialisations: [seed]
@@ -70,6 +74,7 @@ layers:
     requires_key_tests: false
 
   - name: reverse_etl
+    pipeline_stage: 4
     paths: ["models/reverse_etl/**"]
     prefix: null
     materialisations: [table, view, incremental]
@@ -83,6 +88,7 @@ layers:
     in_alignment: true
 
   - name: ai
+    pipeline_stage: 4
     paths: ["models/ai/**"]
     prefix: null
     materialisations: [table, incremental]
