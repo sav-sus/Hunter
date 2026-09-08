@@ -103,6 +103,13 @@ class Model(Node):
     unique_id: str
     path: str
     resource_type: str = "model"
+
+    #: dbt package this model belongs to. Models from an installed package are
+    #: vendored code the client did not write and cannot fix, so they are
+    #: excluded from scoring. The pilot has 57 of them across three packages.
+    package: str | None = None
+    vendored: bool = False
+
     schema_name: str | None = None
     database: str | None = None
     alias: str | None = None
@@ -156,6 +163,11 @@ class Model(Node):
     def is_sql_model(self) -> bool:
         """A model written in SQL. Seeds are CSV and have no SQL to check."""
         return self.resource_type == "model"
+
+    @property
+    def is_scoreable(self) -> bool:
+        """Whether findings on this model should affect the score."""
+        return not self.vendored
 
     @property
     def is_temporary(self) -> bool:

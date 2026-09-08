@@ -102,6 +102,7 @@ def _model_from_node(node: dict[str, Any], *, enabled: bool) -> Model:
         unique_id=str(node.get("unique_id") or ""),
         path=str(node.get("original_file_path") or node.get("path") or ""),
         resource_type=str(node.get("resource_type") or "model"),
+        package=str(node.get("package_name") or "") or None,
         schema_name=node.get("schema") or None,
         database=node.get("database") or None,
         alias=node.get("alias") or None,
@@ -207,6 +208,14 @@ class ManifestData:
         self.schema_version: str | None = None
         self.project_name: str | None = None
 
+    def vendored_counts(self) -> dict[str, int]:
+        """How many models each installed package contributed."""
+        counts: dict[str, int] = {}
+        for model in self.models.values():
+            if model.vendored and model.package:
+                counts[model.package] = counts.get(model.package, 0) + 1
+        return dict(sorted(counts.items()))
+
 
 def load_manifest(path: Path) -> ManifestData:
     """Read a manifest file.
@@ -290,6 +299,15 @@ def parse_manifest(raw: dict[str, Any], *, source: str = "manifest.json") -> Man
     for node in (raw.get("exposures") or {}).values():
         if isinstance(node, dict):
             data.exposures.append(_exposure_from_node(node))
+
+    # Anything from an installed package is vendored. Holding a client to
+    # their conventions on code they did not write, and cannot change without
+    # forking the package, would produce findings nobody can act on.
+    root_package = data.project_name
+    if root_package:
+        for collection in (data.models, data.disabled_models):
+            for model in collection.values():
+                model.vendored = bool(model.package) and model.package != root_package
 
     data.exposures.sort(key=lambda exposure: exposure.name)
     data.tests.sort(key=lambda test: test.unique_id)

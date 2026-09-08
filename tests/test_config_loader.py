@@ -82,18 +82,21 @@ class TestKeyedListMerge:
     """A project adding one layer must not have to restate every layer."""
 
     def test_overriding_one_layer_keeps_the_rest(self, tmp_path: Path) -> None:
+        house_names = [layer.name for layer in resolve().config.layers]
         project = write(
             tmp_path / "hunter.yml",
             {"layers": [{"name": "staging", "prefix": "s_"}]},
         )
         resolved = resolve(project)
-        names = [layer.name for layer in resolved.config.layers]
-        assert names == ["staging", "integration", "warehouse", "reverse_etl", "ai"]
+
+        # Every house layer survives, in the same order
+        assert [layer.name for layer in resolved.config.layers] == house_names
         assert resolved.config.layer("staging").prefix == "s_"
         # Untouched fields on the same layer survive
         assert resolved.config.layer("staging").persistence.value == "temporary"
 
     def test_adding_a_new_layer_appends_it(self, tmp_path: Path) -> None:
+        house_count = len(resolve().config.layers)
         project = write(
             tmp_path / "hunter.yml",
             {
@@ -109,16 +112,17 @@ class TestKeyedListMerge:
         )
         resolved = resolve(project)
         assert resolved.config.layer("sandbox") is not None
-        assert len(resolved.config.layers) == 6
+        assert len(resolved.config.layers) == house_count + 1
 
     def test_entities_merge_on_kind(self, tmp_path: Path) -> None:
+        house_count = len(resolve().config.entities)
         project = write(
             tmp_path / "hunter.yml",
             {"entities": [{"kind": "fact", "suffix": "_f"}]},
         )
         resolved = resolve(project)
         assert resolved.config.entity_for_name("orders_f").kind.value == "fact"
-        assert len(resolved.config.entities) == 5
+        assert len(resolved.config.entities) == house_count
 
     def test_ignores_accumulate_rather_than_replace(self, tmp_path: Path) -> None:
         project = write(

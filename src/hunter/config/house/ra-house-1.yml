@@ -24,7 +24,7 @@ layers:
     prefix: stg_
     materialisations: [view, ephemeral, incremental]
     persistence: temporary
-    may_reference: []
+    may_reference: [seeds]
     may_reference_sources: true
     requires_model_description: false
     requires_column_descriptions: true
@@ -36,7 +36,7 @@ layers:
     prefix: int_
     materialisations: [view, ephemeral, table, incremental]
     persistence: temporary
-    may_reference: [staging, integration]
+    may_reference: [staging, integration, seeds]
     may_reference_sources: false
     requires_model_description: false
     requires_column_descriptions: true
@@ -48,13 +48,25 @@ layers:
     prefix: wh_
     materialisations: [table, incremental]
     persistence: persistent
-    may_reference: [staging, integration, warehouse]
+    may_reference: [staging, integration, warehouse, seeds]
     may_reference_sources: false
     requires_model_description: true
     requires_column_descriptions: true
     requires_owner: true
     requires_key_tests: true
     expected_entity_kinds: [fact, dimension, aggregate, bridge, snapshot]
+
+  - name: seeds
+    paths: ["seeds/**", "data/**"]
+    prefix: null
+    materialisations: [seed]
+    persistence: persistent
+    may_reference: []
+    may_reference_sources: false
+    requires_model_description: false
+    requires_column_descriptions: false
+    requires_owner: false
+    requires_key_tests: false
 
   - name: reverse_etl
     paths: ["models/reverse_etl/**"]
