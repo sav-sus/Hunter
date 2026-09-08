@@ -236,7 +236,7 @@ the site with its reason and its review date.
 | [`examples/tiny-shop/`](examples/tiny-shop) | A working example project |
 | [`docs/`](docs) | The published documentation |
 | [`.doc/`](.doc/README.md) | Why it is built this way: problem, decisions, roadmap, what is not built |
-| [`tests/`](tests) | 515 tests, including a golden file pinning the example's score |
+| [`tests/`](tests) | 519 tests, including a golden file pinning the example's score |
 | [`action.yml`](action.yml) | The composite GitHub Action |
 
 ## What it will never do
@@ -255,7 +255,7 @@ Those are licence terms, not only design intent.
 | Version | 0.1.0.dev0, unreleased |
 | Milestone | M0 complete, plus four additions |
 | Rules | 77 across 7 scored areas |
-| Tests | 518 |
+| Tests | 519 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).

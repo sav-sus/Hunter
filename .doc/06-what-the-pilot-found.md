@@ -207,10 +207,10 @@ Predicted in the plan against what the finished tool reports.
 | Areas scored | 7 of 8 |
 | Systemic gaps | 2: no table names an owner, none declares an exposure |
 
-## Three more, found by rebuilding the example
+## Four more, found by rebuilding the example
 
 Rebuilding the example project to match the real layout, with real SQL files
-and the layered LookML structure, found three further faults. That is the
+and the layered LookML structure, found four further faults. That is the
 strongest argument for keeping an example realistic: a fixture that does not
 look like the real thing does not behave like it either.
 
@@ -241,3 +241,29 @@ through. That is 2 of 228, and both are hardcoded tables rather than sources.
 hardcoded-reference and star-select rules reported only the first part as the
 table name. A finding that names `` `warehouse` `` instead of the table is a
 finding nobody can act on.
+
+### The rendered output was not deterministic
+
+Committing the example turned two of its findings into git-derived values, and
+chasing that down exposed a worse fault behind it.
+
+The blast-radius diagram looped over a set of table names. Set order over
+strings depends on Python's hash seed, which is fixed inside one process and
+different between processes. So two runs of the same commit drew the same edges
+in a different order, on three committed pages.
+
+The golden-file test could not have caught this. It runs in one process, where
+the order is stable, so the comparison passed every time. The drift only
+appeared when the pages were rebuilt from a second process.
+
+Two changes came out of it. The loop now walks the sorted list and keeps the set
+for membership only. And the determinism test now renders every page and every
+diagram twice, in two subprocesses with different hash seeds, and compares the
+bytes. Reverting the one-line fix makes that test fail, which is the only
+evidence worth having that a test covers what it claims to.
+
+The git-derived values were the smaller half. Attribution and the
+description-staleness rule both read history, which would tie the pinned output
+to whoever committed the example and when. A shallow checkout, a squash merge or
+a second developer would each have broken it. The example's committed output now
+skips history, and says so on its "what was not checked" page.

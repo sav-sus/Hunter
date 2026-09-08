@@ -149,6 +149,12 @@ def example_intro(result) -> str:
             "main/examples/tiny-shop), regenerated whenever the tool changes. It is "
             "not a mock-up.",
             "",
+            "Two areas read as unavailable here and would not be on your "
+            "repository. There is no warehouse to connect to, and git history is "
+            "skipped on purpose so these pages rebuild identically from any "
+            "checkout. On a real repository Hunter attributes every table to "
+            "whoever wrote it.",
+            "",
             "## The example project",
             "",
             "Eight tables, with one deliberate flaw per finding class. Small enough "
@@ -243,7 +249,10 @@ def example_intro(result) -> str:
 
 def build_example() -> object:
     """Render the example project's site into the documentation."""
-    result = run(EXAMPLE, as_of=AS_OF)
+    # read_git=False so these committed pages rebuild identically from any
+    # checkout. Git dates would move them on every commit that touches the
+    # example, and CI checks they have not drifted.
+    result = run(EXAMPLE, as_of=AS_OF, read_git=False)
 
     target = DOCS / "example"
     if target.exists():

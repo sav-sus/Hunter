@@ -131,7 +131,7 @@ this project.
 
 Twelve rules were wrong when first written, and every one was caught by running
 against a real 280-model client repository rather than against this. Rebuilding
-this example to match the real layout caught three more, which is the strongest
+this example to match the real layout caught four more, which is the strongest
 argument for keeping it realistic: a fixture that does not look like the real
 thing does not behave like it either.
 

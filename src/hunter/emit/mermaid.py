@@ -371,8 +371,11 @@ def blast_radius(
     for name in downstream[:max_nodes]:
         lines.append(f'  {safe_id(name, "m")}["{escape(name)}"]')
 
+    # Iterate the sorted list, never the set: set order over strings varies with
+    # the hash seed, so two runs of one commit would draw the edges in a
+    # different order. The set is for membership only.
     shown = set(downstream[:max_nodes])
-    for name in shown:
+    for name in downstream[:max_nodes]:
         for parent in graph.direct_parents(name):
             if parent == model_name or parent in shown:
                 lines.append(f"  {safe_id(parent, 'm')} --> {safe_id(name, 'm')}")

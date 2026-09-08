@@ -51,10 +51,10 @@ flowchart LR
   wh_shop__order_fact["wh_shop__order_fact"]
   wh_shop__product_dim["wh_shop__product_dim"]
   stg_shop__orders --> int_shop__orders
-  int_shop__orders --> wh_shop__product_dim
   stg_shop__orders --> wh_shop__daily_sales_xa
   int_shop__orders --> wh_shop__legacy_fact
   int_shop__orders --> wh_shop__order_fact
+  int_shop__orders --> wh_shop__product_dim
 ```
 
 

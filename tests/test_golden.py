@@ -69,7 +69,16 @@ EXPECTED_FINDINGS: dict[str, int] = {
 
 @pytest.fixture(scope="module")
 def result() -> RunResult:
-    return run(EXAMPLE, as_of=AS_OF)
+    """History is skipped on purpose.
+
+    Attribution and the description-staleness rule both read git. Both would
+    make this payload depend on who committed the example and when, so a
+    shallow CI checkout, a squash merge or a second developer would each break
+    the comparison for no reason. Attribution is covered by
+    ``test_ingest_git.py`` and ``test_model_build.py`` against repositories
+    those tests build themselves.
+    """
+    return run(EXAMPLE, as_of=AS_OF, read_git=False)
 
 
 class TestFixtureScore:
@@ -220,3 +229,56 @@ class TestDeterminism:
         payload = json.dumps(stable_payload(result), default=str)
         assert "/Users/" not in payload
         assert "/home/" not in payload
+
+
+#: Rendered every page and every diagram, then hashed. Run under two different
+#: hash seeds, this catches anything that iterates a set where it should iterate
+#: a sorted list.
+_RENDER_AND_HASH = """
+import datetime as dt, hashlib, json, pathlib, sys, tempfile
+from hunter.emit.markdown import write_site
+from hunter.emit.report import stable_payload
+from hunter.run import run
+
+root = pathlib.Path(sys.argv[1])
+out = pathlib.Path(tempfile.mkdtemp())
+result = run(root, as_of=dt.date(2026, 9, 8), read_git=False)
+write_site(result, out, generated_at=dt.datetime(2026, 9, 8, 12, 0, 0))
+
+digest = hashlib.sha256()
+for path in sorted(p for p in out.rglob("*") if p.is_file()):
+    digest.update(str(path.relative_to(out)).encode())
+    digest.update(path.read_bytes())
+digest.update(json.dumps(stable_payload(result), sort_keys=True, default=str).encode())
+print(digest.hexdigest())
+"""
+
+
+class TestRenderedOutputIsDeterministic:
+    """The golden file alone cannot prove this.
+
+    Within one process the hash seed is fixed, so a loop over a set of strings
+    gives the same order every time and the golden comparison passes. The order
+    only changes between processes. One such loop shipped in the blast-radius
+    diagram and reordered three edges on three committed pages, which is why
+    this runs the whole render twice under different seeds.
+    """
+
+    def _digest(self, seed: str) -> str:
+        import os
+        import subprocess
+        import sys
+
+        env = os.environ | {"PYTHONHASHSEED": seed}
+        completed = subprocess.run(
+            [sys.executable, "-c", _RENDER_AND_HASH, str(EXAMPLE)],
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=EXAMPLE.parent.parent,
+        )
+        assert completed.returncode == 0, completed.stderr
+        return completed.stdout.strip()
+
+    def test_two_hash_seeds_render_byte_identical_output(self) -> None:
+        assert self._digest("0") == self._digest("1")

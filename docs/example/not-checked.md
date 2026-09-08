@@ -4,6 +4,7 @@ A score is only as good as what went into it. This page says what did not.
 
 | Not available | What that means |
 |---|---|
+| git | No usable history, so nothing is attributed to whoever wrote it and no window can be reported. |
 | warehouse | No read access to the warehouse, so nothing here reflects what is actually deployed, what it costs or whether row counts match the design. |
 
 

@@ -2,6 +2,8 @@
 
 Everything under this section is the real output of running Hunter against [`examples/tiny-shop`](https://github.com/sav-sus/Hunter/tree/main/examples/tiny-shop), regenerated whenever the tool changes. It is not a mock-up.
 
+Two areas read as unavailable here and would not be on your repository. There is no warehouse to connect to, and git history is skipped on purpose so these pages rebuild identically from any checkout. On a real repository Hunter attributes every table to whoever wrote it.
+
 ## The example project
 
 Eight tables, with one deliberate flaw per finding class. Small enough to read in a sitting, and it exercises 28 of Hunter's rules.

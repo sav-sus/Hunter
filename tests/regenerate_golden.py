@@ -17,7 +17,9 @@ from tests.test_golden import AS_OF, EXAMPLE, GOLDEN
 
 
 def main() -> None:
-    result = run(EXAMPLE, as_of=AS_OF)
+    # read_git=False for the reason given in tests/test_golden.py: git dates
+    # would make the pinned payload depend on the commit history.
+    result = run(EXAMPLE, as_of=AS_OF, read_git=False)
     payload = json.loads(json.dumps(stable_payload(result), sort_keys=True, default=str))
     GOLDEN.parent.mkdir(parents=True, exist_ok=True)
     GOLDEN.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
