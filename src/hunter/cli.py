@@ -344,6 +344,31 @@ def docs_build(
         raise typer.Exit(EXIT_COULD_NOT_RUN)
 
     typer.echo(f"Site built at {target / '_built'}")
+    typer.echo(f"Open {target / '_built' / 'dashboard.html'}")
+
+
+@app.command()
+def dashboard(
+    root: Path = typer.Argument(Path(), help="The repository to read."),
+    config_file: Path | None = typer.Option(None, "--config", "-c"),
+    manifest: Path | None = typer.Option(None, "--manifest", "-m"),
+    out: Path | None = typer.Option(None, "--out", "-o", help="Where to write the file."),
+) -> None:
+    """Write the dashboard as one self-contained HTML file.
+
+    Everything is inlined: the stylesheet, every chart and the logo. The file
+    can be emailed, attached to a build or opened from a laptop with no network,
+    and it needs neither MkDocs nor anything beside it.
+    """
+    from hunter.emit.dashboard import dashboard_html
+
+    result = _execute(root, config_file=config_file, manifest=manifest)
+    target = out or (root / result.config.paths.output_dir / "dashboard.html")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(dashboard_html(result), encoding="utf-8")
+    size = target.stat().st_size // 1024
+    typer.echo(f"Wrote {target} ({size} KB, self-contained)")
+    typer.echo(f"Open {target}")
 
 
 @app.command()

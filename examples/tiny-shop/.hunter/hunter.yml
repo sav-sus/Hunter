@@ -1,29 +1,126 @@
-# The tiny-shop example project's ruleset.
+# The tiny shop's ruleset: what "correct" means for this repository.
 #
-# The layout mirrors the Rittman Analytics standard: an analytics_warehouse
-# directory holding models, lookml and docs, with the design documents under
-# docs/data_model_design and the introspected picture under docs/db_docs.
+# WHERE THIS FILE GOES
+#
+# At the repository root, in .hunter/. Every path below is resolved from the
+# repository root, not from this file, so a copy sitting inside
+# analytics_warehouse/ would have to say "dbt_project_dir: analytics_warehouse"
+# while living in that very directory. Root is the only place the paths read
+# correctly. `hunter init` writes it here.
+#
+# WHAT GOES WHERE
+#
+#   hunter.yml    what correct looks like: layers, naming, thresholds, weights.
+#                 Owned by the engagement lead. Changes rarely.
+#   register.yml  what the team has decided about particular tables: that one is
+#                 temporary on purpose, that an off-plan build is accepted, who
+#                 owns what. Edited by whoever is doing the work. See that file
+#                 for how to mark something temporary.
+#
+# Every setting here overrides the version-pinned house standard, and every
+# difference from that standard is published on the report site with the reason
+# given for it. There is no way to quietly diverge.
+
 extends: ra-house@1
+
+# ---------------------------------------------------------------- where things are
+#
+# All of these are relative to the repository root, except the ones under
+# `paths` that Hunter resolves from dbt_project_dir: manifest, models_dir,
+# dbml, the two diagrams, lookml and droughty_dbml.
 
 paths:
   dbt_project_dir: analytics_warehouse
   manifest: target/manifest.json
   models_dir: models
+
+  # The design. One file per domain is normal; a glob keeps this stable as
+  # domains are added.
   dbml:
     - docs/data_model_design/*.dbml
+
+  # The business model and the data flow diagram. Hunter reads these for names
+  # and grouping only. It works out real build status itself and reports where
+  # the diagram's own colours disagree, because a hand-maintained status drifts.
   conceptual_diagram: docs/data_model_design/conceptual_model.mermaid
   logical_diagram: docs/data_model_design/logical_model.mermaid
+
   lookml:
     - lookml/**/*.lkml
+
+  # What Droughty found deployed, so the design can be compared against the
+  # warehouse without a warehouse credential.
   droughty_dbml:
     - docs/db_docs/*.dbml
+
+  # Resolved from the repository root, not from dbt_project_dir.
+  register_file: .hunter/register.yml
+  baseline: .hunter/baseline.json
+  output_dir: out
+
+# ---------------------------------------------------------------- how it reports
+#
+# advisory never fails a build and is the default. A tool that fails builds in
+# its first week gets switched off in its second. Move to `gate` once the team
+# has agreed a floor.
 
 pull_request:
   mode: advisory
 
-# One deliberate divergence, so the divergence report has something in it and
-# the reason is exercised.
+# ---------------------------------------------------------------- turning rules off
+#
+# Any of the 77 rules can be switched off, re-weighted or have its severity
+# changed here, by id. `hunter rules` lists them all.
+#
+# A reason is required. It appears on the report's own rules page next to the
+# house standard's position, so anyone reading the score can see what was
+# changed and why. Switching a rule off without a reason is refused.
+
 rules:
   structure.model_too_long:
     enabled: false
     reason: this example has no long models, so the rule adds nothing here
+
+  # Other shapes this block accepts:
+  #
+  # documentation.owner_missing:
+  #   severity: low          # high | medium | low | info
+  #   reason: ownership is tracked in the service catalogue, not in dbt meta
+  #
+  # testing.key_uniqueness_missing:
+  #   points: 8              # raise what it costs, because keys matter here
+  #   reason: two incidents last quarter came from duplicate keys
+
+# ---------------------------------------------------------------- everything else
+#
+# The house standard already sets layers, entity suffixes, column naming,
+# thresholds and the eight scoring weights. This project takes all of it
+# unchanged. To see what it contains:
+#
+#     hunter rules                    every rule and what it costs
+#     hunter score --explain-config   every setting, and which level set it
+#
+# The blocks available, should this project need to differ:
+#
+#   layers:            name, paths, prefix, materialisations, persistence,
+#                      may_reference, requires_* and pipeline_stage. Setting a
+#                      layer's `persistence: temporary` is how a whole layer is
+#                      declared to be working steps rather than finished tables.
+#   entities:          kind and suffix, plus what each kind is expected to have
+#                      (measures, a date grain, foreign keys, a surrogate key).
+#   column_naming:     key, date, timestamp and boolean conventions.
+#   structure:         max_model_lines, max_joins, forbid_select_star.
+#   lineage:           max_fanout, and which lineage smells to flag.
+#   documentation:     minimum description words, placeholder patterns,
+#                      stale_after_days, where an owner is recorded.
+#   testing:           which test names count as proving a key, and which are
+#                      counted but never credited as key cover.
+#   entity_inference:  how confident Hunter must be before a judgement about a
+#                      table's shape is allowed to affect the score.
+#   droughty:          staleness window, and whether to flag orphaned
+#                      descriptions and silently dropped overrides.
+#   cross_layer:       whether explores must declare a caching policy, and
+#                      whether duplicated measures are flagged.
+#   scoring:           the eight weights, exposure weighting and its cap,
+#                      fail_under and fail_on_regression.
+#   branding:          site name, client name and the attribution line.

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repository health · Rittman Hunter</title>
+<link rel="icon" href="data:image/x-icon;base64,AAABAAQAEBAAAAAAIAAcAQAARgAAACAgAAAAACAAMQEAAGIBAAAwMAAAAAAgAI4BAACTAgAAQEAAAAAAIAAgAQAAIQQAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAONJREFUeJzFkzuOwkAMhj9PUvEoaRAFIFFwgq22o6fYigPQ7bn2hFBkHjbFhACbKIlEgaXR2B77l/3bI4DRIyIlZpHV5sTX4Y/gEyJF8+76ksfI2wBll1PEAVLrBWC1bySAmT7pCYAYrsMAIg4zZbv/ZbH8JoZQk5iYzNZoolXJvwpy2Yvlge3+iK9AsgtVSPER09tCDBd8lfBVRKQkT9p18lDmgHsLRXPnYy8z7+TALDbGXVetepNeAFab08MSh1lkOt+hCmPWRH7O1lplTdQAIyoIPrVRnxZpEGCIpCH5/Ge6AZXHSWSgqAOsAAAAAElFTkSuQmCCiVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA+ElEQVR4nO2WsW7CMBRFz02zQDuVgaESYuETGBAdWPoJ/CPiD5vg9xhMYSJ2KkcsvpInXz+fxPa1BTilpAbc2B7OrDZH+i4gvQ0OaYpN/k9VgApQAdp8q5ASvGoA3VpxAMc9JCyx360rCSDAmc2/+FzuwY3nXyjcA/OPdbRl/IkkgNTgHlgsv9n9nAiX4bpOZAyB9JLlANwLuxEusTFYWKBJ9gBxYpEAGKeXH8MKUAHa5I6WEH8ROwVAjKyn8lu/2e80ANvDedgh4dYze19jxqiQyQJYbY5JkwRmxBguvBRt3yVuuAdGVraPBki926fWy49hBagAFeAKYIFEAP6CjOsAAAAASUVORK5CYIKJUE5HDQoaCgAAAA1JSERSAAAAMAAAADAIBgAAAFcC+YcAAAFVSURBVHic7ZhBasMwEEX/KIpxcOxumk1JCoXQC3RZ6LL0Ar1h79HD9BIpaEZdOC40q0gTOjHMA3s3Zp5kWV8mABn/DFFAzoKu3+P57RPdsAUnAVEoflZ5xZXhAta4gDUuYI0LWOMC1sxeIKqfQAFUWjKFtorwdopeIEtxnM1ZAADCB2jDsEqAaIGm3SCEBsiCc6eCMMbpVXcPIt0YVlVPeb5pN3h6+cB6eICkBIQzX4k83igs0bS3EEbVWQBQzkAIDdbDI/qbHZgBKl0MAEQ0HajXQAbzAcwC5roTVe3IT6gXMVE4Xvpmapj9PuAC1riANS5gjQtYEzXbv8XOe0qcsnkJUw3zNwx+bv8hdv2+uGiM0wnt6u43z1cE0YtAr+9flUMoIIrHA83ysl0VELthW1+d9XleS+Sk68B6IVd9ha6JeXcPF7DHBaxxAWtcwBoXsGb2Aj8dVEnG6XTQzAAAAABJRU5ErkJggolQTkcNChoKAAAADUlIRFIAAABAAAAAQAgGAAAAqmlx3gAAAOdJREFUeJztmrEJw0AQBE9GiUChAiWWHXwDzg1yBy7B35lLlSN3cM8gfqaAZRi47IaIOOIEbKXG4/lN372kL54MA9ACNAagBWgMQAvQGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNN0HGFuMbqXGsu6pm9N8T9370yTAsr7iWj4tptPp/gQMQAvQGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNAagBWgMQAvQjFup6aPTfEvfbMXwrscpXmVb0f0JGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNAagBWgMQAvQGIAWoOk+wA9DwgkDi16L4gAAAABJRU5ErkJggg==">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --ink: #151d2d;
+  --primary: #525aff;
+  --accent: #ad93f1;
+  --sky: #88d7fb;
+  --peach: #ff9a75;
+  --border: #e5e7eb;
+  --muted: #f7f7f7;
+  --muted-ink: #94a3b8;
+  --radius: 14px;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: #f4f5f9;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+/* ---- top bar ---- */
+.topbar {
+  background: #fff; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 20;
+}
+.topbar .wrap { display: flex; align-items: center; gap: 20px; height: 68px; }
+.topbar img { height: 26px; width: auto; display: block; }
+.brandmark { display: flex; align-items: center; gap: 14px; }
+.brandmark .divider { width: 1px; height: 26px; background: var(--border); }
+.brandmark .product { font-weight: 700; letter-spacing: -0.01em; font-size: 17px; }
+.topbar nav { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+.topbar nav a {
+  color: var(--ink); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  padding: 7px 11px; border-radius: 8px;
+}
+.topbar nav a:hover { background: var(--muted); color: var(--primary); }
+
+/* ---- hero ---- */
+.hero { background: var(--ink); color: #fff; padding: 40px 0 46px; }
+.hero .wrap { display: flex; gap: 44px; align-items: center; flex-wrap: wrap; }
+.hero-ring { position: relative; flex: 0 0 auto; }
+.ring-value { font: 700 46px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #fff; letter-spacing: -0.02em; }
+.ring-label { font: 500 12px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: rgba(255,255,255,0.55); }
+.hero-copy { flex: 1 1 380px; min-width: 300px; }
+.grade-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.grade {
+  font-weight: 700; font-size: 15px; padding: 4px 13px; border-radius: 999px;
+  color: #fff; letter-spacing: 0.02em;
+}
+.hero h1 {
+  margin: 0 0 10px; font-size: 34px; line-height: 1.15; font-weight: 700;
+  letter-spacing: -0.025em; max-width: 32ch;
+}
+.hero p { margin: 0; color: rgba(255,255,255,0.62); max-width: 58ch; font-size: 14.5px; }
+.delta { font-size: 13px; font-weight: 600; padding: 4px 11px; border-radius: 999px; }
+.delta.up { background: rgba(22,163,74,0.2); color: #86efac; }
+.delta.down { background: rgba(239,68,68,0.2); color: #fca5a5; }
+.delta.flat { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+
+.kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 12px; flex: 1 1 100%; margin-top: 6px;
+}
+.kpi {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius); padding: 15px 17px;
+}
+.kpi b { display: block; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; }
+.kpi span {
+  display: block; font-size: 11.5px; text-transform: uppercase;
+  letter-spacing: 0.06em; color: rgba(255,255,255,0.5); margin-top: 3px; font-weight: 600;
+}
+
+/* ---- alert strip ---- */
+.alerts { background: #ffc2bd; border-bottom: 1px solid #f0a99f; padding: 26px 0; }
+.alerts h2 {
+  margin: 0 0 4px; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.09em; color: #8a2f1c; font-weight: 700;
+}
+.alerts .lead { margin: 0 0 18px; font-size: 14px; color: #7c3a2a; max-width: 74ch; }
+.alert-grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+}
+.alert {
+  background: #fff; border-radius: var(--radius); padding: 18px 20px;
+  border-left: 5px solid var(--peach);
+}
+.alert .count {
+  font-size: 25px; font-weight: 700; letter-spacing: -0.02em; display: block;
+}
+.alert .what { font-weight: 600; margin: 3px 0 7px; font-size: 14.5px; }
+.alert .why { margin: 0; font-size: 13px; color: #52525b; }
+
+/* ---- cards ---- */
+main { padding: 30px 0 12px; }
+.grid { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
+.card {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 22px 24px; grid-column: span 12; min-width: 0;
+}
+.card.half { grid-column: span 6; }
+.card.third { grid-column: span 4; }
+.card.two-thirds { grid-column: span 8; }
+@media (max-width: 940px) {
+  .card.half, .card.third, .card.two-thirds { grid-column: span 12; }
+  .hero h1 { font-size: 27px; }
+}
+.card > h2 {
+  margin: 0 0 3px; font-size: 16.5px; font-weight: 700; letter-spacing: -0.015em;
+}
+.card > .sub { margin: 0 0 18px; font-size: 13px; color: #6b7280; max-width: 80ch; }
+.card .foot {
+  margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--border);
+  font-size: 12.5px; color: #6b7280;
+}
+.split { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.split > .chart { flex: 0 0 auto; }
+.split > .side { flex: 1 1 200px; min-width: 180px; }
+
+/* ---- charts ---- */
+.bar-track { fill: #eceef4; }
+.bar-label { font: 500 13px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: var(--ink); }
+.bar-value { font: 700 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; fill: var(--ink); }
+.bar-note { font: 400 10.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #9aa1ad; }
+.funnel-value { font: 700 19px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #fff; }
+.funnel-label { font: 600 11.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: rgba(255,255,255,0.85); }
+.funnel-drop { font: 600 11.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #9aa1ad; }
+.donut-centre { font: 700 20px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: var(--ink); }
+.stack { border-radius: 6px; overflow: hidden; display: block; }
+.legend { list-style: none; margin: 14px 0 0; padding: 0; }
+.legend li {
+  display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid #f1f2f6;
+}
+.legend li:last-child { border-bottom: 0; }
+.legend b { font-weight: 500; flex: 1; }
+.legend em { font-style: normal; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+.heat { display: block; }
+.heat-key {
+  display: flex; gap: 16px; margin-top: 14px; font-size: 12px; color: #6b7280;
+  flex-wrap: wrap;
+}
+.heat-key span { display: flex; align-items: center; gap: 6px; }
+
+/* ---- tables ---- */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: #6b7280; font-weight: 700; padding: 0 12px 9px 0; border-bottom: 1px solid var(--border);
+}
+td { padding: 11px 12px 11px 0; border-bottom: 1px solid #f1f2f6; vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-weight: 700; white-space: nowrap; }
+.pill {
+  display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px;
+  border-radius: 999px; color: #fff; white-space: nowrap;
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 12px; background: var(--muted);
+  padding: 1.5px 5px; border-radius: 4px;
+}
+.objects { color: #6b7280; font-size: 12px; }
+
+/* ---- footer ---- */
+footer {
+  margin-top: 34px; border-top: 1px solid var(--border); background: #fff;
+  padding: 24px 0; font-size: 12.5px; color: #6b7280;
+}
+footer .wrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+footer img { height: 19px; opacity: 0.75; }
+footer .meta { margin-left: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 11.5px; }
+a { color: var(--primary); }
+@media print {
+  body { background: #fff; }
+  .topbar { position: static; }
+  .card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <div class="brandmark">
+    <img src="data:image/png;base64,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" alt="Rittman Analytics">
+    <span class="divider"></span>
+    <span class="product">Hunter</span>
+  </div>
+  <nav><a href='#areas'>Areas</a><a href='#funnel'>The plan</a><a href='#rules'>Rules</a><a href='#queue'>Do first</a><a href='#not-checked'>Not checked</a><a href='scorecard/'>Full report</a></nav>
+</div></header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="hero-ring"><svg class="ring" viewBox="0 0 200 200" width="200"
+     height="200" role="img" aria-label="Score 88.2 out of 100, grade A">
+  <circle cx="100" cy="100" r="84" fill="none"
+          stroke="rgba(255,255,255,0.14)" stroke-width="14"/>
+  <circle cx="100" cy="100" r="84" fill="none"
+          stroke="#65a30d" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="465.51 62.28"
+          transform="rotate(-90 100 100)"/>
+  <text x="100" y="96" class="ring-value"
+        text-anchor="middle">88.2</text>
+  <text x="100" y="122" class="ring-label"
+        text-anchor="middle">out of 100</text>
+</svg></div>
+    <div class="hero-copy">
+      <div class="grade-row">
+        <span class="grade" style="background:#16a34a">Grade A</span>
+        
+      </div>
+      <h1>Well maintained. Safe to build on</h1>
+      <p>8 tables read, 36 open findings, 7 of 8 areas
+         measured. Scored on 08 September 2026 from the repository alone,
+         with no warehouse credential.</p>
+    </div>
+    <div class="kpis">
+      <div class='kpi'><b>8</b><span>tables</span></div>
+      <div class='kpi'><b>36</b><span>open findings</span></div>
+      <div class='kpi'><b>7/8</b><span>areas measured</span></div>
+      <div class='kpi'><b>8</b><span>entities tracked</span></div>
+      <div class='kpi'><b>1</b><span>accepted by the team</span></div>
+    </div>
+  </div>
+</div>
+<div class="alerts">
+  <div class="wrap">
+    <h2>Needs a decision, not a fix</h2>
+    <p class="lead">Each of these was missing everywhere Hunter looked. That is one
+       decision nobody has taken, not a list of separate defects, so it sits above
+       the score rather than inside it.</p>
+    <div class="alert-grid"><div class='alert'><span class='count'>3 of 3</span><p class='what'>What is tested</p><p class='why'>The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</p></div><div class='alert'><span class='count'>3 of 3</span><p class='what'>Do the reports still match the data</p><p class='why'>Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.</p></div><div class='alert'><span class='count'>1</span><p class='what'>Built with no design behind it</p><p class='why'>wh_shop__legacy_fact. Either the design is out of date or these were never agreed. Somebody has to say which.</p></div></div>
+  </div>
+</div>
+
+<main><div class="wrap"><div class="grid"><section class='card two-thirds' id="areas"><h2>Where the ground is being lost</h2><p class='sub'>Each area scored out of 100, weakest first. The weight is how much of the total it can move, after unmeasured areas were excluded.</p><svg class="bars" viewBox="0 0 700 280" width="100%" height="280" role="img">
+  <text x="0" y="19" class="bar-label">Do the reports still match the data</text>
+  <rect x="260" y="11" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="11" width="272.92" height="18" rx="4" fill="#65a30d"/>
+  <text x="700" y="24" text-anchor="end" class="bar-value">72.2</text>
+  <text x="0" y="32" class="bar-note">carries 14 of the 100 points · 10 findings</text>
+  <text x="0" y="59" class="bar-label">What is checked automatically</text>
+  <rect x="260" y="51" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="51" width="290.68" height="18" rx="4" fill="#65a30d"/>
+  <text x="700" y="64" text-anchor="end" class="bar-value">76.9</text>
+  <text x="0" y="72" class="bar-note">carries 19 of the 100 points · 7 findings</text>
+  <text x="0" y="99" class="bar-label">How the tables fit together</text>
+  <rect x="260" y="91" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="91" width="333.02" height="18" rx="4" fill="#16a34a"/>
+  <text x="700" y="104" text-anchor="end" class="bar-value">88.1</text>
+  <text x="0" y="112" class="bar-note">carries 14 of the 100 points · 4 findings</text>
+  <text x="0" y="139" class="bar-label">Does what was built match the design</text>
+  <rect x="260" y="131" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="131" width="361.37" height="18" rx="4" fill="#16a34a"/>
+  <text x="700" y="144" text-anchor="end" class="bar-value">95.6</text>
+  <text x="0" y="152" class="bar-note">carries 16 of the 100 points · 9 findings</text>
+  <text x="0" y="179" class="bar-label">What is written down</text>
+  <rect x="260" y="171" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="171" width="363.26" height="18" rx="4" fill="#16a34a"/>
+  <text x="700" y="184" text-anchor="end" class="bar-value">96.1</text>
+  <text x="0" y="192" class="bar-note">carries 14 of the 100 points · 3 findings</text>
+  <text x="0" y="219" class="bar-label">Are the tables the shape they claim</text>
+  <rect x="260" y="211" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="211" width="364.39" height="18" rx="4" fill="#16a34a"/>
+  <text x="700" y="224" text-anchor="end" class="bar-value">96.4</text>
+  <text x="0" y="232" class="bar-note">carries 9 of the 100 points · 2 findings</text>
+  <text x="0" y="259" class="bar-label">Are the house rules followed</text>
+  <rect x="260" y="251" width="378" height="18" rx="4" class="bar-track"/>
+  <rect x="260" y="251" width="372.33" height="18" rx="4" fill="#16a34a"/>
+  <text x="700" y="264" text-anchor="end" class="bar-value">98.5</text>
+  <text x="0" y="272" class="bar-note">carries 14 of the 100 points · 3 findings</text>
+</svg><p class='foot'>Not measured: What it costs to run. Excluded from the score rather than counted as zero, with its weight shared across the areas above.</p></section><section class='card third' id="severity"><h2>What kind of problem this is</h2><p class='sub'>Open findings by how much they matter. A tall bar of tidy-ups is a different repository from a short one of urgent gaps.</p><div class='split'><div class='chart'><svg class="donut" viewBox="0 0 190 190" width="190" height="190" role="img">
+  <circle cx="95" cy="95" r="81" fill="none" stroke="#ef4444" stroke-width="22" stroke-dasharray="127.23 381.7" stroke-dashoffset="-0" transform="rotate(-90 95 95)"><title>Needs attention: 9</title></circle>
+  <circle cx="95" cy="95" r="81" fill="none" stroke="#d97706" stroke-width="22" stroke-dasharray="197.92 311.02" stroke-dashoffset="-127.23" transform="rotate(-90 95 95)"><title>Worth fixing: 14</title></circle>
+  <circle cx="95" cy="95" r="81" fill="none" stroke="#88d7fb" stroke-width="22" stroke-dasharray="155.51 353.43" stroke-dashoffset="-325.15" transform="rotate(-90 95 95)"><title>Tidy up: 11</title></circle>
+  <circle cx="95" cy="95" r="81" fill="none" stroke="#94a3b8" stroke-width="22" stroke-dasharray="28.27 480.66" stroke-dashoffset="-480.66" transform="rotate(-90 95 95)"><title>For information: 2</title></circle>
+  <text x="95" y="102" class="donut-centre" text-anchor="middle">36</text>
+</svg></div><div class='side'><ul class="legend"><li><span class="swatch" style="background:#ef4444"></span><b>Needs attention</b><em>9</em></li><li><span class="swatch" style="background:#d97706"></span><b>Worth fixing</b><em>14</em></li><li><span class="swatch" style="background:#88d7fb"></span><b>Tidy up</b><em>11</em></li><li><span class="swatch" style="background:#94a3b8"></span><b>For information</b><em>2</em></li></ul></div></div></section><section class='card half' id="funnel"><h2>How much of the plan is real</h2><p class='sub'>Every entity, from what the business asked for through to what exists. The narrowing is the part nobody has a number for today.</p><svg class="funnel" viewBox="0 0 620 276" width="100%" height="276" role="img">
+  <polygon points="120,0 500,0 472.86,78 147.14,78" fill="#525aff" fill-opacity="0.92"/>
+  <text x="310" y="26" class="funnel-value" text-anchor="middle">7</text>
+  <text x="310" y="44" class="funnel-label" text-anchor="middle">Asked for by the business</text>
+  <text x="612" y="84" class="funnel-drop" text-anchor="end">-1 designed, not built</text>
+  <polygon points="147.14,92 472.86,92 445.71,170 174.29,170" fill="#ad93f1" fill-opacity="0.92"/>
+  <text x="310" y="118" class="funnel-value" text-anchor="middle">6</text>
+  <text x="310" y="136" class="funnel-label" text-anchor="middle">Designed</text>
+  <text x="612" y="176" class="funnel-drop" text-anchor="end">-1 built, not deployed</text>
+  <polygon points="174.29,184 445.71,184 445.71,262 174.29,262" fill="#88d7fb" fill-opacity="0.92"/>
+  <text x="310" y="210" class="funnel-value" text-anchor="middle">5</text>
+  <text x="310" y="228" class="funnel-label" text-anchor="middle">Built in the repository</text>
+</svg><p class='foot'>The warehouse stage needs read access and is milestone M2, so it is not drawn.</p></section><section class='card half' id="states"><h2>Every entity, and where it actually stands</h2><p class='sub'>One state per entity. Built and switched off is not the same as unbuilt, and approved off-plan is not the same as off-plan.</p><svg class="stack" viewBox="0 0 560 26" width="100%" height="26" role="img" preserveAspectRatio="none">
+  <rect x="0" y="0" width="280" height="26" fill="#16a34a"><title>Designed and delivered: 4</title></rect>
+  <rect x="280" y="0" width="70" height="26" fill="#94a3b8"><title>Built, switched off: 1</title></rect>
+  <rect x="350" y="0" width="70" height="26" fill="#ff9a75"><title>Built off-plan: 1</title></rect>
+  <rect x="420" y="0" width="70" height="26" fill="#d97706"><title>Designed, not started: 1</title></rect>
+  <rect x="490" y="0" width="70" height="26" fill="#525aff"><title>On the business model only: 1</title></rect>
+</svg><table><thead><tr><th>State</th><th>Count</th><th>What it means</th></tr></thead><tbody><tr><td><span class='pill' style='background:#16a34a'>Designed and delivered</span></td><td class='num'>4</td><td class='objects'>Working as intended.</td></tr><tr><td><span class='pill' style='background:#94a3b8'>Built, switched off</span></td><td class='num'>1</td><td class='objects'>The code exists but is switched off, so nothing is being produced from it.</td></tr><tr><td><span class='pill' style='background:#ff9a75'>Built off-plan</span></td><td class='num'>1</td><td class='objects'>Delivered but never designed, so it is undocumented and has no named owner.</td></tr><tr><td><span class='pill' style='background:#d97706'>Designed, not started</span></td><td class='num'>1</td><td class='objects'>On the plan, no work done yet.</td></tr><tr><td><span class='pill' style='background:#525aff'>On the business model only</span></td><td class='num'>1</td><td class='objects'>Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog.</td></tr></tbody></table></section><section class='card two-thirds' id="rules"><h2>Every rule at once</h2><p class='sub'>One square per rule, 74 of them. The shape of the block is the point: a field of green with three red squares is a different repository from an even wash of amber. Hover a square for its numbers.</p><svg class="heat" viewBox="0 0 480 150" width="100%" height="150" role="img">
+  <rect x="0" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>alignment.approved_off_plan: passed all 6</title></rect>
+  <rect x="30" y="0" width="26" height="26" rx="5" fill="#d97706"><title>alignment.built_disabled: 1 of 6 failed</title></rect>
+  <rect x="60" y="0" width="26" height="26" rx="5" fill="#d97706"><title>alignment.built_off_plan: 1 of 6 failed</title></rect>
+  <rect x="90" y="0" width="26" height="26" rx="5" fill="#e8eaf0"><title>alignment.design_backlog: not applicable here</title></rect>
+  <rect x="120" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>alignment.design_without_business_entity: passed all 6</title></rect>
+  <rect x="150" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>alignment.diagram_claim_stale: passed all 7</title></rect>
+  <rect x="180" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>alignment.unmanaged_production_object: passed all 6</title></rect>
+  <rect x="210" y="0" width="26" height="26" rx="5" fill="#d97706"><title>conformance.column_missing_from_design: 1 of 4 failed</title></rect>
+  <rect x="240" y="0" width="26" height="26" rx="5" fill="#d97706"><title>conformance.column_missing_from_model: 1 of 4 failed</title></rect>
+  <rect x="270" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>conformance.design_entity_suffix_missing: passed all 6</title></rect>
+  <rect x="300" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>conformance.design_key_naming: passed all 6</title></rect>
+  <rect x="330" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>conformance.design_no_primary_key: passed all 6</title></rect>
+  <rect x="360" y="0" width="26" height="26" rx="5" fill="#d97706"><title>conformance.design_not_built: 1 of 6 failed</title></rect>
+  <rect x="390" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>conformance.relationship_key_missing: passed all 1</title></rect>
+  <rect x="420" y="0" width="26" height="26" rx="5" fill="#16a34a"><title>conformance.relationship_not_tested: passed all 1</title></rect>
+  <rect x="450" y="0" width="26" height="26" rx="5" fill="#e8eaf0"><title>conformance.type_drift: not applicable here</title></rect>
+  <rect x="0" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>crosslayer.duplicate_measure: passed all 3</title></rect>
+  <rect x="30" y="30" width="26" height="26" rx="5" fill="#d97706"><title>crosslayer.explore_no_caching_policy: 1 of 2 failed</title></rect>
+  <rect x="60" y="30" width="26" height="26" rx="5" fill="#ef4444"><title>crosslayer.exposure_missing: 3 of 3 failed</title></rect>
+  <rect x="90" y="30" width="26" height="26" rx="5" fill="#d97706"><title>crosslayer.field_references_missing_column: 1 of 3 failed</title></rect>
+  <rect x="120" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>crosslayer.view_model_missing: passed all 3</title></rect>
+  <rect x="150" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.column_description_missing: passed all 8</title></rect>
+  <rect x="180" y="30" width="26" height="26" rx="5" fill="#e8eaf0"><title>documentation.description_stale: not applicable here</title></rect>
+  <rect x="210" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.design_column_notes_missing: passed all 6</title></rect>
+  <rect x="240" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.design_grain_missing: passed all 6</title></rect>
+  <rect x="270" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.design_note_missing: passed all 6</title></rect>
+  <rect x="300" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.model_description_missing: passed all 5</title></rect>
+  <rect x="330" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>documentation.model_description_placeholder: passed all 5</title></rect>
+  <rect x="360" y="30" width="26" height="26" rx="5" fill="#d97706"><title>documentation.owner_missing: 1 of 5 failed</title></rect>
+  <rect x="390" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>droughty.description_empty: passed all 1</title></rect>
+  <rect x="420" y="30" width="26" height="26" rx="5" fill="#ef4444"><title>droughty.description_orphaned: 1 of 1 failed</title></rect>
+  <rect x="450" y="30" width="26" height="26" rx="5" fill="#16a34a"><title>droughty.description_undefined: passed all 1</title></rect>
+  <rect x="0" y="60" width="26" height="26" rx="5" fill="#ef4444"><title>droughty.generated_test_missing: 3 of 3 failed</title></rect>
+  <rect x="30" y="60" width="26" height="26" rx="5" fill="#d97706"><title>droughty.introspected_column_undesigned: 2 of 4 failed</title></rect>
+  <rect x="60" y="60" width="26" height="26" rx="5" fill="#d97706"><title>droughty.model_not_covered: 1 of 4 failed</title></rect>
+  <rect x="90" y="60" width="26" height="26" rx="5" fill="#d97706"><title>droughty.override_dropped: 1 of 2 failed</title></rect>
+  <rect x="120" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>droughty.schema_stale: passed all 1</title></rect>
+  <rect x="150" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>entity.declared_type_mismatch: passed all 5</title></rect>
+  <rect x="180" y="60" width="26" height="26" rx="5" fill="#ef4444"><title>entity.dimension_with_measures: 1 of 1 failed</title></rect>
+  <rect x="210" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>entity.fact_without_measures: passed all 2</title></rect>
+  <rect x="240" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>entity.surrogate_key_missing: passed all 5</title></rect>
+  <rect x="270" y="60" width="26" height="26" rx="5" fill="#e8eaf0"><title>entity.type_unclear: not applicable here</title></rect>
+  <rect x="300" y="60" width="26" height="26" rx="5" fill="#d97706"><title>lineage.dead_model: 2 of 5 failed</title></rect>
+  <rect x="330" y="60" width="26" height="26" rx="5" fill="#e8eaf0"><title>lineage.dependency_cycle: not applicable here</title></rect>
+  <rect x="360" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>lineage.high_fanout: passed all 8</title></rect>
+  <rect x="390" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>lineage.model_rejoin: passed all 8</title></rect>
+  <rect x="420" y="60" width="26" height="26" rx="5" fill="#d97706"><title>lineage.staging_bypassed: 2 of 8 failed</title></rect>
+  <rect x="450" y="60" width="26" height="26" rx="5" fill="#16a34a"><title>lineage.temporary_model_exposed: passed all 3</title></rect>
+  <rect x="0" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.date_column_suffix: passed all 8</title></rect>
+  <rect x="30" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.direct_source_reference: passed all 6</title></rect>
+  <rect x="60" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.entity_suffix_missing: passed all 5</title></rect>
+  <rect x="90" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.layer_boundary_violation: passed all 8</title></rect>
+  <rect x="120" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.layer_prefix_wrong: passed all 8</title></rect>
+  <rect x="150" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.materialisation_not_permitted: passed all 8</title></rect>
+  <rect x="180" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>naming.model_outside_every_layer: not applicable here</title></rect>
+  <rect x="210" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>naming.primary_key_column_missing: passed all 5</title></rect>
+  <rect x="240" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.approval_matches_no_model: not applicable here</title></rect>
+  <rect x="270" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.approval_review_overdue: not applicable here</title></rect>
+  <rect x="300" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.entry_matches_no_model: not applicable here</title></rect>
+  <rect x="330" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.ignore_expired: not applicable here</title></rect>
+  <rect x="360" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.ignore_names_unknown_rule: not applicable here</title></rect>
+  <rect x="390" y="90" width="26" height="26" rx="5" fill="#e8eaf0"><title>register.review_overdue: not applicable here</title></rect>
+  <rect x="420" y="90" width="26" height="26" rx="5" fill="#16a34a"><title>structure.cte_name_invalid: passed all 8</title></rect>
+  <rect x="450" y="90" width="26" height="26" rx="5" fill="#d97706"><title>structure.hardcoded_reference: 1 of 8 failed</title></rect>
+  <rect x="0" y="120" width="26" height="26" rx="5" fill="#e8eaf0"><title>structure.model_too_long: not applicable here</title></rect>
+  <rect x="30" y="120" width="26" height="26" rx="5" fill="#d97706"><title>structure.select_star_from_source: 2 of 8 failed</title></rect>
+  <rect x="60" y="120" width="26" height="26" rx="5" fill="#16a34a"><title>structure.too_many_joins: passed all 8</title></rect>
+  <rect x="90" y="120" width="26" height="26" rx="5" fill="#d97706"><title>testing.declared_grain_untested: 1 of 3 failed</title></rect>
+  <rect x="120" y="120" width="26" height="26" rx="5" fill="#ef4444"><title>testing.key_not_null_missing: 2 of 3 failed</title></rect>
+  <rect x="150" y="120" width="26" height="26" rx="5" fill="#16a34a"><title>testing.key_test_warns_only: passed all 2</title></rect>
+  <rect x="180" y="120" width="26" height="26" rx="5" fill="#d97706"><title>testing.key_uniqueness_missing: 1 of 3 failed</title></rect>
+  <rect x="210" y="120" width="26" height="26" rx="5" fill="#d97706"><title>testing.no_tests_at_all: 2 of 5 failed</title></rect>
+  <rect x="240" y="120" width="26" height="26" rx="5" fill="#d97706"><title>testing.only_weak_tests: 1 of 3 failed</title></rect>
+  <rect x="270" y="120" width="26" height="26" rx="5" fill="#16a34a"><title>testing.relationship_test_missing: passed all 1</title></rect>
+</svg><div class='heat-key'><span><i class='swatch' style='background:#16a34a'></i>passed everything (37)</span><span><i class='swatch' style='background:#d97706'></i>failed somewhere (19)</span><span><i class='swatch' style='background:#ef4444'></i>failed more than half (5)</span><span><i class='swatch' style='background:#e8eaf0'></i>nothing to check (13)</span></div></section><section class='card third' id="by-area"><h2>Where the findings are</h2><p class='sub'>Count of open findings per area. Read this next to the scores: a large count on a well-scored area means many small things.</p><svg class="bars" viewBox="0 0 440 238" width="100%" height="238" role="img">
+  <text x="0" y="21" class="bar-label">Are the tables the shape they claim</text>
+  <rect x="250" y="8" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="8" width="12.8" height="18" rx="4" fill="#16a34a"/>
+  <text x="440" y="21" text-anchor="end" class="bar-value">1</text>
+  <text x="0" y="55" class="bar-label">What is written down</text>
+  <rect x="250" y="42" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="42" width="25.6" height="18" rx="4" fill="#16a34a"/>
+  <text x="440" y="55" text-anchor="end" class="bar-value">2</text>
+  <text x="0" y="89" class="bar-label">Are the house rules followed</text>
+  <rect x="250" y="76" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="76" width="38.4" height="18" rx="4" fill="#16a34a"/>
+  <text x="440" y="89" text-anchor="end" class="bar-value">3</text>
+  <text x="0" y="123" class="bar-label">How the tables fit together</text>
+  <rect x="250" y="110" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="110" width="51.2" height="18" rx="4" fill="#16a34a"/>
+  <text x="440" y="123" text-anchor="end" class="bar-value">4</text>
+  <text x="0" y="157" class="bar-label">What is checked automatically</text>
+  <rect x="250" y="144" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="144" width="89.6" height="18" rx="4" fill="#65a30d"/>
+  <text x="440" y="157" text-anchor="end" class="bar-value">7</text>
+  <text x="0" y="191" class="bar-label">Does what was built match the design</text>
+  <rect x="250" y="178" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="178" width="115.2" height="18" rx="4" fill="#16a34a"/>
+  <text x="440" y="191" text-anchor="end" class="bar-value">9</text>
+  <text x="0" y="225" class="bar-label">Do the reports still match the data</text>
+  <rect x="250" y="212" width="128" height="18" rx="4" class="bar-track"/>
+  <rect x="250" y="212" width="128" height="18" rx="4" fill="#65a30d"/>
+  <text x="440" y="225" text-anchor="end" class="bar-value">10</text>
+</svg></section><section class='card two-thirds' id="load-bearing"><h2>What everything else is built on</h2><p class='sub'>Ranked by total reach: tables downstream plus report views. A table with nothing checking it and a long reach is where one silent error becomes many wrong numbers.</p><table><thead><tr><th>Table</th><th>Tables downstream</th><th>Report views</th><th>Reach</th><th>Is it checked</th></tr></thead><tbody><tr><td><code>stg_shop__customers</code></td><td class='num'>5</td><td class='num'>0</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="5 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="120" height="8" rx="4" fill="#ef4444"/></svg></td><td><span class='pill' style='background:#ef4444'>nothing checks it</span></td></tr><tr><td><code>stg_shop__orders</code></td><td class='num'>5</td><td class='num'>0</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="5 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="120" height="8" rx="4" fill="#ef4444"/></svg></td><td><span class='pill' style='background:#ef4444'>nothing checks it</span></td></tr><tr><td><code>int_shop__orders</code></td><td class='num'>3</td><td class='num'>0</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="3 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="72" height="8" rx="4" fill="#ef4444"/></svg></td><td><span class='pill' style='background:#ef4444'>nothing checks it</span></td></tr><tr><td><code>wh_shop__customer_dim</code></td><td class='num'>0</td><td class='num'>1</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="1 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="24" height="8" rx="4" fill="#525aff"/></svg></td><td><span class='pill' style='background:#16a34a'>checked</span></td></tr><tr><td><code>wh_shop__daily_sales_xa</code></td><td class='num'>0</td><td class='num'>1</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="1 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="24" height="8" rx="4" fill="#ef4444"/></svg></td><td><span class='pill' style='background:#ef4444'>nothing checks it</span></td></tr><tr><td><code>wh_shop__order_fact</code></td><td class='num'>0</td><td class='num'>1</td><td><svg class="meter" viewBox="0 0 120 8" width="120" height="8" preserveAspectRatio="none" role="img" aria-label="1 of 5"><rect x="0" y="0" width="120" height="8" rx="4" class="bar-track"/><rect x="0" y="0" width="24" height="8" rx="4" fill="#525aff"/></svg></td><td><span class='pill' style='background:#16a34a'>checked</span></td></tr></tbody></table></section><section class='card' id="queue"><h2>Do these first</h2><p class='sub'>Ranked by how many points closing the whole group would recover, most serious first. The last column is what happens if it is left.</p><table><thead><tr><th>Points back</th><th>How much it matters</th><th>What is wrong</th><th>What breaks if it is left</th></tr></thead><tbody><tr><td class='num'>7.3</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>wh_shop__daily_sales_xa has no tests of any kind</b><br><span class='objects'>wh_shop__daily_sales_xa, wh_shop__legacy_fact</span></td><td>Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it.</td></tr><tr><td class='num'>5.8</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>1 report field in view wh_shop__order_fact read columns wh_shop__order_fact no longer produces: order_channel_name -&gt; order_channel_name</b><br><span class='objects'>wh_shop__order_fact</span></td><td>These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact.</td></tr><tr><td class='num'>5.4</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>Nothing tests that customer_pk is always populated on wh_shop__customer_dim</b><br><span class='objects'>wh_shop__customer_dim, wh_shop__product_dim</span></td><td>Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why.</td></tr><tr><td class='num'>3.9</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>1 test declared for wh_shop__customer_dim never reached the generated schema: customer_pk: not_null</b><br><span class='objects'>wh_shop__customer_dim</span></td><td>Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes.</td></tr><tr><td class='num'>2.0</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>Nothing tests that product_pk is unique on wh_shop__product_dim</b><br><span class='objects'>wh_shop__product_dim</span></td><td>Nothing checks that products holds one row per one row per product. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it.</td></tr><tr><td class='num'>1.5</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>wh_shop__legacy_fact names the table &#x27;`warehouse`.`old_shop`.`legacy_orders`&#x27; directly on line 17</b><br><span class='objects'>wh_shop__legacy_fact</span></td><td>Because legacy does not go through dbt to reach this table, the dependency is invisible: it does not appear in the lineage, it is not built in the right order, and nothing warns you if the table it points at changes.</td></tr><tr><td class='num'>0.6</td><td><span class='pill' style='background:#ef4444'>Needs attention</span></td><td><b>wh_shop__daily_sales_xa is missing 1 column that the design specifies: daily_sales_returned_amount</b><br><span class='objects'>wh_shop__daily_sales_xa</span></td><td>daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read.</td></tr><tr><td class='num'>5.2</td><td><span class='pill' style='background:#d97706'>Worth fixing</span></td><td><b>wh_shop__daily_sales_xa skips the integration layer to read stg_shop__orders</b><br><span class='objects'>wh_shop__customer_dim, wh_shop__daily_sales_xa</span></td><td>daily sales reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads.</td></tr><tr><td class='num'>3.2</td><td><span class='pill' style='background:#d97706'>Worth fixing</span></td><td><b>3 tests in the generated schema for wh_shop__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one</b><br><span class='objects'>wh_shop__customer_dim, wh_shop__order_fact, wh_shop__product_dim</span></td><td>The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td></tr><tr><td class='num'>2.1</td><td><span class='pill' style='background:#d97706'>Worth fixing</span></td><td><b>wh_shop__daily_sales_xa is not described in the generated schema</b><br><span class='objects'>wh_shop__daily_sales_xa</span></td><td>daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has.</td></tr><tr><td class='num'>2.1</td><td><span class='pill' style='background:#d97706'>Worth fixing</span></td><td><b>wh_shop__customer_dim names no owner</b><br><span class='objects'>wh_shop__customer_dim</span></td><td>There is nobody to ask about customers and nobody to route a problem with it to. It is a persistent table, and 6 report fields depend on it.</td></tr><tr><td class='num'>2.0</td><td><span class='pill' style='background:#d97706'>Worth fixing</span></td><td><b>wh_shop__legacy_fact is built and stored but nothing reads it</b><br><span class='objects'>wh_shop__legacy_fact, wh_shop__product_dim</span></td><td>legacy is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it.</td></tr></tbody></table></section><section class='card half' id="not-checked"><h2>What this score is not based on</h2><p class='sub'>A score is only as good as what went into it. Anything Hunter could not read is named here and excluded, never scored as zero.</p><table><thead><tr><th>Not available</th><th>What that means</th></tr></thead><tbody><tr><td><code>git</code></td><td>No usable history, so nothing is attributed to whoever wrote it and no window can be reported.</td></tr><tr><td><code>warehouse</code></td><td>No read access to the warehouse, so nothing here reflects what is actually deployed, what it costs or whether row counts match the design.</td></tr></tbody></table></section><section class='card half' id="sources"><h2>Every file this was computed from</h2><p class='sub'>Nothing else was read, and nothing was written. Hunter never modifies code, opens a commit or writes to a warehouse.</p><table><tbody><tr><td><code>analytics_warehouse/docs/data_model_design/conceptual_model.mermaid</code></td></tr><tr><td><code>analytics_warehouse/docs/data_model_design/logical_model.mermaid</code></td></tr><tr><td><code>analytics_warehouse/docs/data_model_design/physical_model.dbml</code></td></tr><tr><td><code>analytics_warehouse/lookml/aggregate/agg_shop.layer.lkml</code></td></tr><tr><td><code>analytics_warehouse/lookml/base/_aggregate.layer.lkml</code></td></tr><tr><td><code>analytics_warehouse/lookml/base/_base.layer.lkml</code></td></tr><tr><td><code>analytics_warehouse/lookml/int/int_explore_shop.explore.lkml</code></td></tr><tr><td><code>analytics_warehouse/lookml/models/tiny_shop.model.lkml</code></td></tr><tr><td><code>analytics_warehouse/lookml/staging/stg_shop.layer.lkml</code></td></tr><tr><td><code>analytics_warehouse/models/droughty_schema.yml</code></td></tr><tr><td><code>analytics_warehouse/target/manifest.json</code></td></tr></tbody></table></section></div></div></main>
+
+<footer><div class="wrap">
+  <img src="data:image/png;base64,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" alt="Rittman Analytics">
+  <span>Generated by Rittman Hunter, from Rittman Analytics. Read from the repository, nothing written back.</span>
+  <span class="meta">hunter 0.1.0.dev0 · house 1</span>
+</div></footer>
+</body>
+</html>

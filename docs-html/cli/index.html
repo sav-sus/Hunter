@@ -22,7 +22,7 @@
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../assets/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
@@ -48,10 +48,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../assets/rittman.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -69,7 +71,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -96,8 +98,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="Rittman Hunter" class="md-header__button md-logo" aria-label="Rittman Hunter" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/rittman-analytics.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -127,7 +128,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
@@ -137,7 +138,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
@@ -234,8 +235,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Rittman Hunter" class="md-nav__button md-logo" aria-label="Rittman Hunter" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/rittman-analytics.png" alt="logo">
 
     </a>
     Rittman Hunter
@@ -788,6 +788,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#hunter-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hunter dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#hunter-docs-build" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -934,6 +945,8 @@
       
         
       
+        
+      
     
     
     
@@ -986,6 +999,34 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example/dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -1586,6 +1627,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#hunter-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hunter dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#hunter-docs-build" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1827,11 +1879,86 @@ that window touched.</p>
 <p>That last section is always present. A report listing only what was delivered
 is marketing rather than reporting.</p>
 <hr />
+<h2 id="hunter-dashboard"><code>hunter dashboard</code><a class="headerlink" href="#hunter-dashboard" title="Permanent link">&para;</a></h2>
+<p>Write the report as one self-contained HTML file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hunter<span class="w"> </span>dashboard
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>hunter<span class="w"> </span>dashboard<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>/tmp/report.html
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--out</code>, <code>-o</code></td>
+<td>Where to write. Default <code>out/dashboard.html</code></td>
+</tr>
+</tbody>
+</table>
+<p>The stylesheet, every chart and the logo are inlined, so the file opens with no
+network and nothing beside it: from a build artifact, a shared drive or an email
+attachment. About 75 KB. Needs nothing installed beyond Hunter itself, and in
+particular not the <code>site</code> extra.</p>
+<p>Every chart is SVG generated in Python rather than drawn by a charting library.
+That is what keeps the file self-contained, and it keeps two runs of one commit
+byte-identical.</p>
+<p>Nine bands, each answering one question:</p>
+<table>
+<thead>
+<tr>
+<th>Band</th>
+<th>The question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The number</td>
+<td>How healthy is this repository</td>
+</tr>
+<tr>
+<td>Needs a decision</td>
+<td>What has nobody decided, as opposed to not fixed</td>
+</tr>
+<tr>
+<td>Where the ground is being lost</td>
+<td>Which area is costing the most points</td>
+</tr>
+<tr>
+<td>How much of the plan is real</td>
+<td>How much of the business model exists</td>
+</tr>
+<tr>
+<td>Every entity</td>
+<td>Where each table stands, in one of eleven states</td>
+</tr>
+<tr>
+<td>Every rule at once</td>
+<td>Is this a few bad tables or a habit</td>
+</tr>
+<tr>
+<td>What everything else is built on</td>
+<td>Which tables are load-bearing and unchecked</td>
+</tr>
+<tr>
+<td>Do these first</td>
+<td>What to fix, ranked by what closing it recovers</td>
+</tr>
+<tr>
+<td>What this is not based on</td>
+<td>What Hunter could not read</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="hunter-docs-build"><code>hunter docs build</code><a class="headerlink" href="#hunter-docs-build" title="Permanent link">&para;</a></h2>
-<p>Generate the site and build it.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>/tmp/site
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--markdown-only
+<p>Generate the site and build it. This is the dashboard plus every detail page
+behind it, with search and navigation.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>/tmp/site
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--markdown-only
 </code></pre></div>
 <table>
 <thead>
@@ -1851,15 +1978,16 @@ is marketing rather than reporting.</p>
 </tr>
 </tbody>
 </table>
-<p>Twelve pages plus one per table. Needs the <code>site</code> extra installed for the build
-step; the markdown is written either way.</p>
+<p>Twelve pages plus one per table, and <code>dashboard.html</code> as the front door. Needs
+the <code>site</code> extra installed for the build step; the markdown and the dashboard
+are written either way.</p>
 <hr />
 <h2 id="hunter-diagram"><code>hunter diagram</code><a class="headerlink" href="#hunter-diagram" title="Permanent link">&para;</a></h2>
 <p>Print one Mermaid diagram.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>conceptual
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>logical<span class="w"> </span>--domain<span class="w"> </span>commerce
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>lineage
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>blast<span class="w"> </span>--model<span class="w"> </span>wh_shop__order_fact
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>conceptual
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>logical<span class="w"> </span>--domain<span class="w"> </span>commerce
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>lineage
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>blast<span class="w"> </span>--model<span class="w"> </span>wh_shop__order_fact
 </code></pre></div>
 <table>
 <thead>
@@ -1894,16 +2022,16 @@ step; the markdown is written either way.</p>
 <hr />
 <h2 id="hunter-baseline"><code>hunter baseline</code><a class="headerlink" href="#hunter-baseline" title="Permanent link">&para;</a></h2>
 <p>Record where the repository starts.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>hunter<span class="w"> </span>baseline
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>hunter<span class="w"> </span>baseline<span class="w"> </span>.<span class="w"> </span>--note<span class="w"> </span><span class="s2">"Recorded at the start of the engagement"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>hunter<span class="w"> </span>baseline
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>hunter<span class="w"> </span>baseline<span class="w"> </span>.<span class="w"> </span>--note<span class="w"> </span><span class="s2">"Recorded at the start of the engagement"</span>
 </code></pre></div>
 <p>Writes <code>.hunter/baseline.json</code>. Commit it, so later runs measure movement
 rather than absolutes.</p>
 <hr />
 <h2 id="hunter-init"><code>hunter init</code><a class="headerlink" href="#hunter-init" title="Permanent link">&para;</a></h2>
 <p>Write a starting ruleset and register.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>hunter<span class="w"> </span>init
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>hunter<span class="w"> </span>init<span class="w"> </span>.<span class="w"> </span>--force
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>hunter<span class="w"> </span>init
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>hunter<span class="w"> </span>init<span class="w"> </span>.<span class="w"> </span>--force
 </code></pre></div>
 <p>Detects the layout and says what it could not find. Where a manifest is
 present, it also scores the repository and fills the register with the tables it
@@ -1913,24 +2041,24 @@ somebody has tuned would be worse than refusing.</p>
 <hr />
 <h2 id="hunter-rules"><code>hunter rules</code><a class="headerlink" href="#hunter-rules" title="Permanent link">&para;</a></h2>
 <p>Every rule Hunter can report.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>hunter<span class="w"> </span>rules
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>hunter<span class="w"> </span>rules
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>alignment.built_disabled                    low      0.5  Does what was built match the design
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>alignment.built_off_plan                    medium   1.2  Does what was built match the design
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>...
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>77 rules.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>alignment.built_disabled                    low      0.5  Does what was built match the design
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>alignment.built_off_plan                    medium   1.2  Does what was built match the design
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>...
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>77 rules.
 </code></pre></div>
 <p>Full reference with the consequence line for each: <a href="../reference/rules/">Every rule</a>.</p>
 <hr />
 <h2 id="hunter-version"><code>hunter version</code><a class="headerlink" href="#hunter-version" title="Permanent link">&para;</a></h2>
 <p>The three versions stamped on every report.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>hunter<span class="w"> </span>version
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>hunter<span class="w"> </span>version
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">"hunter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">"house_ruleset"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">"score_model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">"hunter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">"house_ruleset"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nt">"score_model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
 </code></pre></div>
 <p>The score model version is what lets a later run tell real change from a change
 caused by upgrading Hunter.</p>

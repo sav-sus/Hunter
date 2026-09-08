@@ -22,6 +22,38 @@ aid: any difference from the house standard is published on the conventions page
 with the reason given for it, so on a client engagement the report shows how far
 the repository sits from the standard.
 
+## Where the files go
+
+Both files live in `.hunter/` at the **repository root**, and `hunter init`
+writes them there.
+
+This catches people out on the standard Rittman Analytics layout, where the dbt
+project, the LookML and the design documents all sit under `analytics_warehouse/`
+and only the LookML manifest sits at the root. It looks as though `hunter.yml`
+belongs beside `dbt_project.yml`.
+
+It does not, and the reason is in the file itself. Every path in `hunter.yml` is
+resolved from the repository root, so a copy inside `analytics_warehouse/` would
+have to say `dbt_project_dir: analytics_warehouse` while living in that very
+directory. The root is also the only place that can see both the dbt project and
+anything outside it.
+
+```
+your-repo/
+  .hunter/
+    hunter.yml        <- here
+    register.yml      <- and here
+  analytics_warehouse/
+    dbt_project.yml
+    models/  lookml/  docs/  target/
+  manifest.lkml
+```
+
+A worked pair is in the example project, written to be read rather than only to
+work: [`hunter.yml`](https://github.com/sav-sus/Hunter/blob/main/examples/tiny-shop/.hunter/hunter.yml)
+and [`register.yml`](https://github.com/sav-sus/Hunter/blob/main/examples/tiny-shop/.hunter/register.yml).
+Both document every option in comments.
+
 ## `.hunter/hunter.yml`
 
 `hunter init` writes a starting version with your paths already filled in. This

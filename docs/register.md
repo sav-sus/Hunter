@@ -8,6 +8,11 @@ house standard, and changes rarely. The register records decisions about
 individual tables and changes constantly. Different owners, different rates of
 change, so two files.
 
+Both sit in `.hunter/` at the repository root, not beside `dbt_project.yml`. See
+[where the files go](configuration.md#where-the-files-go) for why. A worked
+register, commented option by option, is in the
+[example project](https://github.com/sav-sus/Hunter/blob/main/examples/tiny-shop/.hunter/register.yml).
+
 ## What it is for
 
 Four things Hunter cannot work out on its own.

@@ -147,6 +147,34 @@ and a small leak of whoever ran it.
 **The attribution is on every published artifact.** The site, the report and the
 comment. A licence term, not a preference.
 
+**The front page is a purpose-built dashboard, not a themed markdown page.**
+The first version was Markdown through the default MkDocs theme. It read as a
+document, and a document gets filed rather than acted on. The report now leads
+with a dashboard: nine bands, each answering one question, with the number, the
+undecided items, the areas, the plan-versus-reality funnel, every rule at once,
+the load-bearing tables and the fix queue. The twelve detail pages sit behind it
+as the evidence.
+
+**Charts are SVG generated in Python, not drawn by a charting library.** Three
+reasons, and the third is the one that settled it. A report gets opened offline,
+from a build artifact or an email attachment, and a chart that silently fails to
+draw is worse than a table. The dashboard has to be one self-contained file, so
+nothing may be fetched at view time. And the whole site is compared against a
+committed file in review, which needs byte-identical output between runs; a
+library that lays out at draw time cannot promise that. Cost: no interactivity
+beyond a tooltip, and every chart type had to be written.
+
+**No panel shows a figure without a rule behind it.** The temptation in a
+dashboard is a number computed for the picture. A figure nobody can trace to a
+finding is a figure nobody should trust, so every band reads from the same
+computed result the score does.
+
+**The palette is lifted from the published brand tokens, not matched by eye.**
+`hunter.brand` holds the exact values from rittmananalytics.com's own
+stylesheet, and both the dashboard and the documentation theme are generated
+from that one module, so the product and its documentation cannot drift apart.
+The logo ships inside the package and is inlined as a data URI.
+
 ## Distribution
 
 **A standalone package, separate from any other framework.** Machine-readable

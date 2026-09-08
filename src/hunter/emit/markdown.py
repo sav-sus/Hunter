@@ -15,6 +15,7 @@ import datetime as dt
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 
+from hunter.brand import ASSETS
 from hunter.emit import mermaid
 from hunter.emit.plain import (
     DIMENSION_EXPLANATIONS,
@@ -91,6 +92,10 @@ def overview_page(result: RunResult) -> str:
     score = result.score
     out = [
         "# Repository health",
+        "",
+        # The dashboard is the front door. These markdown pages are the evidence
+        # behind it, so every reader who lands here first gets sent there.
+        "[Open the dashboard](dashboard.html){ .hunter-back }",
         "",
         f"# {score.total:g} / 100",
         "",
@@ -1037,34 +1042,33 @@ def glossary_page() -> str:
     )
 
 
+#: Every source Hunter can read, and what its absence costs. Shared with the
+#: dashboard so both say the same thing about the same gap.
+UNAVAILABLE_REASONS: dict[str, str] = {
+    "warehouse": (
+        "No read access to the warehouse, so nothing here reflects what is "
+        "actually deployed, what it costs or whether row counts match the "
+        "design."
+    ),
+    "dbml": "No design files were found, so nothing was compared against a design.",
+    "conceptual": (
+        "No business model diagram was found, so there is nothing to compare the design against."
+    ),
+    "lookml": ("No reporting layer files were found, so nothing was checked against the reports."),
+    "droughty": (
+        "No generated schema was found, so the generated tests and descriptions were not compared."
+    ),
+    "git": (
+        "No usable history, so nothing is attributed to whoever wrote it and no "
+        "window can be reported."
+    ),
+}
+
+
 def not_checked_page(result: RunResult) -> str:
     """What Hunter did not look at, and why. Honest about its own limits."""
-    missing = sorted(
-        {"conceptual", "dbml", "droughty", "git", "lookml", "warehouse"} - result.available
-    )
-    reasons = {
-        "warehouse": (
-            "No read access to the warehouse, so nothing here reflects what is "
-            "actually deployed, what it costs or whether row counts match the "
-            "design."
-        ),
-        "dbml": "No design files were found, so nothing was compared against a design.",
-        "conceptual": (
-            "No business model diagram was found, so there is nothing to compare the "
-            "design against."
-        ),
-        "lookml": (
-            "No reporting layer files were found, so nothing was checked against the reports."
-        ),
-        "droughty": (
-            "No generated schema was found, so the generated tests and descriptions "
-            "were not compared."
-        ),
-        "git": (
-            "No usable history, so nothing is attributed to whoever wrote it and no "
-            "window can be reported."
-        ),
-    }
+    missing = sorted(set(UNAVAILABLE_REASONS) - result.available)
+    reasons = UNAVAILABLE_REASONS
     out = [
         "# What was not checked",
         "",
@@ -1179,6 +1183,30 @@ def write_site(
             path.write_text(model_page(result, model.name) + footer, encoding="utf-8")
             written.append(path)
 
+    # The dashboard is the front page of the report. It is written into the
+    # MkDocs tree so the built site serves it, and it is also standalone: every
+    # style, chart and image is inlined, so this one file can be sent on its own.
+    from hunter.emit.dashboard import dashboard_html
+    from hunter.emit.theme import BRAND_CSS
+
+    dashboard = docs / "dashboard.html"
+    dashboard.write_text(dashboard_html(result, generated_at=generated_at), encoding="utf-8")
+    written.append(dashboard)
+
+    overrides = docs / "assets"
+    overrides.mkdir(exist_ok=True)
+    css_path = overrides / "rittman.css"
+    css_path.write_text(BRAND_CSS, encoding="utf-8")
+    written.append(css_path)
+
+    logo_path = overrides / "rittman-analytics.png"
+    logo_path.write_bytes((ASSETS / "rittman-analytics.png").read_bytes())
+    written.append(logo_path)
+
+    favicon_path = overrides / "favicon.ico"
+    favicon_path.write_bytes((ASSETS / "favicon.ico").read_bytes())
+    written.append(favicon_path)
+
     config_path = out_dir / "mkdocs.yml"
     config_path.write_text(mkdocs_config(result), encoding="utf-8")
     written.append(config_path)
@@ -1201,23 +1229,36 @@ use_directory_urls: true
 
 theme:
   name: material
+  logo: assets/rittman-analytics.png
+  favicon: assets/favicon.ico
+  font:
+    text: Inter
+    code: Roboto Mono
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light
   features:
     - navigation.top
     - navigation.tracking
+    - navigation.instant
     - content.code.copy
     - search.highlight
     - toc.follow
+
+extra_css:
+  - assets/rittman.css
 
 markdown_extensions:
   - admonition

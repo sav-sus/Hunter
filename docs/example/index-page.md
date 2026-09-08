@@ -1,5 +1,7 @@
 # Repository health
 
+[Open the dashboard](dashboard.html){ .hunter-back }
+
 # 88.2 / 100
 
 !!! abstract "Well maintained. Safe to build on"

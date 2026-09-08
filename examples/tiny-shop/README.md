@@ -13,6 +13,7 @@ Every name here is invented and resembles no client's.
 
 ```bash
 uv run hunter score examples/tiny-shop
+uv run hunter dashboard examples/tiny-shop --out /tmp/shop.html && open /tmp/shop.html
 uv run hunter align examples/tiny-shop
 uv run hunter explain wh_shop__customer_dim examples/tiny-shop
 uv run hunter docs build examples/tiny-shop --out /tmp/example-site
@@ -20,6 +21,40 @@ uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 
 It scores **88.2** and triggers 28 of Hunter's 77 rules across all seven scored
 areas.
+
+`hunter dashboard` writes one HTML file with everything inlined: the stylesheet,
+every chart and the logo. It opens with no network and nothing beside it.
+
+## The two config files
+
+Both are in [`.hunter/`](.hunter), and both are written to be read: they
+document every option in comments rather than only setting the ones this example
+needs.
+
+| File | What it decides | Who edits it |
+|---|---|---|
+| [`.hunter/hunter.yml`](.hunter/hunter.yml) | What correct looks like: layers, naming, thresholds, weights, which rules are on | The engagement lead, rarely |
+| [`.hunter/register.yml`](.hunter/register.yml) | What the team decided about particular tables: what is temporary, what is approved, who owns what | Whoever is doing the work |
+
+**Marking a table temporary** is the register's job, not the ruleset's:
+
+```yaml
+models:
+  int_shop__orders:
+    persistence: temporary
+    reason: a working step feeding the order fact, not for reporting from
+    review_by: 2027-01-31
+```
+
+That stops the table being judged as a finished table: no consumer-facing
+description expected, no owner, no key tests, and no complaint that reports do
+not read from it. A reason is required because the declaration overrides what
+Hunter worked out for itself, and the report says which signal decided.
+
+Both files live at the repository root rather than inside `analytics_warehouse`,
+because every path in `hunter.yml` is resolved from the root. A copy sitting
+inside `analytics_warehouse` would have to say `dbt_project_dir:
+analytics_warehouse` while living in that directory.
 
 ## The layout
 

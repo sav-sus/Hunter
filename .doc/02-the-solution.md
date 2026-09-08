@@ -18,9 +18,15 @@ is the page a non-technical reader can act on without opening a single file.
 **A list of what needs doing**, ranked by how much the score would recover,
 each item saying what breaks if it is left.
 
-**A site**, twelve pages, readable by an engineer and by someone who has never
-seen SQL. Plain language sits above the detail on the same page rather than in a
-separate mode nobody finds.
+**A dashboard**, one screen, in Rittman Analytics colours. Nine bands, each
+answering one question: the number, what nobody has decided, where the points
+are going, how much of the plan is real, every rule at once, which tables
+everything is built on, and what to fix first. It is one self-contained HTML
+file, so it opens with no network and can be sent as an attachment.
+
+**A site**, twelve pages behind the dashboard, readable by an engineer and by
+someone who has never seen SQL. Plain language sits above the detail on the same
+page rather than in a separate mode nobody finds.
 
 **A pull request comment**, short, specific to the change, with what it reaches.
 

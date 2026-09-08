@@ -26,8 +26,21 @@ Missing everywhere it was checked:
 
 Two seconds on a 280-model repository. No warehouse credential needed.
 
+That is the terminal output. The report itself is a dashboard: the score, what
+nobody has decided, where the points are going, how much of the plan is real,
+which tables everything is built on, and what to fix first, in one screen.
+
+```bash
+hunter dashboard          # one self-contained HTML file, ~75 KB
+```
+
+Every chart is SVG generated in Python, so the file carries its own stylesheet,
+charts and logo. It opens with no network and nothing beside it, and two runs of
+one commit produce identical bytes.
+
 | | |
 |---|---|
+| **See the dashboard** | [`docs/example/dashboard.html`](docs/example/dashboard.html), regenerated on every change |
 | **Documentation, published** | https://rittman-hunter.readthedocs.io |
 | **Documentation, in this checkout** | [`docs-html/index.html`](docs-html/index.html), built HTML. Source in [`docs/`](docs) |
 | **See real output** | [`docs/example/`](docs/example/index.md), regenerated on every change |
@@ -74,8 +87,10 @@ non-technical reader can act on this page without opening a file.
 **A list of what needs doing**, ranked by how much the score would recover, each
 item saying what breaks if it is left.
 
-**A site**, twelve pages, readable by an engineer and by someone who has never
-seen SQL. Plain language sits above the detail on the same page.
+**A dashboard**, one screen, in Rittman Analytics colours. Nine bands, each
+answering one question, every figure traceable to a rule and a finding. Behind
+it sit twelve detail pages, readable by an engineer and by someone who has never
+seen SQL.
 
 **A pull request comment**, short, specific to the change, with what it reaches.
 
@@ -171,7 +186,8 @@ rather than being a prerequisite.
 | `hunter check --pr 1184` | Build the pull request comment for a change |
 | `hunter explain <table>` | Everything known about one table |
 | `hunter showcase --days 14` | What changed in a window, and what it cost |
-| `hunter docs build` | Generate and build the site |
+| `hunter dashboard` | Write the dashboard as one self-contained HTML file |
+| `hunter docs build` | Generate and build the site, dashboard included |
 | `hunter diagram --level conceptual` | Print one Mermaid diagram |
 | `hunter baseline` | Record the starting score |
 | `hunter init` | Set up a repository |
@@ -232,11 +248,12 @@ the site with its reason and its review date.
 
 | Path | What it is |
 |---|---|
-| [`src/hunter/`](src/hunter) | The package. 45 modules |
+| [`src/hunter/`](src/hunter) | The package. 48 modules |
+| [`src/hunter/brand.py`](src/hunter/brand.py) | The Rittman Analytics palette, from the published design tokens |
 | [`examples/tiny-shop/`](examples/tiny-shop) | A working example project |
 | [`docs/`](docs) | The published documentation |
 | [`.doc/`](.doc/README.md) | Why it is built this way: problem, decisions, roadmap, what is not built |
-| [`tests/`](tests) | 519 tests, including a golden file pinning the example's score |
+| [`tests/`](tests) | 544 tests, including a golden file pinning the example's score |
 | [`action.yml`](action.yml) | The composite GitHub Action |
 
 ## What it will never do
@@ -255,7 +272,7 @@ Those are licence terms, not only design intent.
 | Version | 0.1.0.dev0, unreleased |
 | Milestone | M0 complete, plus four additions |
 | Rules | 77 across 7 scored areas |
-| Tests | 519 |
+| Tests | 544 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).

@@ -127,9 +127,48 @@ is marketing rather than reporting.
 
 ---
 
+## `hunter dashboard`
+
+Write the report as one self-contained HTML file.
+
+```bash
+hunter dashboard
+hunter dashboard . --out /tmp/report.html
+```
+
+| Option | What it does |
+|---|---|
+| `--out`, `-o` | Where to write. Default `out/dashboard.html` |
+
+The stylesheet, every chart and the logo are inlined, so the file opens with no
+network and nothing beside it: from a build artifact, a shared drive or an email
+attachment. About 75 KB. Needs nothing installed beyond Hunter itself, and in
+particular not the `site` extra.
+
+Every chart is SVG generated in Python rather than drawn by a charting library.
+That is what keeps the file self-contained, and it keeps two runs of one commit
+byte-identical.
+
+Nine bands, each answering one question:
+
+| Band | The question |
+|---|---|
+| The number | How healthy is this repository |
+| Needs a decision | What has nobody decided, as opposed to not fixed |
+| Where the ground is being lost | Which area is costing the most points |
+| How much of the plan is real | How much of the business model exists |
+| Every entity | Where each table stands, in one of eleven states |
+| Every rule at once | Is this a few bad tables or a habit |
+| What everything else is built on | Which tables are load-bearing and unchecked |
+| Do these first | What to fix, ranked by what closing it recovers |
+| What this is not based on | What Hunter could not read |
+
+---
+
 ## `hunter docs build`
 
-Generate the site and build it.
+Generate the site and build it. This is the dashboard plus every detail page
+behind it, with search and navigation.
 
 ```bash
 hunter docs build
@@ -142,8 +181,9 @@ hunter docs build . --markdown-only
 | `--out`, `-o` | Where to write. Default `out/site` |
 | `--markdown-only` | Write the pages and stop, without running MkDocs |
 
-Twelve pages plus one per table. Needs the `site` extra installed for the build
-step; the markdown is written either way.
+Twelve pages plus one per table, and `dashboard.html` as the front door. Needs
+the `site` extra installed for the build step; the markdown and the dashboard
+are written either way.
 
 ---
 

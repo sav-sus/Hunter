@@ -17,18 +17,23 @@ use_directory_urls: true
 
 theme:
   name: material
+  logo: assets/rittman-analytics.png
+  favicon: assets/favicon.ico
+  font:
+    text: Inter
+    code: Roboto Mono
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light
@@ -70,6 +75,12 @@ markdown_extensions:
 plugins:
   - search
 
+# The Rittman Analytics palette, generated from the same brand module the
+# report dashboard uses, so the documentation and the product cannot drift
+# apart. Regenerate with: python scripts/build_docs_pages.py
+extra_css:
+  - assets/rittman.css
+
 extra:
   # The theme's own "Made with Material for MkDocs" line is switched off, so the
   # footer carries the Rittman Analytics attribution and nothing else.
@@ -100,6 +111,7 @@ nav:
       - In CI: ci.md
   - See it working:
       - Overview: example/index.md
+      - 'The dashboard': example/dashboard.md
       - 'Output: overview': example/index-page.md
       - 'Output: designed against built': example/reconciliation.md
       - 'Output: the business model': example/conceptual-model.md

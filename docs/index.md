@@ -26,8 +26,21 @@ Missing everywhere it was checked:
 
 Two seconds on a 280-model repository. No warehouse credential needed.
 
-[Install it](install.md){ .md-button .md-button--primary }
-[See it working](example/index.md){ .md-button }
+That is the terminal output. The report itself is a dashboard: the score, what
+nobody has decided, where the points are going, how much of the plan is real,
+and what to fix first, in one screen.
+
+[See the dashboard](example/dashboard.md){ .md-button .md-button--primary }
+[Install it](install.md){ .md-button }
+
+The dashboard is one HTML file. The stylesheet, every chart and the logo are
+inlined, so it opens with no network and nothing beside it: from a build
+artifact, a shared drive or an email attachment.
+
+```bash
+hunter dashboard          # one self-contained file
+hunter docs build         # the dashboard plus every detail page behind it
+```
 
 ## The four questions it answers
 
@@ -99,6 +112,7 @@ an area to the score rather than being a prerequisite.
 
 | If you want to | Read |
 |---|---|
+| See what it produces | [The dashboard](example/dashboard.md) |
 | Install it and run it | [Installing](install.md), then [Getting started](quickstart.md) |
 | See real output before installing anything | [See it working](example/index.md) |
 | Understand the ideas behind it | [Concepts](concepts.md) |
