@@ -140,6 +140,31 @@ class DimensionScore(BaseModel):
         return self.effective_weight * (self.score / 100.0)
 
 
+class SystemicGap(BaseModel):
+    """A rule that failed on everything it examined.
+
+    Worth naming apart from the score. "No model in the warehouse layer names
+    an owner" is one decision nobody has taken, not 63 separate defects, and a
+    weighted mean can leave it looking like a rounding error. A team lead reads
+    this list before the number.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    rule: str
+    dimension: Dimension
+    severity: Severity
+    summary: str
+    consequence: str
+    failed: int
+    checked: int
+    plain_heading: str = ""
+
+    @property
+    def is_total(self) -> bool:
+        return self.checked > 0 and self.failed >= self.checked
+
+
 class ScoreResult(BaseModel):
     """The score, and enough context to defend it."""
 
@@ -162,6 +187,9 @@ class ScoreResult(BaseModel):
     dimensions_scored: list[Dimension] = Field(default_factory=list)
     dimensions_skipped: list[Dimension] = Field(default_factory=list)
     weights_renormalised: bool = False
+
+    #: Rules that failed on every object they looked at.
+    systemic_gaps: list[SystemicGap] = Field(default_factory=list)
 
     @property
     def passed(self) -> bool:
