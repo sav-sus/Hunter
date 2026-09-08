@@ -1,21 +1,60 @@
-MIT License
+Rittman Hunter
+Copyright (c) 2026 Rittman Analytics. All rights reserved.
 
-Copyright (c) 2026 Sav
+This software and its source code are proprietary and confidential. They are not
+open source. No licence is granted except as set out below or in a separate
+written agreement signed by Rittman Analytics.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Grant
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Rittman Analytics grants a named licensee a non-exclusive, non-transferable,
+revocable licence to run this software for the sole purpose of producing reports
+and suggestions about repositories the licensee owns or is authorised to assess.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Restrictions
+
+The licensee may not:
+
+  a. copy, publish, distribute, sublicense, sell or lease the software or its
+     source code;
+  b. modify the software or create derivative works from it;
+  c. remove or obscure the attribution required by clause 4;
+  d. use the software to provide an assessment service to a third party without
+     a separate written agreement.
+
+3. What the software does not do
+
+By design, and as a term of this licence, the software:
+
+  a. never modifies the licensee's code;
+  b. never creates commits, branches or pull requests;
+  c. never writes to any data warehouse, and requires only read access to
+     warehouse metadata where warehouse access is granted at all;
+  d. reads metadata and aggregate counts only, and does not read, store or
+     publish row-level data.
+
+4. Attribution
+
+Every report, site and comment the software publishes carries a Rittman
+Analytics attribution footer. That footer must remain intact.
+
+5. Suggestions are suggestions
+
+Output is advisory. Every finding names the rule and the evidence behind it. The
+licensee remains responsible for decisions taken about its own repositories and
+data.
+
+6. No warranty
+
+The software is provided "as is", without warranty of any kind, express or
+implied, including the warranties of merchantability, fitness for a particular
+purpose and non-infringement. To the maximum extent permitted by law, Rittman
+Analytics is not liable for any claim, damage or other liability arising from
+the software or its use.
+
+7. Termination
+
+This licence ends automatically if the licensee breaches any term. On
+termination the licensee must stop using the software and destroy all copies.
+
+Enquiries: Rittman Analytics, https://rittmananalytics.com

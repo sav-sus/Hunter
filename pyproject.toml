@@ -1,0 +1,95 @@
+[project]
+name = "rittman-hunter"
+version = "0.1.0.dev0"
+description = "Repository intelligence for analytics repositories containing dbt and LookML"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Rittman Analytics" }]
+keywords = ["dbt", "lookml", "dbml", "analytics-engineering", "data-quality"]
+classifiers = [
+  "Private :: Do Not Upload",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
+# Pinned deliberately. pydbml and lkml are small-maintainer projects parsing
+# formats that shift; a break must surface at upgrade rather than in a client
+# run. See section 15 of the requirements document.
+dependencies = [
+  "pydantic>=2.7,<3",
+  "typer>=0.12,<0.20",
+  "PyYAML>=6.0,<7",
+  "pydbml==1.2.1",
+  "lkml==1.3.7",
+  "GitPython>=3.1.43,<4",
+  "Jinja2>=3.1,<4",
+]
+
+[project.optional-dependencies]
+site = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10"]
+
+[project.scripts]
+hunter = "hunter.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/sav-sus/Hunter"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "types-PyYAML",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hunter"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "PTH", "C4"]
+ignore = [
+  "B008",   # typer uses function calls in argument defaults by design
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src/hunter"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+
+# Strict on the modules that decide a client's score. A wrong type here is a
+# wrong number in a report, per the plan's phase 4 and 5.
+[[tool.mypy.overrides]]
+module = ["hunter.checks.*", "hunter.score.*", "hunter.model.*"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_any_generics = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = ["pydbml.*", "lkml.*", "git.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+  "pilot: runs against a local client repository; never runs in CI",
+]
