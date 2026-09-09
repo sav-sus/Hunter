@@ -556,3 +556,45 @@ class TestPlainLanguage:
         for term, definition in GLOSSARY.items():
             assert definition.strip()
             assert not definition.lower().startswith(term.lower() + " is")
+
+
+class TestDbtPins:
+    """CI must parse with the dbt the team runs, or it scores a manifest nobody has."""
+
+    def test_pins_are_read_from_requirements(self, tmp_path: Path) -> None:
+        (tmp_path / "dbt_project.yml").write_text("name: shop\nprofile: shop\n", encoding="utf-8")
+        (tmp_path / "requirements.txt").write_text(
+            "dbt-core~=1.10\ndbt-bigquery~=1.9\nsqlfluff==3.0.0\n", encoding="utf-8"
+        )
+        found = detect(tmp_path)
+        assert found.dbt_pins == ["dbt-core~=1.10", "dbt-bigquery~=1.9"]
+        assert found.dbt_pins_source == "requirements.txt"
+        assert found.adapter == "bigquery"
+
+    def test_a_lock_file_gives_exact_versions_and_wins(self, tmp_path: Path) -> None:
+        (tmp_path / "dbt_project.yml").write_text("name: shop\nprofile: shop\n", encoding="utf-8")
+        (tmp_path / "requirements.txt").write_text("dbt-snowflake>=1.8\n", encoding="utf-8")
+        (tmp_path / "uv.lock").write_text(
+            '[[package]]\nname = "dbt-core"\nversion = "1.10.3"\n\n'
+            '[[package]]\nname = "dbt-snowflake"\nversion = "1.9.2"\n\n'
+            '[[package]]\nname = "dbt-common"\nversion = "1.20.0"\n',
+            encoding="utf-8",
+        )
+        found = detect(tmp_path)
+        assert found.dbt_pins == ["dbt-core==1.10.3", "dbt-snowflake==1.9.2"]
+        assert found.dbt_pins_source == "uv.lock"
+
+    def test_the_workflow_installs_the_pinned_versions(self) -> None:
+        text = workflow_text(
+            dbt_pins=["dbt-core~=1.10", "dbt-bigquery~=1.9"], dbt_pins_source="requirements.txt"
+        )
+        assert 'pip install --quiet "dbt-core~=1.10" "dbt-bigquery~=1.9"' in text
+        assert "Pinned to match requirements.txt" in text
+        assert "Unpinned" not in text
+
+    def test_an_unpinned_install_says_so_and_how_to_fix_it(self) -> None:
+        text = workflow_text(adapter="bigquery")
+        assert "pip install --quiet dbt-core dbt-bigquery" in text
+        assert "Unpinned: no dbt version was found" in text
+        assert '"dbt-bigquery~=1.9"' in text
+        yaml.safe_load(text)

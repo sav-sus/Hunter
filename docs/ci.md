@@ -31,7 +31,7 @@ Six jobs. Each shows as its own line on the pull request.
 
 | Job | When | What it does |
 |---|---|---|
-| Build the dbt manifest | Every run | `dbt deps`, `dbt parse`, and hands `manifest.json` to the other jobs |
+| Build the dbt manifest | Every run | Installs the dbt version the repository pins, runs `dbt deps` and `dbt parse`, and hands `manifest.json` to the other jobs |
 | Score | Every pull request and push | Scores the repository and posts one comment, edited in place |
 | LookML sync | Every pull request and push | Does the reporting layer still match the tables? |
 | Droughty sync | Every pull request and push | Was the generated schema applied, and is it current? |
@@ -71,7 +71,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install --quiet dbt-core dbt-bigquery
+      - run: pip install --quiet "dbt-core~=1.10" "dbt-bigquery~=1.9"
+        # pinned to match requirements.txt; unpinned, with a note, if no pin was found
       - name: Write the dbt profile from the repository secrets
         env:
           DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}

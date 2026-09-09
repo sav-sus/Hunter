@@ -61,6 +61,11 @@ class Detected:
         #: Whether target/ is gitignored, in which case CI has no manifest
         #: unless the workflow builds one.
         self.target_gitignored: bool = False
+        #: dbt packages with the versions the repository pins, such as
+        #: ``dbt-bigquery~=1.9``, and the file they were read from. CI parses
+        #: with the same dbt the team runs, or the manifest can differ.
+        self.dbt_pins: list[str] = []
+        self.dbt_pins_source: str | None = None
         self.notes: list[str] = []
 
 
@@ -106,6 +111,13 @@ def detect(root: Path) -> Detected:
 
     found.profile = _dbt_profile_name(project_dir)
     found.adapter = _dbt_adapter(root, project_dir)
+    found.dbt_pins, found.dbt_pins_source = _dbt_pins(root, project_dir)
+    if found.adapter is None:
+        for pin in found.dbt_pins:
+            package = re.split(r"[=~!<>\[ ]", pin, maxsplit=1)[0]
+            if package != "dbt-core":
+                found.adapter = package.removeprefix("dbt-")
+                break
     found.target_gitignored = _target_is_gitignored(root, project_dir)
     if found.target_gitignored:
         found.notes.append(
@@ -181,6 +193,76 @@ def _dbt_adapter(root: Path, project_dir: Path) -> str | None:
                 if isinstance(output, dict) and isinstance(output.get("type"), str):
                     return output["type"]
     return None
+
+
+#: dbt-core and the adapters. Not dbt-common, dbt-adapters or the other
+#: internal packages, which the adapter pulls in at the version it needs.
+_DBT_ADAPTERS = (
+    "bigquery",
+    "snowflake",
+    "postgres",
+    "redshift",
+    "databricks",
+    "duckdb",
+    "spark",
+    "trino",
+    "athena",
+    "clickhouse",
+    "sqlserver",
+    "fabric",
+    "synapse",
+    "oracle",
+    "mysql",
+)
+_DBT_PACKAGE = r"dbt-(?:core|" + "|".join(_DBT_ADAPTERS) + r")"
+_REQUIREMENT = re.compile(
+    r"(?<![\w-])(?P<name>" + _DBT_PACKAGE + r")(?:\[[^\]]*\])?\s*"
+    r"(?P<spec>(?:===?|~=|!=|<=?|>=?)\s*[0-9][\w.*+!-]*(?:\s*,\s*(?:===?|~=|!=|<=?|>=?)\s*[0-9][\w.*+!-]*)*)",
+    re.I,
+)
+_LOCKED = re.compile(
+    r'^name = "(?P<name>' + _DBT_PACKAGE + r')"\nversion = "(?P<version>[^"]+)"', re.M
+)
+_PIN_FILES = (
+    "requirements.txt",
+    "requirements-dbt.txt",
+    "requirements/dbt.txt",
+    "requirements-dev.txt",
+    "pyproject.toml",
+    "uv.lock",
+    "poetry.lock",
+)
+
+
+def _dbt_pins(root: Path, project_dir: Path) -> tuple[list[str], str | None]:
+    """The dbt versions the repository pins, from the first file that names any.
+
+    Lock files give exact versions and win over loose ranges, so they are
+    read first. Requirement and project files are read for their specifiers.
+    """
+    seen: list[Path] = []
+    for directory in (project_dir, root):
+        for name in _PIN_FILES:
+            candidate = directory / name
+            if candidate.exists() and candidate not in seen:
+                seen.append(candidate)
+    seen.sort(key=lambda path: 0 if path.suffix == ".lock" else 1)
+    for path in seen:
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        pins: dict[str, str] = {}
+        if path.suffix == ".lock":
+            for match in _LOCKED.finditer(text):
+                pins[match.group("name").lower()] = f"=={match.group('version')}"
+        else:
+            for match in _REQUIREMENT.finditer(text):
+                pins[match.group("name").lower()] = re.sub(r"\s+", "", match.group("spec"))
+        if pins:
+            ordered = sorted(pins, key=lambda name: (name != "dbt-core", name))
+            return [f"{name}{pins[name]}" for name in ordered], _as_relative(path, root)
+    return [], None
 
 
 _TARGET_IGNORE = re.compile(r"^/?(\*\*/)?target/?(\*\*)?$")
@@ -395,6 +477,8 @@ def workflow_text(
     dbt_project_dir: str = ".",
     adapter: str | None = None,
     profile: str | None = None,
+    dbt_pins: list[str] | None = None,
+    dbt_pins_source: str | None = None,
 ) -> str:
     """The workflow a client repository needs. Section 11.6.
 
@@ -419,6 +503,22 @@ def workflow_text(
         if not adapter_guessed
         else "\n        # No profiles.yml in the repository, so the adapter is a guess. Change it."
     )
+    if dbt_pins:
+        packages = " ".join(f'"{pin}"' for pin in dbt_pins)
+        if not any(pin.startswith("dbt-core") for pin in dbt_pins):
+            packages = "dbt-core " + packages
+        install_note = (
+            f"\n        # Pinned to match {dbt_pins_source}, so CI parses with the dbt the team"
+            "\n        # runs. A different dbt can write a different manifest."
+        )
+    else:
+        packages = f"dbt-core dbt-{adapter}"
+        install_note = (
+            "\n        # Unpinned: no dbt version was found in the repository. CI then parses"
+            "\n        # with the newest dbt, which can differ from the one the team runs and"
+            "\n        # change the manifest Hunter scores. Pin it here once you know the"
+            f'\n        # version, for example "dbt-core~=1.10" "dbt-{adapter}~=1.9".'
+        )
     return f"""# Rittman Hunter.
 #
 # What runs when:
@@ -504,7 +604,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dbt
-        run: pip install --quiet dbt-core dbt-{adapter}{adapter_note}
+        run: pip install --quiet {packages}{install_note}{adapter_note}
       - name: Write the dbt profile from the repository secrets
         env:
           DBT_PROFILES_YML: ${{{{ secrets.DBT_PROFILES_YML }}}}
@@ -648,6 +748,8 @@ def scaffold(
             dbt_project_dir=found.dbt_project_dir,
             adapter=found.adapter,
             profile=found.profile,
+            dbt_pins=found.dbt_pins,
+            dbt_pins_source=found.dbt_pins_source,
         )
 
     if not force:

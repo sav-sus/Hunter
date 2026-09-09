@@ -729,6 +729,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#releasing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Releasing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-golden-file" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -989,6 +1000,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#releasing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Releasing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-golden-file" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1233,6 +1255,20 @@ off-plan build and a dropped generation override.</p>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_pages.py<span class="w">     </span><span class="c1"># rewrite the documented example</span>
 </code></pre></div>
 <p>Then review all three diffs.</p>
+<h2 id="releasing">Releasing<a class="headerlink" href="#releasing" title="Permanent link">&para;</a></h2>
+<p>The composite actions install Hunter from the git tag <code>v&lt;version&gt;</code>, and the
+workflow <code>hunter init</code> writes references the actions at that tag. So a release
+is a version bump: change <code>__version__</code> in <code>src/hunter/__init__.py</code> and the
+<code>version</code> in <code>pyproject.toml</code>, and set the <code>hunter-version</code> default in
+<code>action.yml</code> and the three files under <code>actions/</code> to match.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/check_release.py<span class="w">          </span><span class="c1"># the six files agree, no network</span>
+</code></pre></div>
+<p>That check runs on every pull request and never looks at the remote. When the
+bump reaches <code>main</code>, the release job creates the tag at that commit and then
+asserts it exists. Later commits with the same version leave the tag alone. The
+two are kept apart on purpose: an earlier wiring had the pull-request check
+require the tag and the release job require the check, so no tag could ever be
+created.</p>
 <h2 id="the-golden-file">The golden file<a class="headerlink" href="#the-golden-file" title="Permanent link">&para;</a></h2>
 <p><code>tests/golden/tiny-shop.json</code> is the example's whole report, minus its
 timestamp. Every change to the arithmetic changes it, and CI fails if it has
@@ -1263,7 +1299,7 @@ repository.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_pages.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_pages.py
 </code></pre></div>
 <p>CI regenerates and fails on a difference, so neither can go stale. A stale rules
 reference is worse than none, because somebody will act on it.</p>
@@ -1271,8 +1307,8 @@ reference is worse than none, because somebody will act on it.</p>
 <p><code>docs-html/</code> holds the built site, committed so it can be opened from any
 checkout without installing anything. Read the Docs builds its own copy from
 <code>mkdocs.yml</code> and does not use this folder.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w">            </span><span class="c1"># rebuild</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w"> </span>--serve<span class="w">    </span><span class="c1"># rebuild and open it</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w">            </span><span class="c1"># rebuild</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_docs_site.py<span class="w"> </span>--serve<span class="w">    </span><span class="c1"># rebuild and open it</span>
 </code></pre></div>
 <p>It costs about 4 MB in the repository, most of it theme assets. CI rebuilds it
 and fails on a difference. To stop committing it, add <code>/docs-html/</code> to
