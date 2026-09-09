@@ -69,7 +69,7 @@ inputs:
       action at @main, because a client's score must not move because someone
       pushed a commit.
     required: false
-    default: "0.1.0"
+    default: "0.1.1"
 
   python-version:
     description: Python version to run under.

@@ -55,7 +55,7 @@ inputs:
       action at @main, because a result must not change because somebody pushed
       a commit.
     required: false
-    default: "0.1.0"
+    default: "0.1.1"
 
   python-version:
     description: Python version to run under.
