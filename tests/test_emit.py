@@ -320,6 +320,20 @@ class TestPrComment:
         """FR11.5."""
         assert build_comment(result).startswith(MARKER)
 
+    def test_no_logo_unless_a_public_url_is_configured(self, result: RunResult) -> None:
+        """A private repository's file URL would render as a broken image."""
+        assert "<img" not in build_comment(result)
+
+    def test_the_logo_leads_the_comment_when_configured(self, result: RunResult) -> None:
+        from dataclasses import replace
+
+        branding = result.config.branding.model_copy(
+            update={"logo_url": "https://example.github.io/repo/assets/rittman-analytics.png"}
+        )
+        branded = replace(result, config=result.config.model_copy(update={"branding": branding}))
+        body = build_comment(branded)
+        assert body.index('<img src="https://example.github.io') < body.index("## Rittman Hunter")
+
     def test_the_score_leads(self, result: RunResult) -> None:
         assert f"{result.score.total:g} / 100" in build_comment(result)
 

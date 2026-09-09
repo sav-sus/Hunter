@@ -78,6 +78,19 @@ def findings_for_changed_files(result: RunResult, changed_files: Iterable[str]) 
     ]
 
 
+def header(title: str, logo_url: str | None) -> list[str]:
+    """The heading of a comment or summary, with the logo where one is configured.
+
+    GitHub shows its own icon next to every check that comes from Actions and
+    offers no way to change it, so the logo goes inside the body instead.
+    """
+    lines: list[str] = []
+    if logo_url:
+        lines += [f'<img src="{logo_url}" alt="Rittman Analytics" height="28">', ""]
+    lines += [f"## {title}", ""]
+    return lines
+
+
 def build_comment(
     result: RunResult,
     *,
@@ -107,7 +120,7 @@ def build_comment(
             "this change touched. Some may predate the change."
         )
 
-    lines = [MARKER, "", "## Rittman Hunter", ""]
+    lines = [MARKER, "", *header("Rittman Hunter", config.branding.logo_url)]
 
     if score.baseline is not None and score.delta is not None:
         arrow = "up" if score.delta > 0 else ("down" if score.delta < 0 else "level")

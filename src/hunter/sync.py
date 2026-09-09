@@ -327,13 +327,15 @@ _VERDICT_MARK = {
 }
 
 
-def as_markdown(results: list[SyncResult]) -> str:
+def as_markdown(results: list[SyncResult], *, logo_url: str | None = None) -> str:
     """A CI step summary.
 
     Written so the table alone is enough to decide whether to look further,
     and the detail below it is enough to act without opening the repository.
     """
-    lines: list[str] = ["## Rittman Hunter: layer sync", ""]
+    from hunter.emit.pr_comment import header
+
+    lines: list[str] = header("Rittman Hunter: layer sync", logo_url)
     lines += ["| | Check | Result | Detail |", "|---|---|---|---|"]
     for item in results:
         mark = _VERDICT_MARK[item.verdict]

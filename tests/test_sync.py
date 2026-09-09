@@ -220,6 +220,11 @@ class TestEmitters:
     def test_the_markdown_carries_the_attribution(self, results: list[sync.SyncResult]) -> None:
         assert "Rittman Analytics" in sync.as_markdown(results)
 
+    def test_the_summary_carries_the_logo_when_configured(self, results) -> None:
+        body = sync.as_markdown(results, logo_url="https://example.github.io/logo.png")
+        assert body.startswith('<img src="https://example.github.io/logo.png"')
+        assert "<img" not in sync.as_markdown(results)
+
 
 class TestTheActions:
     """The YAML is tested because nothing else will run it until it is published."""

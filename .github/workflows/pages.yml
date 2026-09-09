@@ -7,7 +7,7 @@
 # link that opens without a GitHub account.
 #
 # One-time setup: repository settings, Pages, source "GitHub Actions".
-name: Pages
+name: Publish the documentation
 
 on:
   push:
@@ -25,6 +25,7 @@ concurrency:
 
 jobs:
   publish:
+    name: Publish to GitHub Pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages

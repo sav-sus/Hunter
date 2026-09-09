@@ -537,6 +537,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-the-checks-are-named-and-the-logo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the checks are named, and the logo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-score-action" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -928,6 +939,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-the-checks-are-named-and-the-logo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the checks are named, and the logo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-score-action" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1162,6 +1184,23 @@ shallow clone rather than staying quiet about it, but the fix is here.</p>
 <p><strong>Never reference the Action at <code>@main</code>.</strong> Pin a tag, or a repository's score
 moves because somebody pushed a commit to Hunter.</p>
 </div>
+<h2 id="how-the-checks-are-named-and-the-logo">How the checks are named, and the logo<a class="headerlink" href="#how-the-checks-are-named-and-the-logo" title="Permanent link">&para;</a></h2>
+<p>A check on a pull request is named <code>&lt;workflow name&gt; / &lt;job name&gt;</code>. Both come
+from the workflow file, so rename them there. The workflow above shows as
+<strong>Hunter / Score</strong>, <strong>Hunter / LookML sync</strong>, <strong>Hunter / Droughty sync</strong> and
+<strong>Hunter / Modelling sync</strong>.</p>
+<p>GitHub puts its own icon next to every check that comes from Actions and
+offers no way to change it. The only way to get a different icon on the check
+row itself is a GitHub App, which is a separate piece of infrastructure and not
+part of Hunter.</p>
+<p>What Hunter can do is put the Rittman Analytics logo at the top of the pull
+request comment and of each sync summary. Set a public URL in <code>hunter.yml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">branding</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">logo_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://&lt;organisation&gt;.github.io/&lt;repository&gt;/assets/rittman-analytics.png</span>
+</code></pre></div>
+<p>It is off by default because GitHub only renders images it can fetch. A raw
+file URL from a private repository shows as a broken image. The published
+documentation site, once Pages is on, serves the logo at the path above.</p>
 <h2 id="the-score-action">The score action<a class="headerlink" href="#the-score-action" title="Permanent link">&para;</a></h2>
 <p>The rest of this page is about the first job, the composite action at the
 repository root. It wraps the command line and nothing else, so CI and local
@@ -1318,18 +1357,18 @@ the comment step is skipped.</p>
 <p>By default the comment lists findings on the files the change touched,
 which is a superset of what the change introduced, and says so. For an
 exact diff, give it the report from before.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch the report from main</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/download-artifact@v4</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">continue-on-error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hunter-report</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">          </span><span class="nt">github-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.token }}</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">          </span><span class="nt">run-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ needs.find-baseline.outputs.run-id }}</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter@v0.1.0</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">          </span><span class="nt">previous-report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous/report.json</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch the report from main</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/download-artifact@v4</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">continue-on-error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hunter-report</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="nt">github-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.token }}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">          </span><span class="nt">run-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ needs.find-baseline.outputs.run-id }}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter@v0.1.0</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">          </span><span class="nt">previous-report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous/report.json</span>
 </code></pre></div>
 <p>Worth it once the comment is being read. Not worth it on day one.</p>
 </details>
@@ -1340,10 +1379,10 @@ rest on every push to main.</p>
 <details class="note">
 <summary>Running it without GitHub Actions</summary>
 <p>Nothing in Hunter depends on Actions. In any CI system:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>report.json
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>hunter<span class="w"> </span>sync<span class="w"> </span>--root<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>sync.json
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>site
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>report.json
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>hunter<span class="w"> </span>sync<span class="w"> </span>--root<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>sync.json
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>site
 </code></pre></div>
 <p>Exit code 1 means the gate failed, 2 means it could not run.</p>
 </details>

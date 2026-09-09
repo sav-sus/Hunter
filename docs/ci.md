@@ -101,6 +101,30 @@ shallow clone rather than staying quiet about it, but the fix is here.
 moves because somebody pushed a commit to Hunter.
 </div>
 
+## How the checks are named, and the logo
+
+A check on a pull request is named `<workflow name> / <job name>`. Both come
+from the workflow file, so rename them there. The workflow above shows as
+**Hunter / Score**, **Hunter / LookML sync**, **Hunter / Droughty sync** and
+**Hunter / Modelling sync**.
+
+GitHub puts its own icon next to every check that comes from Actions and
+offers no way to change it. The only way to get a different icon on the check
+row itself is a GitHub App, which is a separate piece of infrastructure and not
+part of Hunter.
+
+What Hunter can do is put the Rittman Analytics logo at the top of the pull
+request comment and of each sync summary. Set a public URL in `hunter.yml`:
+
+```yaml
+branding:
+  logo_url: https://<organisation>.github.io/<repository>/assets/rittman-analytics.png
+```
+
+It is off by default because GitHub only renders images it can fetch. A raw
+file URL from a private repository shows as a broken image. The published
+documentation site, once Pages is on, serves the logo at the path above.
+
 ## The score action
 
 The rest of this page is about the first job, the composite action at the

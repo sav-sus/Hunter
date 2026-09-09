@@ -1,6 +1,6 @@
 # Hunter's own CI. Three gates and the golden file, which is the one that
 # catches an accidental change to a client's score.
-name: CI
+name: Hunter
 
 on:
   push:
@@ -16,6 +16,9 @@ concurrency:
 
 jobs:
   check:
+    # Shown on a pull request as "Hunter / Tests and checks (Python 3.12)".
+    # The name says what the job does; "check" said nothing.
+    name: Tests and checks (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

@@ -432,7 +432,10 @@ def sync_command(
 
     if summary:
         summary.parent.mkdir(parents=True, exist_ok=True)
-        summary.write_text(sync_module.as_markdown(results), encoding="utf-8")
+        summary.write_text(
+            sync_module.as_markdown(results, logo_url=result.config.branding.logo_url),
+            encoding="utf-8",
+        )
         typer.echo(f"  Summary written to {summary}")
 
     failing = [item for item in results if item.fails_build(fail_on)]

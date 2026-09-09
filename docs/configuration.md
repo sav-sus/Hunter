@@ -134,6 +134,20 @@ A found layer carries no rules: no required descriptions, owners or tests, and
 no place in the pipeline order. Declare it here to say what it should look like.
 Until then, nothing needs editing for its tables to appear on the dashboard.
 
+??? note "Branding: names and the logo on the report"
+
+    ```yaml
+    branding:
+      site_name: Repository health
+      client_name: Tiny Shop            # shown before the site name
+      logo_url: https://<organisation>.github.io/<repository>/assets/rittman-analytics.png
+    ```
+
+    `logo_url` puts the logo at the top of the pull request comment and the
+    sync summaries. It is off by default: GitHub only renders images it can
+    fetch, and a private repository's file URL shows as a broken image. See
+    [how the checks are named](ci.md#how-the-checks-are-named-and-the-logo).
+
 ??? note "Layers: what is allowed in each stage"
 
     ```yaml
