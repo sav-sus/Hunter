@@ -22,14 +22,15 @@ Any change counts: a new model, an edited one, a LookML file, a design file, a
 register entry. The workflow has no path filter, so nothing is missed because a
 file sat in an unexpected place.
 
-## 2. GitHub Actions starts five jobs
+## 2. GitHub Actions starts six jobs
 
-The workflow `hunter init` writes runs the score and the three sync checks, each
-as its own job. They show as separate lines on the pull request, so one drifted
+The workflow `hunter init` writes builds the dbt manifest, then runs the score
+and the three sync checks, each as its own job. They show as separate lines on the pull request, so one drifted
 layer does not hide another.
 
 | Job | Question it answers |
 |---|---|
+| Build the dbt manifest | Runs `dbt parse` so the other jobs have something to read. Needs the `DBT_PROFILES_YML` secret |
 | Score | What state is the whole repository in? |
 | LookML sync | Does the reporting layer still match the tables? |
 | Droughty sync | Was the generated schema applied, and is it current? |

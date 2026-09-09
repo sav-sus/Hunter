@@ -526,10 +526,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-commit-the-files-and-open-a-pull-request" class="md-nav__link">
+  <a href="#9-add-the-two-dbt-secrets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Commit the files and open a pull request
+        9. Add the two dbt secrets
       
     </span>
   </a>
@@ -537,10 +537,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-merge-then-open-the-dashboard" class="md-nav__link">
+  <a href="#10-commit-the-files-and-open-a-pull-request" class="md-nav__link">
     <span class="md-ellipsis">
       
-        10. Merge, then open the dashboard
+        10. Commit the files and open a pull request
       
     </span>
   </a>
@@ -548,10 +548,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-fill-in-the-register" class="md-nav__link">
+  <a href="#11-merge-then-open-the-dashboard" class="md-nav__link">
     <span class="md-ellipsis">
       
-        11. Fill in the register
+        11. Merge, then open the dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-fill-in-the-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Fill in the register
       
     </span>
   </a>
@@ -993,10 +1004,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-commit-the-files-and-open-a-pull-request" class="md-nav__link">
+  <a href="#9-add-the-two-dbt-secrets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Commit the files and open a pull request
+        9. Add the two dbt secrets
       
     </span>
   </a>
@@ -1004,10 +1015,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-merge-then-open-the-dashboard" class="md-nav__link">
+  <a href="#10-commit-the-files-and-open-a-pull-request" class="md-nav__link">
     <span class="md-ellipsis">
       
-        10. Merge, then open the dashboard
+        10. Commit the files and open a pull request
       
     </span>
   </a>
@@ -1015,10 +1026,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#11-fill-in-the-register" class="md-nav__link">
+  <a href="#11-merge-then-open-the-dashboard" class="md-nav__link">
     <span class="md-ellipsis">
       
-        11. Fill in the register
+        11. Merge, then open the dashboard
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-fill-in-the-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Fill in the register
       
     </span>
   </a>
@@ -1073,7 +1095,7 @@
 
 
 <h1 id="quick-start-step-by-step">Quick start, step by step<a class="headerlink" href="#quick-start-step-by-step" title="Permanent link">&para;</a></h1>
-<p class="lede">From nothing to a published dashboard. Eleven steps. Each one
+<p class="lede">From nothing to a published dashboard. Twelve steps. Each one
 says what to do, what you should see, and what to do if you do not see it.
 Nothing here changes your warehouse.</p>
 
@@ -1220,7 +1242,7 @@ Hunter where the manifest is:</p>
 </code></pre></div>
 <p><strong>You should see</strong> one page in your browser: the score, a checklist, the
 roadmap, the model diagrams and a list of every table. This is the page a
-stakeholder will get a link to in step 10. <a href="../example/dashboard/">Here is what it looks like</a>.</p>
+stakeholder will get a link to in step 11. <a href="../example/dashboard/">Here is what it looks like</a>.</p>
 <h2 id="7-record-where-you-started">7. Record where you started<a class="headerlink" href="#7-record-where-you-started" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>hunter<span class="w"> </span>baseline
 </code></pre></div>
@@ -1244,7 +1266,25 @@ dashboard shows table names, column names, owners and findings. It shows no
 data. If a public page is not acceptable, skip this step and see
 <a href="../publish/">Publish the dashboard</a> for the alternative.</p>
 </div>
-<h2 id="9-commit-the-files-and-open-a-pull-request">9. Commit the files and open a pull request<a class="headerlink" href="#9-commit-the-files-and-open-a-pull-request" title="Permanent link">&para;</a></h2>
+<h2 id="9-add-the-two-dbt-secrets">9. Add the two dbt secrets<a class="headerlink" href="#9-add-the-two-dbt-secrets" title="Permanent link">&para;</a></h2>
+<p>Hunter reads the file dbt writes when it parses the project, and that file is
+never in a checkout. So the workflow runs <code>dbt parse</code> itself before anything
+else, and <code>dbt parse</code> needs a dbt profile. You give it one as a secret.</p>
+<ol>
+<li>In the repository on GitHub, click <strong>Settings</strong>.</li>
+<li>In the left-hand list, click <strong>Secrets and variables</strong>, then <strong>Actions</strong>.</li>
+<li>Click <strong>New repository secret</strong>. Name: <code>DBT_PROFILES_YML</code>. Value: the whole
+   contents of a <code>profiles.yml</code> for CI. The top of the generated
+   <code>.github/workflows/hunter.yml</code> shows one to copy, with your profile name
+   already filled in.</li>
+<li>For BigQuery with a service account, add a second secret. Name:
+   <code>DBT_KEYFILE_JSON</code>. Value: the service account key file, as JSON.</li>
+</ol>
+<p><strong>If your dbt job already produces a manifest</strong> somewhere, you can skip the
+secrets: the header of the workflow file says how to fetch that file instead.</p>
+<p><strong>If you skip this step</strong>, the first job on the pull request stops with a
+message that names the missing secret. Nothing else runs until it is added.</p>
+<h2 id="10-commit-the-files-and-open-a-pull-request">10. Commit the files and open a pull request<a class="headerlink" href="#10-commit-the-files-and-open-a-pull-request" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>add-hunter
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>git<span class="w"> </span>add<span class="w"> </span>.hunter<span class="w"> </span>.github/workflows/hunter.yml
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Add Hunter"</span>
@@ -1263,6 +1303,10 @@ to open a pull request for <code>add-hunter</code>. Click <strong>Compare &amp; 
 </thead>
 <tbody>
 <tr>
+<td>A check called <strong>Build the dbt manifest</strong></td>
+<td><code>dbt parse</code>, using the profile from step 9. The other four wait for it</td>
+</tr>
+<tr>
 <td>A check called <strong>Score</strong></td>
 <td>The whole repository scored. It never fails the build</td>
 </tr>
@@ -1276,11 +1320,11 @@ to open a pull request for <code>add-hunter</code>. Click <strong>Compare &amp; 
 </tr>
 </tbody>
 </table>
-<p>Nothing fails on this first run. All four checks start in report-only mode.</p>
+<p>Nothing fails on this first run if step 9 was done. All four Hunter checks start in report-only mode.</p>
 <p><strong>If no checks appear</strong>, click the <strong>Actions</strong> tab. If the list is empty,
 Actions is switched off for the repository: Settings, Actions, General, allow
 all actions. Then push a small change to the branch.</p>
-<h2 id="10-merge-then-open-the-dashboard">10. Merge, then open the dashboard<a class="headerlink" href="#10-merge-then-open-the-dashboard" title="Permanent link">&para;</a></h2>
+<h2 id="11-merge-then-open-the-dashboard">11. Merge, then open the dashboard<a class="headerlink" href="#11-merge-then-open-the-dashboard" title="Permanent link">&para;</a></h2>
 <p>Click <strong>Merge pull request</strong>, then <strong>Confirm merge</strong>.</p>
 <p>Click the <strong>Actions</strong> tab. <strong>You should see</strong> a run called <strong>Hunter</strong> on
 <code>main</code>. Wait for every job to show a green tick, including <strong>Publish the
@@ -1293,7 +1337,7 @@ open. Send the link to whoever asked for it. It updates itself every time a
 pull request is merged, and every Monday morning.</p>
 <p><strong>If the Publish job failed</strong>, go back to step 8. The Pages source is still set
 to a branch.</p>
-<h2 id="11-fill-in-the-register">11. Fill in the register<a class="headerlink" href="#11-fill-in-the-register" title="Permanent link">&para;</a></h2>
+<h2 id="12-fill-in-the-register">12. Fill in the register<a class="headerlink" href="#12-fill-in-the-register" title="Permanent link">&para;</a></h2>
 <p>This is the step that turns findings into something people can act on, and it
 is the one you will come back to.</p>
 <p>Open <code>.hunter/register.yml</code>. It has a list of tables with a blank owner. Fill
@@ -1410,6 +1454,14 @@ pull request.</p>
 <tr>
 <td>The Publish job fails</td>
 <td>Step 8. The Pages source is still set to a branch</td>
+</tr>
+<tr>
+<td><code>Missing secret DBT_PROFILES_YML</code></td>
+<td>Step 9. The workflow cannot build the manifest without a dbt profile</td>
+</tr>
+<tr>
+<td><code>unable to resolve action</code></td>
+<td>The Hunter version in the workflow has no release tag. Run <code>python scripts/check_release.py --tag</code> in the Hunter repository</td>
 </tr>
 </tbody>
 </table>
