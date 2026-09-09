@@ -66,7 +66,7 @@ that let it down named. Nothing on the page is written by a language model.
 <li markdown><b>Someone opens a pull request</b>
 Any change to the repository. There is no path filter and nothing to run by hand.</li>
 <li markdown><b>GitHub Actions runs Hunter</b>
-Five jobs: the score, and the LookML, Droughty and modelling sync checks, each as its own line on the pull request. Hunter finds the layers itself, so a new directory of models is picked up without configuration.</li>
+Six jobs: the dbt manifest is built, then the score and the LookML, Droughty and modelling sync checks run, each as its own line on the pull request. Hunter finds the layers itself, so a new directory of models is picked up without configuration.</li>
 <li markdown><b>The pull request gets one comment</b>
 What the change touches, what it reaches downstream, and what it adds to the debt. Edited in place on each push.</li>
 <li markdown><b>On merge, the dashboard is rebuilt and published</b>

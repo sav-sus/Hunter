@@ -389,3 +389,23 @@ class TestVerified:
     def test_unknown_cannot_be_declared(self) -> None:
         with pytest.raises(ValueError, match="temporary, verified or permanent"):
             RegisterModel(persistence=Persistence.UNKNOWN, reason="a long enough reason here")
+
+
+class TestEmptySections:
+    """A section emptied by hand reads as null. That is an empty section, not an error."""
+
+    def test_null_sections_are_empty(self) -> None:
+        register = Register.model_validate(
+            {"version": 1, "models": None, "off_plan_approved": None, "ignores": None}
+        )
+        assert register.models == {}
+        assert register.off_plan_approved == []
+        assert register.ignores == []
+
+    def test_a_typo_is_still_refused(self) -> None:
+        with pytest.raises(ValueError):
+            Register.model_validate({"version": 1, "modles": {}})
+
+    def test_a_wrong_type_is_still_refused(self) -> None:
+        with pytest.raises(ValueError):
+            Register.model_validate({"version": 1, "models": ["not", "a", "mapping"]})

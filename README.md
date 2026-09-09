@@ -226,13 +226,16 @@ by construction rather than by discipline.
 
 ## In CI
 
-`hunter init` writes one workflow with five jobs. Every pull request gets the
-score and the three sync checks, each as its own line. Every push to main
+`hunter init` writes one workflow with six jobs. The first builds the dbt
+manifest with `dbt parse`, which needs a `DBT_PROFILES_YML` secret the file's
+header explains. Then every pull request gets the score and the three sync
+checks, each as its own line. Every push to main
 rebuilds the dashboard and publishes it to GitHub Pages in the same repository.
 No path filter and no manual step: a new layer or model is detected by Hunter.
 
 ```yaml
 jobs:
+  manifest:          # dbt deps, dbt parse, hand manifest.json to the rest
   hunter:            # the score, and one comment edited in place
   lookml-sync:       # does the reporting layer still match the tables?
   droughty-sync:     # was the generated schema applied, and is it current?

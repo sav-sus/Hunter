@@ -1,6 +1,6 @@
 # Quick start, step by step
 
-<p class="lede">From nothing to a published dashboard. Eleven steps. Each one
+<p class="lede">From nothing to a published dashboard. Twelve steps. Each one
 says what to do, what you should see, and what to do if you do not see it.
 Nothing here changes your warehouse.</p>
 
@@ -145,7 +145,7 @@ open out/dashboard.html          # on Windows: start out\dashboard.html
 
 **You should see** one page in your browser: the score, a checklist, the
 roadmap, the model diagrams and a list of every table. This is the page a
-stakeholder will get a link to in step 10. [Here is what it looks like](example/dashboard.md).
+stakeholder will get a link to in step 11. [Here is what it looks like](example/dashboard.md).
 
 ## 7. Record where you started
 
@@ -177,7 +177,28 @@ data. If a public page is not acceptable, skip this step and see
 [Publish the dashboard](publish.md) for the alternative.
 </div>
 
-## 9. Commit the files and open a pull request
+## 9. Add the two dbt secrets
+
+Hunter reads the file dbt writes when it parses the project, and that file is
+never in a checkout. So the workflow runs `dbt parse` itself before anything
+else, and `dbt parse` needs a dbt profile. You give it one as a secret.
+
+1. In the repository on GitHub, click **Settings**.
+2. In the left-hand list, click **Secrets and variables**, then **Actions**.
+3. Click **New repository secret**. Name: `DBT_PROFILES_YML`. Value: the whole
+   contents of a `profiles.yml` for CI. The top of the generated
+   `.github/workflows/hunter.yml` shows one to copy, with your profile name
+   already filled in.
+4. For BigQuery with a service account, add a second secret. Name:
+   `DBT_KEYFILE_JSON`. Value: the service account key file, as JSON.
+
+**If your dbt job already produces a manifest** somewhere, you can skip the
+secrets: the header of the workflow file says how to fetch that file instead.
+
+**If you skip this step**, the first job on the pull request stops with a
+message that names the missing secret. Nothing else runs until it is added.
+
+## 10. Commit the files and open a pull request
 
 ```bash
 git checkout -b add-hunter
@@ -194,17 +215,18 @@ Within a minute or two, **you should see** at the bottom of the pull request:
 
 | What appears | What it is |
 |---|---|
+| A check called **Build the dbt manifest** | `dbt parse`, using the profile from step 9. The other four wait for it |
 | A check called **Score** | The whole repository scored. It never fails the build |
 | **LookML sync**, **Droughty sync**, **Modelling sync** | One line each. Does one layer still match another? |
 | One comment from the GitHub Actions bot | What this change touches, what it reaches, and what it adds to the debt |
 
-Nothing fails on this first run. All four checks start in report-only mode.
+Nothing fails on this first run if step 9 was done. All four Hunter checks start in report-only mode.
 
 **If no checks appear**, click the **Actions** tab. If the list is empty,
 Actions is switched off for the repository: Settings, Actions, General, allow
 all actions. Then push a small change to the branch.
 
-## 10. Merge, then open the dashboard
+## 11. Merge, then open the dashboard
 
 Click **Merge pull request**, then **Confirm merge**.
 
@@ -225,7 +247,7 @@ pull request is merged, and every Monday morning.
 **If the Publish job failed**, go back to step 8. The Pages source is still set
 to a branch.
 
-## 11. Fill in the register
+## 12. Fill in the register
 
 This is the step that turns findings into something people can act on, and it
 is the one you will come back to.
@@ -297,5 +319,7 @@ pull request.
 | `No model named 'x'` | Hunter suggests near matches. Use the name as it appears in the manifest |
 | Most areas say "not measured" | Read the "what was not checked" page on the dashboard. Usually the design files or the LookML are somewhere Hunter did not look |
 | The Publish job fails | Step 8. The Pages source is still set to a branch |
+| `Missing secret DBT_PROFILES_YML` | Step 9. The workflow cannot build the manifest without a dbt profile |
+| `unable to resolve action` | The Hunter version in the workflow has no release tag. Run `python scripts/check_release.py --tag` in the Hunter repository |
 
 Full command reference: [Commands](cli.md).

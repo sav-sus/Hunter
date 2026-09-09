@@ -4,12 +4,34 @@
 pull request gets the score and the three sync checks. Every push to main
 rebuilds the dashboard and publishes it. Nobody runs anything by hand.</p>
 
+## Before the first run: two secrets
+
+Every Hunter command reads dbt's manifest, and dbt writes it under `target/`,
+which is gitignored. A CI checkout never has one. So the workflow builds it
+first with `dbt parse`, and `dbt parse` needs a profile it can resolve.
+
+| Secret | What it holds |
+|---|---|
+| `DBT_PROFILES_YML` | The whole contents of a `profiles.yml` for CI. The header of the generated workflow shows one for BigQuery with a service account |
+| `DBT_KEYFILE_JSON` | The service account key as JSON. The workflow writes it to `/home/runner/.dbt/keyfile.json`, the path the profile points at. Not needed for adapters that authenticate another way |
+
+Add both under Settings, Secrets and variables, Actions. Without the first,
+the manifest job stops with a message naming it, and nothing else runs.
+
+<div class="key" markdown>
+**Already have a manifest?** If your own dbt job publishes `manifest.json`
+somewhere, replace the steps of the `manifest` job with one that fetches it to
+the path in `MANIFEST`, keep the upload step, and skip both secrets. `dbt parse`
+does not connect to the warehouse, but dbt will not start without a profile.
+</div>
+
 ## The workflow
 
-Five jobs. Each shows as its own line on the pull request.
+Six jobs. Each shows as its own line on the pull request.
 
 | Job | When | What it does |
 |---|---|---|
+| Build the dbt manifest | Every run | `dbt deps`, `dbt parse`, and hands `manifest.json` to the other jobs |
 | Score | Every pull request and push | Scores the repository and posts one comment, edited in place |
 | LookML sync | Every pull request and push | Does the reporting layer still match the tables? |
 | Droughty sync | Every pull request and push | Was the generated schema applied, and is it current? |
@@ -18,6 +40,9 @@ Five jobs. Each shows as its own line on the pull request.
 
 There is no path filter. A new layer or a new model is detected by Hunter
 itself, so the file never needs editing as the warehouse grows.
+
+The file `hunter init` writes carries a long header comment covering the
+secrets, then this:
 
 ```yaml
 name: Hunter
@@ -33,17 +58,52 @@ permissions:
   contents: read
   pull-requests: write
 
+env:
+  DBT_PROJECT_DIR: analytics_warehouse
+  MANIFEST: analytics_warehouse/target/manifest.json
+
 jobs:
+  manifest:
+    name: Build the dbt manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet dbt-core dbt-bigquery
+      - name: Write the dbt profile from the repository secrets
+        env:
+          DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
+          DBT_KEYFILE_JSON: ${{ secrets.DBT_KEYFILE_JSON }}
+        run: |
+          # Fails with a message naming the secret if it is missing, then
+          # writes ~/.dbt/profiles.yml and ~/.dbt/keyfile.json
+      - run: dbt deps
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+      - run: dbt parse
+        working-directory: ${{ env.DBT_PROJECT_DIR }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dbt-manifest
+          path: ${{ env.MANIFEST }}
+
   hunter:
     name: Score
+    needs: manifest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: dbt-manifest
+          path: analytics_warehouse/target
       - uses: sav-sus/Hunter@v0.1.0
         with:
           mode: advisory
+          manifest: ${{ env.MANIFEST }}
           publish: ${{ github.event_name != 'pull_request' }}
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
@@ -52,24 +112,19 @@ jobs:
 
   lookml-sync:
     name: LookML sync
+    needs: manifest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dbt-manifest
+          path: analytics_warehouse/target
       - uses: sav-sus/Hunter/actions/lookml-sync@v0.1.0
+        with:
+          manifest: ${{ env.MANIFEST }}
 
-  droughty-sync:
-    name: Droughty sync
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: sav-sus/Hunter/actions/droughty-sync@v0.1.0
-
-  modelling-sync:
-    name: Modelling sync
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: sav-sus/Hunter/actions/modelling-sync@v0.1.0
+  # droughty-sync and modelling-sync: the same shape as lookml-sync
 
   publish:
     name: Publish the dashboard

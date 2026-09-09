@@ -481,10 +481,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-github-actions-starts-five-jobs" class="md-nav__link">
+  <a href="#2-github-actions-starts-six-jobs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. GitHub Actions starts five jobs
+        2. GitHub Actions starts six jobs
       
     </span>
   </a>
@@ -939,10 +939,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-github-actions-starts-five-jobs" class="md-nav__link">
+  <a href="#2-github-actions-starts-six-jobs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. GitHub Actions starts five jobs
+        2. GitHub Actions starts six jobs
       
     </span>
   </a>
@@ -1080,9 +1080,9 @@ to the moment a stakeholder sees the result. Nobody runs anything by hand.</p>
 <p>Any change counts: a new model, an edited one, a LookML file, a design file, a
 register entry. The workflow has no path filter, so nothing is missed because a
 file sat in an unexpected place.</p>
-<h2 id="2-github-actions-starts-five-jobs">2. GitHub Actions starts five jobs<a class="headerlink" href="#2-github-actions-starts-five-jobs" title="Permanent link">&para;</a></h2>
-<p>The workflow <code>hunter init</code> writes runs the score and the three sync checks, each
-as its own job. They show as separate lines on the pull request, so one drifted
+<h2 id="2-github-actions-starts-six-jobs">2. GitHub Actions starts six jobs<a class="headerlink" href="#2-github-actions-starts-six-jobs" title="Permanent link">&para;</a></h2>
+<p>The workflow <code>hunter init</code> writes builds the dbt manifest, then runs the score
+and the three sync checks, each as its own job. They show as separate lines on the pull request, so one drifted
 layer does not hide another.</p>
 <table>
 <thead>
@@ -1092,6 +1092,10 @@ layer does not hide another.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>Build the dbt manifest</td>
+<td>Runs <code>dbt parse</code> so the other jobs have something to read. Needs the <code>DBT_PROFILES_YML</code> secret</td>
+</tr>
 <tr>
 <td>Score</td>
 <td>What state is the whole repository in?</td>

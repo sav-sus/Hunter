@@ -181,6 +181,17 @@ class Register(BaseModel):
     ignores: list[IgnoreRule] = Field(default_factory=list)
     conceptual: list[ConceptualEntityDeclaration] = Field(default_factory=list)
 
+    @field_validator("models", mode="before")
+    @classmethod
+    def _null_models_is_empty(cls, value: object) -> object:
+        """A section somebody emptied by deleting its entries reads as null."""
+        return {} if value is None else value
+
+    @field_validator("off_plan_approved", "ignores", "conceptual", mode="before")
+    @classmethod
+    def _null_list_is_empty(cls, value: object) -> object:
+        return [] if value is None else value
+
     @model_validator(mode="after")
     def _no_duplicate_approvals(self) -> Register:
         seen: set[str] = set()
