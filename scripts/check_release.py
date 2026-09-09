@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
-"""Check that everything installing Hunter agrees on one version, and that the
-version has been released.
+"""Check that everything installing Hunter agrees on one version, and release it.
 
 The composite actions install Hunter from the git tag ``v<hunter-version>``,
 and the workflow ``hunter init`` writes references the actions at the same
 tag. So five files carry the version, and a tag has to exist for it. The first
 client install found all five pointing at a tag nobody had pushed: every job
-failed in seconds with "unable to resolve action". This script is what makes
-that impossible to ship again.
+failed in seconds with "unable to resolve action".
 
-    python scripts/check_release.py                 # agreement only
-    python scripts/check_release.py --tag            # agreement, and the tag exists
-    python scripts/check_release.py --tag --allow-unreleased-bump
-                                                     # as above, but a version that
-                                                     # differs from origin/main may
-                                                     # not have its tag yet
+Three modes, kept apart on purpose so none can wait on another:
 
-The last form is for pull requests. A release is a pull request that bumps the
-version; its tag is created when it reaches main, by the release job in
-.github/workflows/ci.yml. Until then the tag is legitimately absent.
+    python scripts/check_release.py            # the six files agree, and the
+                                               # version is a release. No network.
+                                               # Runs on every pull request.
+    python scripts/check_release.py --tag      # as above, and the tag is on origin
+    python scripts/check_release.py --release  # as above, creating the tag first
+                                               # if it is missing. Runs on main.
+
+The first version of this wiring had the pull-request check require the tag
+and the release job require the check, so the tag could never be created. The
+agreement check now never looks at the remote, and the release job creates the
+tag before it asserts anything about it.
 """
 
 from __future__ import annotations
@@ -32,10 +33,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 ACTION_FILES = (
-    REPO / "action.yml",
-    REPO / "actions" / "lookml-sync" / "action.yml",
-    REPO / "actions" / "droughty-sync" / "action.yml",
-    REPO / "actions" / "modelling-sync" / "action.yml",
+    Path("action.yml"),
+    Path("actions") / "lookml-sync" / "action.yml",
+    Path("actions") / "droughty-sync" / "action.yml",
+    Path("actions") / "modelling-sync" / "action.yml",
 )
 VERSION_LINE = re.compile(r'^__version__ = "(?P<version>[^"]+)"$', re.M)
 HUNTER_VERSION_DEFAULT = re.compile(
@@ -57,17 +58,18 @@ def action_default(text: str, path: Path) -> str:
     return match.group("version")
 
 
-def disagreements(version: str) -> list[str]:
+def disagreements(version: str, repo: Path = REPO) -> list[str]:
     """Every file that names a different version, with what it says."""
     out: list[str] = []
-    pyproject = tomllib.loads((REPO / "pyproject.toml").read_text(encoding="utf-8"))
+    pyproject = tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))
     declared = pyproject["project"]["version"]
     if declared != version:
         out.append(f"pyproject.toml says {declared}")
-    for path in ACTION_FILES:
+    for relative in ACTION_FILES:
+        path = repo / relative
         found = action_default(path.read_text(encoding="utf-8"), path)
         if found != version:
-            out.append(f"{path.relative_to(REPO)} defaults hunter-version to {found}")
+            out.append(f"{relative} defaults hunter-version to {found}")
     if ".dev" in version or "+" in version:
         out.append(
             f"the version is {version}, which is not a release: the actions install "
@@ -76,53 +78,42 @@ def disagreements(version: str) -> list[str]:
     return out
 
 
-def tag_exists(tag: str) -> bool:
-    completed = subprocess.run(
-        ["git", "ls-remote", "--tags", "origin", f"refs/tags/{tag}"],
-        cwd=REPO,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+def _git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=False)
+
+
+def tag_exists(tag: str, repo: Path = REPO) -> bool:
+    completed = _git(repo, "ls-remote", "--tags", "origin", f"refs/tags/{tag}")
     if completed.returncode != 0:
         raise SystemExit(f"git ls-remote failed: {completed.stderr.strip()}")
     return bool(completed.stdout.strip())
 
 
-def _git_show(ref: str) -> str | None:
-    completed = subprocess.run(
-        ["git", "show", f"{ref}:src/hunter/__init__.py"],
-        cwd=REPO,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    return completed.stdout if completed.returncode == 0 else None
+def ensure_tag(tag: str, repo: Path = REPO) -> str:
+    """Create the tag at HEAD and push it, unless origin already has it.
 
-
-def version_on_main() -> str | None:
-    """The released version main carries. A shallow CI checkout has no
-    origin/main, so fetch it when the local ref is missing."""
-    text = _git_show("origin/main")
-    if text is None:
-        subprocess.run(
-            ["git", "fetch", "--quiet", "--depth=1", "origin", "main"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        text = _git_show("FETCH_HEAD")
-    return package_version(text) if text else None
+    An existing tag is left where it is. That is what makes a later commit
+    with the same version a no-op, and a version bump a new tag: the old
+    release keeps pointing at the commit that was released.
+    """
+    if tag_exists(tag, repo):
+        return f"Tag {tag} already exists on origin."
+    for step in (("tag", tag), ("push", "origin", tag)):
+        completed = _git(repo, *step)
+        if completed.returncode != 0:
+            raise SystemExit(f"git {' '.join(step)} failed: {completed.stderr.strip()}")
+    head = _git(repo, "rev-parse", "--short", "HEAD").stdout.strip()
+    return f"Created tag {tag} at {head} and pushed it."
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--tag", action="store_true", help="Also require the tag on origin.")
-    parser.add_argument(
-        "--allow-unreleased-bump",
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--tag", action="store_true", help="Also require the tag on origin.")
+    group.add_argument(
+        "--release",
         action="store_true",
-        help="Accept a missing tag when the version differs from origin/main.",
+        help="Create the tag on origin if it is missing, then require it.",
     )
     args = parser.parse_args()
 
@@ -135,21 +126,18 @@ def main() -> int:
         return 1
     print(f"Every file agrees: Hunter {version}, installed from tag v{version}.")
 
-    if not args.tag:
+    if not (args.tag or args.release):
         return 0
     tag = f"v{version}"
+    if args.release:
+        print(ensure_tag(tag))
     if tag_exists(tag):
         print(f"Tag {tag} exists on origin.")
         return 0
-    if args.allow_unreleased_bump:
-        released = version_on_main()
-        if released is not None and released != version:
-            print(f"Tag {tag} is not on origin yet. main is {released}; this is a release bump.")
-            return 0
     print(
         f"Tag {tag} does not exist on origin. Every action.yml installs Hunter from it, so\n"
         f"every client workflow fails with 'unable to resolve action'. Create it with:\n"
-        f"  git tag {tag} && git push origin {tag}"
+        f"  python scripts/check_release.py --release"
     )
     return 1
 

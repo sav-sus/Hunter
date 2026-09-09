@@ -128,6 +128,25 @@ uv run python scripts/build_docs_pages.py     # rewrite the documented example
 
 Then review all three diffs.
 
+## Releasing
+
+The composite actions install Hunter from the git tag `v<version>`, and the
+workflow `hunter init` writes references the actions at that tag. So a release
+is a version bump: change `__version__` in `src/hunter/__init__.py` and the
+`version` in `pyproject.toml`, and set the `hunter-version` default in
+`action.yml` and the three files under `actions/` to match.
+
+```bash
+uv run python scripts/check_release.py          # the six files agree, no network
+```
+
+That check runs on every pull request and never looks at the remote. When the
+bump reaches `main`, the release job creates the tag at that commit and then
+asserts it exists. Later commits with the same version leave the tag alone. The
+two are kept apart on purpose: an earlier wiring had the pull-request check
+require the tag and the release job require the check, so no tag could ever be
+created.
+
 ## The golden file
 
 `tests/golden/tiny-shop.json` is the example's whole report, minus its
