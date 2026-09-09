@@ -450,6 +450,74 @@ class TestScaffold:
         checkout = loaded["jobs"]["hunter"]["steps"][0]
         assert checkout["with"]["fetch-depth"] == 0
 
+    def test_an_empty_register_loads_after_init(self, tmp_path: Path) -> None:
+        """The first install wrote a register that `hunter score` then refused.
+
+        With nothing to pre-fill, each section was a bare key followed by
+        comments, which YAML reads as null. This is the round trip that test
+        was missing: generate, then load.
+        """
+        from hunter.config.register import load_register
+
+        scaffold(tmp_path, today=AS_OF)
+        register = load_register(tmp_path / ".hunter" / "register.yml")
+        assert register.models == {}
+        assert register.off_plan_approved == []
+        assert register.ignores == []
+
+    def test_a_prefilled_register_loads_after_init(self, tmp_path: Path) -> None:
+        from hunter.config.register import load_register
+
+        scaffold(
+            tmp_path,
+            needs_owner=["wh_a__thing_fact", "wh_a__second_fact"],
+            off_plan=["wh_a__other_fact"],
+            today=AS_OF,
+        )
+        register = load_register(tmp_path / ".hunter" / "register.yml")
+        assert set(register.models) == {"wh_a__thing_fact", "wh_a__second_fact"}
+        assert register.models["wh_a__thing_fact"].owner is None
+        # Off-plan tables are listed for the team to approve, not approved for them.
+        assert register.off_plan_approved == []
+        text = (tmp_path / ".hunter" / "register.yml").read_text(encoding="utf-8")
+        assert "# - model: wh_a__other_fact" in text
+
+    def test_the_workflow_builds_the_manifest_before_anything_reads_it(self) -> None:
+        """dbt's target/ is gitignored, so a checkout never has a manifest."""
+        loaded = yaml.safe_load(workflow_text(dbt_project_dir="analytics_warehouse"))
+        jobs = loaded["jobs"]
+        steps = [step.get("name") or step.get("uses") for step in jobs["manifest"]["steps"]]
+        assert "dbt deps" in steps
+        assert "dbt parse" in steps
+        for name in ("hunter", "lookml-sync", "droughty-sync", "modelling-sync"):
+            assert jobs[name]["needs"] == "manifest", name
+            uses = [
+                step for step in jobs[name]["steps"] if "sav-sus/Hunter" in step.get("uses", "")
+            ]
+            assert uses[0]["with"]["manifest"] == "${{ env.MANIFEST }}", name
+        assert loaded["env"]["MANIFEST"] == "analytics_warehouse/target/manifest.json"
+        assert loaded["env"]["DBT_PROJECT_DIR"] == "analytics_warehouse"
+
+    def test_a_missing_profile_secret_fails_with_its_name(self) -> None:
+        text = workflow_text()
+        assert "DBT_PROFILES_YML" in text
+        assert "Missing secret DBT_PROFILES_YML" in text
+
+    def test_the_detected_adapter_and_profile_reach_the_workflow(self) -> None:
+        text = workflow_text(adapter="snowflake", profile="shop")
+        assert "dbt-snowflake" in text
+        assert "shop:" in text
+        assert "is a guess" not in text
+        assert "is a guess" in workflow_text()
+
+    def test_init_warns_when_target_is_gitignored(self, tmp_path: Path) -> None:
+        (tmp_path / "dbt_project.yml").write_text("name: shop\nprofile: shop\n", encoding="utf-8")
+        (tmp_path / ".gitignore").write_text("target/\ndbt_packages/\n", encoding="utf-8")
+        found = detect(tmp_path)
+        assert found.target_gitignored
+        assert found.profile == "shop"
+        assert any("DBT_PROFILES_YML" in note for note in found.notes)
+
     def test_scaffold_writes_all_three_files(self, tmp_path: Path) -> None:
         written = scaffold(tmp_path, today=AS_OF)
         names = {path.name for path in written}

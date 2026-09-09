@@ -222,14 +222,20 @@ models:
     owner:            # who to ask about this table
     grain:            # what one row of it means, in plain words
 
-off_plan_approved:
-  # Built and on no design. Either add them to the design, or accept them
-  # here with a reason and a review date.
-  - model: wh_commerce__legacy_fact
-    reason:
-    approved_by:
-    review_by: 2027-09-08
+off_plan_approved: []
+  # Built and on no design. Either add each one to the design, or approve it
+  # here: uncomment the block, fill in the reason and the approver, and delete
+  # the [] on the line above.
+  # - model: wh_commerce__legacy_fact
+  #   reason:
+  #   approved_by:
+  #   review_by: 2027-09-08
 ```
+
+The off-plan tables are listed as comments rather than entries, because an
+approval is only valid with a reason and a named approver, and a file that is
+not valid stops `hunter score` from running. Empty sections are written as
+`{}` or `[]` for the same reason.
 
 Filling in blanks against a list works. Authoring a file from nothing does not.
 
