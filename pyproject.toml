@@ -1,6 +1,6 @@
 [project]
 name = "rittman-hunter"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Repository intelligence for analytics repositories containing dbt and LookML"
 readme = "README.md"
 requires-python = ">=3.11"

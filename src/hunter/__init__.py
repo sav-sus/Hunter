@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.1.0"
 
 #: Bumped whenever the score arithmetic changes in a way that moves a number.
 #: FR7.8 and FR7.9: a client on a support plan must never see an apparent

@@ -51,6 +51,14 @@ jobs:
       - name: No client content in tracked files
         run: uv run python scripts/check_no_client_content.py
 
+      - name: One version everywhere, and a tag for it
+        # Every action.yml installs Hunter from tag v<version>. A missing tag
+        # fails every client workflow in seconds and is invisible here, because
+        # this repository does not consume its own actions by tag. A pull
+        # request that bumps the version may not have its tag yet; the release
+        # job below creates it when the bump reaches main.
+        run: uv run python scripts/check_release.py --tag --allow-unreleased-bump
+
       - name: The golden file is current
         # A drifted golden file means someone changed the score without
         # reviewing the change. Section 11.9.
@@ -96,3 +104,43 @@ jobs:
           uv run hunter docs build examples/tiny-shop --out /tmp/site
           uv run hunter rules
           uv run hunter version
+
+  release:
+    # A release is a version bump that reaches main. This creates the tag the
+    # actions install from, once, at the commit that carries the bump. Later
+    # commits with the same version leave the tag where it is: bump the version
+    # to release again.
+    name: Tag the release
+    if: github.event_name == 'push'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create the tag for this version if it does not exist
+        run: |
+          set -euo pipefail
+          version=$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' src/hunter/__init__.py)
+          tag="v$version"
+          if git ls-remote --tags origin "refs/tags/$tag" | grep -q .; then
+            echo "Tag $tag already exists."
+          else
+            git tag "$tag"
+            git push origin "$tag"
+            echo "Created tag $tag at $(git rev-parse --short HEAD)."
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --all-extras --python ${{ env.PYTHON_VERSION }}
+
+      - name: The tag every action installs from exists
+        run: uv run python scripts/check_release.py --tag

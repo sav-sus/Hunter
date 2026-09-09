@@ -50,7 +50,7 @@ It has never had the information to find one.
 | Type comparison | Runs where a catalogue file exists | Almost no manifest carries types, so on most projects it reports that it could not run |
 | The window report | Every fact: commits, pull requests, tables added and changed, tickets, debt created alongside | No written narrative. That is milestone M3, and it will never introduce a fact absent from the computed set |
 | Jira integration | The ticket pattern is configured and references are extracted from subjects, bodies and trailers | Sprint boundaries are not read from a board, so the window is a fixed number of days |
-| The Action | Written, valid, and its YAML is tested | Not published, so nothing can reference it yet |
+| The Action | Written, tested, and installable from tag `v0.1.0`, which the release job creates when a version bump reaches main | Not on the Marketplace |
 
 ## Not built and not planned
 
