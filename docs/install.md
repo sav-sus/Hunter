@@ -10,7 +10,7 @@ hunter version
 
 | You need | Notes |
 |---|---|
-| Python 3.11+ | Tested on 3.11, 3.12 and 3.13 |
+| Python 3.11 or newer | Developed and tested on 3.12 |
 | A dbt `manifest.json` | Anywhere. You tell Hunter where |
 | Read access to the repository | Nothing else |
 

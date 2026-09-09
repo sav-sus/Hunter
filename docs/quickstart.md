@@ -8,7 +8,7 @@ You need three things before you start.
 
 | You need | How to check |
 |---|---|
-| Python 3.11 or newer | Type `python3 --version` in a terminal. You should see `3.11`, `3.12` or `3.13` |
+| Python 3.11 or newer | Type `python3 --version` in a terminal. You should see `3.11` or higher. Hunter is tested on `3.12` |
 | A repository that holds a dbt project | Look for a file called `dbt_project.yml` in it |
 | Permission to change settings on that repository in GitHub | Open the repository on GitHub. You should see a **Settings** tab |
 
