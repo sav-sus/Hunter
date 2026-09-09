@@ -352,6 +352,10 @@ class BrandingSpec(Strict):
     #: repository's raw file URL would show a broken image. The published
     #: documentation site is the usual place to serve it from.
     logo_url: str | None = None
+    #: Where the built site is published, such as a GitHub Pages address. When
+    #: set, the pull request comment links straight to the live dashboard as
+    #: well as to the run that produced the comment.
+    site_url: str | None = None
 
 
 class PrSpec(Strict):

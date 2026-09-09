@@ -622,6 +622,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="The comment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#where-the-comments-link-goes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where the comment's link goes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1035,6 +1052,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="The comment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#where-the-comments-link-goes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where the comment's link goes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1327,8 +1361,8 @@ results agree by construction.</p>
 </tr>
 <tr>
 <td><code>publish</code></td>
-<td><code>false</code></td>
-<td>Build the site as well as the report</td>
+<td><code>true</code></td>
+<td>Build the site as well as the report, so the comment's link reaches a dashboard</td>
 </tr>
 <tr>
 <td><code>comment</code></td>
@@ -1442,23 +1476,39 @@ touches, what those tables reach, and a collapsed diagram of the affected
 tables. Standing debt stays on the site; the comment is about this change.</p>
 <p>Needs <code>pull-requests: write</code>. Without it the score and summary still work and
 the comment step is skipped.</p>
+<h3 id="where-the-comments-link-goes">Where the comment's link goes<a class="headerlink" href="#where-the-comments-link-goes" title="Permanent link">&para;</a></h3>
+<p>The footer says where the full report is, in words a reader can act on:</p>
+<blockquote>
+<p><strong>Full report:</strong> download the <code>hunter-report</code> artifact from [this run] and
+open <code>site/_built/dashboard.html</code>.</p>
+</blockquote>
+<p>"This run" is the workflow run that produced the comment. The action passes
+its address to <code>hunter check --report-url</code>; without one, the footer names the
+artifact and carries no link. A link that goes nowhere is never rendered.</p>
+<p>Where the site is published, set its address and the comment also links to
+the live dashboard, marked as showing main rather than this change:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">branding</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">site_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://&lt;organisation&gt;.github.io/&lt;repository&gt;/</span>
+</code></pre></div>
+<p>GitHub artifacts are zip downloads, so there is no deep link to a file inside
+one. The run page is the closest linkable place.</p>
 <details class="note">
 <summary>Getting a true before-and-after</summary>
 <p>By default the comment lists findings on the files the change touched,
 which is a superset of what the change introduced, and says so. For an
 exact diff, give it the report from before.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch the report from main</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/download-artifact@v4</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">continue-on-error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hunter-report</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="nt">github-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.token }}</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">          </span><span class="nt">run-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ needs.find-baseline.outputs.run-id }}</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter@v0.1.0</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">          </span><span class="nt">previous-report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous/report.json</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch the report from main</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/download-artifact@v4</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">continue-on-error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hunter-report</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">          </span><span class="nt">github-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.token }}</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">          </span><span class="nt">run-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ needs.find-baseline.outputs.run-id }}</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sav-sus/Hunter@v0.1.0</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">          </span><span class="nt">previous-report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">previous/report.json</span>
 </code></pre></div>
 <p>Worth it once the comment is being read. Not worth it on day one.</p>
 </details>
@@ -1469,10 +1519,10 @@ rest on every push to main.</p>
 <details class="note">
 <summary>Running it without GitHub Actions</summary>
 <p>Nothing in Hunter depends on Actions. In any CI system:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>report.json
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>hunter<span class="w"> </span>sync<span class="w"> </span>--root<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>sync.json
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>site
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>report.json
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>hunter<span class="w"> </span>sync<span class="w"> </span>--root<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>sync.json
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>.<span class="w"> </span>--out<span class="w"> </span>site
 </code></pre></div>
 <p>Exit code 1 means the gate failed, 2 means it could not run.</p>
 </details>

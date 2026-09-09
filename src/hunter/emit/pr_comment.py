@@ -97,8 +97,13 @@ def build_comment(
     changed_files: Iterable[str] | None = None,
     previous_report: Path | None = None,
     pull_request: str | None = None,
+    report_url: str | None = None,
 ) -> str:
-    """The comment body, as markdown."""
+    """The comment body, as markdown.
+
+    ``report_url`` is the page of the workflow run that produced this comment.
+    The action passes it; on the command line it is optional.
+    """
     config = result.config
     spec = config.pull_request
     score = result.score
@@ -183,10 +188,10 @@ def build_comment(
         ]
 
     lines += [
+        *report_lines(report_url, config.branding.site_url),
         f"<sub>{basis} "
         f"Hunter {result.meta.get('hunter_version')}, ruleset "
-        f"{result.meta.get('house_ruleset_version')}. "
-        f"[Full report]({_site_hint(result)}).</sub>",
+        f"{result.meta.get('house_ruleset_version')}.</sub>",
         f"<sub>{config.branding.attribution}.</sub>",
     ]
     if pull_request:
@@ -201,8 +206,37 @@ def _gate(result: RunResult) -> tuple[bool, str | None]:
     return fails_build(result.score, result.config)
 
 
-def _site_hint(result: RunResult) -> str:
-    return "../../actions" if not result.config.branding.client_name else "#"
+#: What the action uploads, and where the dashboard sits inside it. The
+#: artifact's root is the common parent of report.json and the built site.
+ARTIFACT_NAME = "hunter-report"
+DASHBOARD_IN_ARTIFACT = "site/_built/dashboard.html"
+
+
+def report_lines(report_url: str | None, site_url: str | None) -> list[str]:
+    """Where the full report is, said so a reader can get to it.
+
+    Two facts a reader cannot guess: that the dashboard is inside an artifact
+    on the run page, and what the file is called. Where a published site is
+    configured it is offered as well, marked as the state of main rather than
+    of this change. With neither URL there is no link: a link that goes
+    nowhere is worse than none.
+    """
+    lines: list[str] = []
+    if report_url:
+        lines.append(
+            f"**Full report:** download the `{ARTIFACT_NAME}` artifact from "
+            f"[this run]({report_url}) and open `{DASHBOARD_IN_ARTIFACT}`."
+        )
+    else:
+        lines.append(
+            f"**Full report:** the `{ARTIFACT_NAME}` artifact on this workflow run, "
+            f"file `{DASHBOARD_IN_ARTIFACT}`."
+        )
+    if site_url:
+        dashboard = site_url.rstrip("/") + "/dashboard.html"
+        lines.append(f"**Live dashboard:** [{dashboard}]({dashboard}), showing main.")
+    lines.append("")
+    return lines
 
 
 def _changed_models(result: RunResult, changed_files: Iterable[str]) -> list[str]:

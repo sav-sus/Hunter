@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import datetime as dt
 import re
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -66,6 +67,9 @@ class Detected:
         #: with the same dbt the team runs, or the manifest can differ.
         self.dbt_pins: list[str] = []
         self.dbt_pins_source: str | None = None
+        #: Where GitHub Pages would publish this repository's site, worked out
+        #: from the origin remote. Offered in hunter.yml as a commented line.
+        self.pages_url: str | None = None
         self.notes: list[str] = []
 
 
@@ -112,6 +116,7 @@ def detect(root: Path) -> Detected:
     found.profile = _dbt_profile_name(project_dir)
     found.adapter = _dbt_adapter(root, project_dir)
     found.dbt_pins, found.dbt_pins_source = _dbt_pins(root, project_dir)
+    found.pages_url = _pages_url(root)
     if found.adapter is None:
         for pin in found.dbt_pins:
             package = re.split(r"[=~!<>\[ ]", pin, maxsplit=1)[0]
@@ -265,6 +270,25 @@ def _dbt_pins(root: Path, project_dir: Path) -> tuple[list[str], str | None]:
     return [], None
 
 
+_GITHUB_REMOTE = re.compile(r"github\.com[:/](?P<owner>[^/\s]+)/(?P<repo>[^/\s]+?)(?:\.git)?/?$")
+
+
+def _pages_url(root: Path) -> str | None:
+    """The GitHub Pages address for the origin remote, or None if not on GitHub."""
+    completed = subprocess.run(
+        ["git", "-C", str(root), "remote", "get-url", "origin"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        return None
+    match = _GITHUB_REMOTE.search(completed.stdout.strip())
+    if match is None:
+        return None
+    return f"https://{match.group('owner').lower()}.github.io/{match.group('repo')}/"
+
+
 _TARGET_IGNORE = re.compile(r"^/?(\*\*/)?target/?(\*\*)?$")
 
 
@@ -333,6 +357,12 @@ def ruleset_text(found: Detected, *, house: str = "ra-house@1") -> str:
         "# few weeks: a tool that fails builds on day one gets switched off.",
         "pull_request:",
         "  mode: advisory",
+        "",
+        "# Where the site is published. Set it once GitHub Pages is switched on, and",
+        "# the pull request comment links to the live dashboard as well as to the run",
+        "# that produced it.",
+        "# branding:",
+        f"#   site_url: {found.pages_url or 'https://<organisation>.github.io/<repository>/'}",
         "",
         "# Uncomment to change a rule, and say why. The reason is published on the",
         "# conventions page, which is the point of asking for it.",
@@ -651,7 +681,9 @@ jobs:
         with:
           mode: advisory
           manifest: ${{{{ env.MANIFEST }}}}
-          publish: ${{{{ github.event_name != 'pull_request' }}}}
+          # The site is built on pull requests as well, so the comment's link
+          # reaches a dashboard for this change. Only main is published.
+          publish: true
       - name: Hand the dashboard to GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3

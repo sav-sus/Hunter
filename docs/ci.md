@@ -195,7 +195,7 @@ results agree by construction.
 | `working-directory` | `.` | The repository root to read |
 | `config` | | Path to `hunter.yml`. Found automatically if omitted |
 | `manifest` | | Path to `manifest.json`, if not where the ruleset says |
-| `publish` | `false` | Build the site as well as the report |
+| `publish` | `true` | Build the site as well as the report, so the comment's link reaches a dashboard |
 | `comment` | `true` | Post or update the pull request comment |
 | `previous-report` | | A `report.json` from before the change, for a true before-and-after |
 | `hunter-version` | `0.1.0` | Which Hunter version to install |
@@ -244,6 +244,28 @@ tables. Standing debt stays on the site; the comment is about this change.
 
 Needs `pull-requests: write`. Without it the score and summary still work and
 the comment step is skipped.
+
+### Where the comment's link goes
+
+The footer says where the full report is, in words a reader can act on:
+
+> **Full report:** download the `hunter-report` artifact from [this run] and
+> open `site/_built/dashboard.html`.
+
+"This run" is the workflow run that produced the comment. The action passes
+its address to `hunter check --report-url`; without one, the footer names the
+artifact and carries no link. A link that goes nowhere is never rendered.
+
+Where the site is published, set its address and the comment also links to
+the live dashboard, marked as showing main rather than this change:
+
+```yaml
+branding:
+  site_url: https://<organisation>.github.io/<repository>/
+```
+
+GitHub artifacts are zip downloads, so there is no deep link to a file inside
+one. The run page is the closest linkable place.
 
 ??? note "Getting a true before-and-after"
 
