@@ -41,8 +41,8 @@ arrive the diagram source is shown as text and a note says why.
 
 | | |
 |---|---|
-| **See the dashboard** | [`docs/example/dashboard.html`](docs/example/dashboard.html), regenerated on every change |
-| **Documentation, published** | https://rittman-hunter.readthedocs.io, and on GitHub Pages from `main` |
+| **See the dashboard, live** | https://sav-sus.github.io/Hunter/example/dashboard.html, republished on every push to `main` |
+| **Documentation, published** | https://sav-sus.github.io/Hunter/ on GitHub Pages. Start with the [quick start](https://sav-sus.github.io/Hunter/quickstart/) |
 | **Documentation, in this checkout** | [`docs-html/index.html`](docs-html/index.html), built HTML. Source in [`docs/`](docs) |
 | **See real output** | [`docs/example/`](docs/example/index.md), regenerated on every change |
 | **Try it in a minute** | [Below](#try-it-in-a-minute) |
@@ -148,9 +148,10 @@ open /tmp/example-site/_built/index.html
 ```
 
 [`examples/tiny-shop`](examples/tiny-shop) is a working project laid out the way
-a Rittman Analytics engagement lays one out: nine tables with one deliberate
-flaw each, a design, a business model, a layered LookML project and generated
-schema output. It scores 87.8 and exercises 28 of Hunter's 77 rules.
+a Rittman Analytics engagement lays one out: eight tables with one deliberate
+flaw each, plus one switched off and one designed but not built, a design, a
+business model, a layered LookML project and generated schema output. It scores
+87.8 and exercises 28 of Hunter's 77 rules.
 
 ## On your own repository
 
@@ -158,18 +159,23 @@ schema output. It scores 87.8 and exercises 28 of Hunter's 77 rules.
 uv tool install "rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"
 
 cd your-analytics-repo
-hunter init          # detect the layout, write .hunter/hunter.yml and register.yml
+hunter init          # detect the layout; write hunter.yml, register.yml and the workflow
 hunter score         # score it, write out/report.json
 hunter baseline      # record where it starts, so it only has to improve
-hunter docs build    # build the site
+hunter dashboard     # one self-contained HTML file
 ```
+
+Then commit the three files and open a pull request. From there nothing is run
+by hand: every pull request gets the score and the three sync checks, and every
+merge republishes the dashboard to GitHub Pages. One setting to change first, in
+the repository: Settings, Pages, source "GitHub Actions".
 
 `hunter init` fills the register with the tables Hunter would flag, each with a
 blank reason. Filling in reasons against a list works; being handed an empty
 file and asked to document your exceptions does not.
 
-Full guide: [Installing](https://rittman-hunter.readthedocs.io/en/latest/install/)
-and [Quick start](https://rittman-hunter.readthedocs.io/en/latest/quickstart/).
+Full guide: [Installation](https://sav-sus.github.io/Hunter/install/) and
+[Quick start, step by step](https://sav-sus.github.io/Hunter/quickstart/).
 
 ## What it reads
 
@@ -201,8 +207,9 @@ rather than being a prerequisite.
 | `hunter docs build` | Generate and build the site, dashboard included |
 | `hunter diagram --level conceptual` | Print one Mermaid diagram |
 | `hunter baseline` | Record the starting score |
-| `hunter init` | Set up a repository |
+| `hunter init` | Set up a repository: the two config files and the workflow |
 | `hunter rules` | List every rule |
+| `hunter version` | The three version numbers stamped on every report |
 
 Every command is a thin wrapper over one pipeline, and the GitHub Action calls
 these and nothing else. A run in CI and a run on a laptop give the same answer
@@ -264,9 +271,10 @@ the site with its reason and its review date.
 | [`examples/tiny-shop/`](examples/tiny-shop) | A working example project |
 | [`docs/`](docs) | The published documentation |
 | [`.doc/`](.doc/README.md) | Why it is built this way: problem, decisions, roadmap, what is not built |
-| [`tests/`](tests) | 652 tests, including a golden file pinning the example's score |
+| [`tests/`](tests) | 657 tests, including a golden file pinning the example's score |
 | [`action.yml`](action.yml) | The composite GitHub Action for the full score |
 | [`actions/`](actions) | LookML sync, Droughty sync and Modelling sync, one action each |
+| [`.github/workflows/`](.github/workflows) | This repository's own CI, and the workflow that publishes the documentation to Pages |
 
 ## What it will never do
 
@@ -284,7 +292,7 @@ Those are licence terms, not only design intent.
 | Version | 0.1.0.dev0, unreleased |
 | Milestone | M0 complete, plus the sync checks, roadmap, verified status, layer discovery and Pages publishing |
 | Rules | 77 across 7 scored areas, 32 of them in the three sync checks |
-| Tests | 652 |
+| Tests | 657 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).
@@ -315,7 +323,7 @@ and all three diffs are part of the review.
 tracked files. Hunter is developed by running it against real client
 repositories, so that rule is enforced rather than remembered.
 
-Full guide: [Contributing](https://rittman-hunter.readthedocs.io/en/latest/contributing/).
+Full guide: [Contributing](https://sav-sus.github.io/Hunter/contributing/).
 
 ## Licence
 

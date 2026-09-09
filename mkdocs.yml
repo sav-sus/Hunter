@@ -1,11 +1,12 @@
-# The Hunter documentation site, published on Read the Docs.
+# The Hunter documentation site, published to GitHub Pages from main by
+# .github/workflows/pages.yml. Read the Docs can build the same file.
 #
 # Not to be confused with the mkdocs.yml Hunter generates for the site it
 # builds about a repository. This one documents the tool; that one is output.
 site_name: Rittman Hunter
 site_description: >-
   Repository intelligence for analytics repositories containing dbt and LookML
-site_url: https://rittman-hunter.readthedocs.io/
+site_url: https://sav-sus.github.io/Hunter/
 repo_url: https://github.com/sav-sus/Hunter
 repo_name: sav-sus/Hunter
 edit_uri: edit/main/docs/
