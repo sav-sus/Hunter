@@ -141,7 +141,12 @@ Until then, nothing needs editing for its tables to appear on the dashboard.
       site_name: Repository health
       client_name: Tiny Shop            # shown before the site name
       logo_url: https://<organisation>.github.io/<repository>/assets/rittman-analytics.png
+      site_url: https://<organisation>.github.io/<repository>/
     ```
+
+    `site_url` is where the built site is published. When set, the pull request
+    comment links to the live dashboard as well as to the run that produced
+    the comment. See [where the comment's link goes](ci.md#where-the-comments-link-goes).
 
     `logo_url` puts the logo at the top of the pull request comment and the
     sync summaries. It is off by default: GitHub only renders images it can

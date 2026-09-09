@@ -170,12 +170,23 @@ def check(
         help="A report.json from before this change, for a true before-and-after.",
     ),
     out: Path | None = typer.Option(None, "--out", "-o", help="Where to write the comment body."),
+    report_url: str | None = typer.Option(
+        None,
+        "--report-url",
+        help="The workflow run page that holds the report artifact. Linked from the footer.",
+    ),
 ) -> None:
     """Build the pull request comment for a change."""
     result = _execute(root, config_file=config_file, manifest=manifest)
     changed = _changed_files(root, base)
 
-    body = build_comment(result, changed_files=changed, previous_report=previous, pull_request=pr)
+    body = build_comment(
+        result,
+        changed_files=changed,
+        previous_report=previous,
+        pull_request=pr,
+        report_url=report_url,
+    )
     target = out or (root / result.config.paths.output_dir / "pr-comment.md")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(body, encoding="utf-8")

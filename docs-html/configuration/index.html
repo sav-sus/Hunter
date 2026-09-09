@@ -1119,7 +1119,11 @@ Until then, nothing needs editing for its tables to appear on the dashboard.</p>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">site_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Repository health</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">client_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tiny Shop</span><span class="w">            </span><span class="c1"># shown before the site name</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">logo_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://&lt;organisation&gt;.github.io/&lt;repository&gt;/assets/rittman-analytics.png</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">site_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://&lt;organisation&gt;.github.io/&lt;repository&gt;/</span>
 </code></pre></div>
+<p><code>site_url</code> is where the built site is published. When set, the pull request
+comment links to the live dashboard as well as to the run that produced
+the comment. See <a href="../ci/#where-the-comments-link-goes">where the comment's link goes</a>.</p>
 <p><code>logo_url</code> puts the logo at the top of the pull request comment and the
 sync summaries. It is off by default: GitHub only renders images it can
 fetch, and a private repository's file URL shows as a broken image. See

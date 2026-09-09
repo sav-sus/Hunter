@@ -320,6 +320,63 @@ class TestPrComment:
         """FR11.5."""
         assert build_comment(result).startswith(MARKER)
 
+    def test_with_a_run_url_the_footer_names_the_artifact_and_the_file(
+        self, result: RunResult
+    ) -> None:
+        url = "https://github.com/acme/warehouse/actions/runs/123"
+        body = build_comment(result, report_url=url)
+        assert f"[this run]({url})" in body
+        assert "`hunter-report`" in body
+        assert "`site/_built/dashboard.html`" in body
+        assert "](#)" not in body
+        assert "../../actions" not in body
+
+    def test_without_a_url_there_is_no_link_at_all(self, result: RunResult) -> None:
+        """A link that goes nowhere is worse than none."""
+        body = build_comment(result)
+        assert "](#)" not in body
+        assert "../../actions" not in body
+        assert "Full report:" in body
+        assert "`hunter-report`" in body
+        assert "](" not in body.split("Full report:")[1].split("\n")[0]
+
+    def test_a_client_name_never_produces_a_dead_anchor(self, result: RunResult) -> None:
+        from dataclasses import replace
+
+        branding = result.config.branding.model_copy(update={"client_name": "Acme"})
+        branded = replace(result, config=result.config.model_copy(update={"branding": branding}))
+        for url in (None, "https://github.com/acme/warehouse/actions/runs/123"):
+            body = build_comment(branded, report_url=url)
+            assert "](#)" not in body
+            assert 'href="#"' not in body
+
+    def test_a_published_site_is_linked_as_the_live_dashboard(self, result: RunResult) -> None:
+        from dataclasses import replace
+
+        branding = result.config.branding.model_copy(
+            update={"site_url": "https://acme.github.io/warehouse/"}
+        )
+        branded = replace(result, config=result.config.model_copy(update={"branding": branding}))
+        body = build_comment(branded, report_url="https://github.com/acme/warehouse/actions/runs/1")
+        assert "https://acme.github.io/warehouse/dashboard.html" in body
+        assert "showing main" in body
+        assert "[this run]" in body
+
+    def test_the_action_passes_the_run_page_to_hunter_check(self) -> None:
+        text = (Path(__file__).parent.parent / "action.yml").read_text(encoding="utf-8")
+        assert "--report-url" in text
+        assert "actions/runs/${{ github.run_id }}" in text
+
+    def test_the_generated_workflow_builds_the_site_on_pull_requests(self) -> None:
+        """Otherwise the comment links to a run with no dashboard in it."""
+        loaded = yaml.safe_load(workflow_text())
+        score = next(
+            step
+            for step in loaded["jobs"]["hunter"]["steps"]
+            if "sav-sus/Hunter@" in step.get("uses", "")
+        )
+        assert score["with"]["publish"] is True
+
     def test_no_logo_unless_a_public_url_is_configured(self, result: RunResult) -> None:
         """A private repository's file URL would render as a broken image."""
         assert "<img" not in build_comment(result)
@@ -556,6 +613,27 @@ class TestPlainLanguage:
         for term, definition in GLOSSARY.items():
             assert definition.strip()
             assert not definition.lower().startswith(term.lower() + " is")
+
+
+class TestPagesUrl:
+    def test_the_ruleset_offers_the_pages_address_for_the_origin(self, tmp_path: Path) -> None:
+        import subprocess
+
+        (tmp_path / "dbt_project.yml").write_text("name: shop\nprofile: shop\n", encoding="utf-8")
+        subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+        subprocess.run(
+            ["git", "remote", "add", "origin", "git@github.com:Acme-Data/warehouse.git"],
+            cwd=tmp_path,
+            check=True,
+        )
+        found = detect(tmp_path)
+        assert found.pages_url == "https://acme-data.github.io/warehouse/"
+        assert "#   site_url: https://acme-data.github.io/warehouse/" in ruleset_text(found)
+
+    def test_no_remote_means_a_placeholder(self, tmp_path: Path) -> None:
+        (tmp_path / "dbt_project.yml").write_text("name: shop\n", encoding="utf-8")
+        found = detect(tmp_path)
+        assert "site_url: https://<organisation>.github.io/<repository>/" in ruleset_text(found)
 
 
 class TestDbtPins:
