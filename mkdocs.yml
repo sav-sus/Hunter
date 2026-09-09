@@ -1,0 +1,137 @@
+# The Hunter documentation site, published on Read the Docs.
+#
+# Not to be confused with the mkdocs.yml Hunter generates for the site it
+# builds about a repository. This one documents the tool; that one is output.
+site_name: Rittman Hunter
+site_description: >-
+  Repository intelligence for analytics repositories containing dbt and LookML
+site_url: https://rittman-hunter.readthedocs.io/
+repo_url: https://github.com/sav-sus/Hunter
+repo_name: sav-sus/Hunter
+edit_uri: edit/main/docs/
+copyright: >-
+  Rittman Hunter is a Rittman Analytics product.
+  Copyright Rittman Analytics. All rights reserved. Not open source.
+
+use_directory_urls: true
+
+theme:
+  name: material
+  logo: assets/rittman-analytics.png
+  favicon: assets/favicon.ico
+  font:
+    text: Inter
+    code: Roboto Mono
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light
+  features:
+    - navigation.instant
+    - navigation.tracking
+    # Deliberately not navigation.sections: that renders every group expanded,
+    # and the example-output group alone is 13 pages. Collapsible keeps the
+    # sidebar short enough to scan.
+    - navigation.prune
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.action.edit
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+# The Rittman Analytics palette, generated from the same brand module the
+# report dashboard uses, so the documentation and the product cannot drift
+# apart. Regenerate with: python scripts/build_docs_pages.py
+extra_css:
+  - assets/rittman.css
+  - assets/docs.css
+
+extra:
+  # The theme's own "Made with Material for MkDocs" line is switched off, so the
+  # footer carries the Rittman Analytics attribution and nothing else.
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/sav-sus/Hunter
+      name: Hunter on GitHub
+    - icon: fontawesome/solid/globe
+      link: https://rittmananalytics.com
+      name: Rittman Analytics
+
+# The generated per-table pages under docs/example/models/ are reachable by
+# link and deliberately left out, which would otherwise add one entry per table.
+nav:
+  - Overview: index.md
+  - Getting started:
+      - Installation: install.md
+      - Quick start: quickstart.md
+      - See it working: example/dashboard.md
+  - How to:
+      - From a pull request to the dashboard: how-it-works.md
+      - Mark a table temporary, verified or permanent: register.md
+      - Run it on every pull request: ci.md
+      - Publish the dashboard: publish.md
+      - Check the layers agree: sync-checks.md
+  - Configuration:
+      - hunter.yml: configuration.md
+      - The score: scoring.md
+      - The ideas behind it: concepts.md
+  - Reference:
+      - Commands: cli.md
+      - Every rule: reference/rules.md
+      - Questions: faq.md
+      - Contributing: contributing.md
+  - Example output:
+      - Every page: example/index.md
+      - Overview: example/index-page.md
+      - The roadmap: example/roadmap.md
+      - The score: example/scorecard.md
+      - Designed against built: example/reconciliation.md
+      - The business model: example/conceptual-model.md
+      - The data model: example/data-model.md
+      - What is built: example/physical-model.md
+      - How it fits together: example/lineage.md
+      - What needs doing: example/debt.md
+      - Do the layers agree: example/sync.md
+      - The rules: example/conventions.md
+      - What was not checked: example/not-checked.md
+      - Words used here: example/glossary.md

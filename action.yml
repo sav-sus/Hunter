@@ -1,0 +1,233 @@
+# Rittman Hunter, as a composite GitHub Action.
+#
+# This wraps the CLI and nothing else, so a run in CI and a run on a laptop
+# give the same answer by construction rather than by discipline. Section 5.
+#
+# fetch-depth: 0 on the checkout step matters. Attribution and showcase windows
+# need full history, and the default shallow checkout has none.
+name: Rittman Hunter
+description: >-
+  Score an analytics repository containing dbt and LookML, comment on the pull
+  request, and publish a report.
+author: Rittman Analytics
+
+branding:
+  icon: activity
+  color: blue
+
+inputs:
+  mode:
+    description: >-
+      advisory (never fails), ratchet (fails on a real regression below the
+      committed baseline) or gate (fails below the threshold in hunter.yml).
+      Advisory on first installation: a tool that fails builds on day one gets
+      switched off.
+    required: false
+    default: advisory
+
+  working-directory:
+    description: The repository root to read. Defaults to the checkout.
+    required: false
+    default: "."
+
+  config:
+    description: Path to hunter.yml. Found automatically if omitted.
+    required: false
+    default: ""
+
+  manifest:
+    description: >-
+      Path to manifest.json. Set this when the manifest comes from wherever your
+      own dbt job puts it rather than from target/.
+    required: false
+    default: ""
+
+  publish:
+    description: Build the site as well as the report.
+    required: false
+    default: "false"
+
+  comment:
+    description: Post or update the pull request comment.
+    required: false
+    default: "true"
+
+  previous-report:
+    description: >-
+      A report.json from before this change. With one, the comment reports
+      exactly which findings appeared; without one it reports findings on the
+      files this change touched, and says so.
+    required: false
+    default: ""
+
+  hunter-version:
+    description: >-
+      The Hunter version to install. Pinned on purpose: never reference this
+      action at @main, because a client's score must not move because someone
+      pushed a commit.
+    required: false
+    default: "0.1.0"
+
+  python-version:
+    description: Python version to run under.
+    required: false
+    default: "3.12"
+
+outputs:
+  score:
+    description: The score out of 100.
+    value: ${{ steps.run.outputs.score }}
+  grade:
+    description: The letter grade.
+    value: ${{ steps.run.outputs.grade }}
+  delta:
+    description: Movement against the committed baseline, if there is one.
+    value: ${{ steps.run.outputs.delta }}
+  report:
+    description: Path to report.json.
+    value: ${{ steps.run.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Hunter
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --quiet --upgrade pip
+        python -m pip install --quiet \
+          "rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v${{ inputs.hunter-version }}"
+
+    - name: Score the repository
+      id: run
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -uo pipefail
+        args=()
+        [ -n "${{ inputs.config }}" ] && args+=(--config "${{ inputs.config }}")
+        [ -n "${{ inputs.manifest }}" ] && args+=(--manifest "${{ inputs.manifest }}")
+
+        hunter score . "${args[@]}" --out out/report.json --quiet
+        status=$?
+
+        python - <<'PY' >> "$GITHUB_OUTPUT"
+        import json, pathlib
+        payload = json.loads(pathlib.Path("out/report.json").read_text())
+        score = payload["score"]
+        print(f"score={score['total']}")
+        print(f"grade={score['grade']}")
+        print(f"delta={score.get('delta') if score.get('delta') is not None else ''}")
+        print("report=out/report.json")
+        PY
+
+        # The gate decision belongs to a later step, so the summary and the
+        # comment are still written when a build is going to fail.
+        echo "gate_status=$status" >> "$GITHUB_OUTPUT"
+
+    - name: Write the run summary
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+        import json, pathlib
+        payload = json.loads(pathlib.Path("out/report.json").read_text())
+        score = payload["score"]
+        print(f"## Rittman Hunter: {score['total']:g} / 100\n")
+        print(f"{score['interpretation']}. Grade {score['grade']}.\n")
+        print("| Area | Score | Grade | Findings |")
+        print("|---|---|---|---|")
+        for entry in score["dimensions"]:
+            shown = f"{entry['score']:g}" if entry["scored"] else "not measured"
+            grade = entry["grade"] if entry["scored"] else "-"
+            print(
+                f"| {entry['dimension'].replace('_', ' ')} | {shown} | {grade} "
+                f"| {entry['finding_count']} |"
+            )
+        gaps = payload.get("systemic_gaps") or []
+        if gaps:
+            print("\n### Missing everywhere it was checked\n")
+            for gap in gaps:
+                print(f"- {gap['failed']} of {gap['checked']}: {gap['consequence']}")
+        PY
+
+    - name: Build the pull request comment
+      if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -uo pipefail
+        args=()
+        [ -n "${{ inputs.config }}" ] && args+=(--config "${{ inputs.config }}")
+        [ -n "${{ inputs.manifest }}" ] && args+=(--manifest "${{ inputs.manifest }}")
+        [ -n "${{ inputs.previous-report }}" ] && args+=(--previous-report "${{ inputs.previous-report }}")
+
+        hunter check . "${args[@]}" \
+          --pr "${{ github.event.pull_request.number }}" \
+          --base "origin/${{ github.event.pull_request.base.ref }}" \
+          --out out/pr-comment.md > /dev/null || true
+
+    - name: Post or update the comment
+      if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+        [ -f out/pr-comment.md ] || exit 0
+
+        # One comment, edited in place. FR11.5: a new comment on every push is
+        # how a tool gets muted.
+        existing=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+          --jq 'map(select(.body | contains("<!-- rittman-hunter-comment -->"))) | .[0].id // empty')
+
+        if [ -n "$existing" ]; then
+          gh api --method PATCH "repos/$REPO/issues/comments/$existing" \
+            -F body=@out/pr-comment.md > /dev/null
+        else
+          gh api --method POST "repos/$REPO/issues/$PR/comments" \
+            -F body=@out/pr-comment.md > /dev/null
+        fi
+
+    - name: Build the site
+      if: ${{ inputs.publish == 'true' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        args=()
+        [ -n "${{ inputs.config }}" ] && args+=(--config "${{ inputs.config }}")
+        [ -n "${{ inputs.manifest }}" ] && args+=(--manifest "${{ inputs.manifest }}")
+        hunter docs build . "${args[@]}" --out out/site
+
+    - name: Upload the report and site
+      uses: actions/upload-artifact@v4
+      with:
+        name: hunter-report
+        path: |
+          ${{ inputs.working-directory }}/out/report.json
+          ${{ inputs.working-directory }}/out/site/_built
+        if-no-files-found: warn
+
+    - name: Apply the gate
+      shell: bash
+      run: |
+        set -euo pipefail
+        mode="${{ inputs.mode }}"
+        if [ "$mode" = "advisory" ]; then
+          echo "Advisory mode: this check never fails a build."
+          exit 0
+        fi
+        if [ "${{ steps.run.outputs.gate_status }}" != "0" ]; then
+          echo "::error::Hunter's gate failed. See the run summary for the reason."
+          exit 1
+        fi

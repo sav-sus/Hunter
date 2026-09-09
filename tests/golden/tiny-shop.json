@@ -1,0 +1,2760 @@
+{
+  "alignment": [
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "daily sales",
+      "claim_matches_reality": true,
+      "claimed_status": "built",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "commerce",
+      "entity": "commerce/daily_sale",
+      "grain": "One row per day",
+      "in_repo": "present",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": "commerce",
+      "state": "designed_and_delivered",
+      "state_label": "Designed and delivered",
+      "state_meaning": "Working as intended.",
+      "technical_name": "wh_commerce__daily_sales_xa"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "forecasts",
+      "claim_matches_reality": null,
+      "claimed_status": "flagged",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "commerce",
+      "entity": "commerce/forecast",
+      "grain": "One row per product per week",
+      "in_repo": "disabled",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": "commerce",
+      "state": "built_disabled",
+      "state_label": "Built, switched off",
+      "state_meaning": "The code exists but is switched off, so nothing is being produced from it.",
+      "technical_name": "wh_commerce__forecast_fact"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "legacy",
+      "claim_matches_reality": null,
+      "claimed_status": null,
+      "conceptual": "absent",
+      "design_file": null,
+      "designed": "absent",
+      "domain": "commerce",
+      "entity": "commerce/legacy",
+      "grain": null,
+      "in_repo": "present",
+      "in_warehouse": "unknown",
+      "logical": "absent",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": "commerce",
+      "state": "built_off_plan",
+      "state_label": "Built off-plan",
+      "state_meaning": "Delivered but never designed, so it is undocumented and has no named owner.",
+      "technical_name": "wh_commerce__legacy_fact"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "orders",
+      "claim_matches_reality": true,
+      "claimed_status": "built",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "commerce",
+      "entity": "commerce/order",
+      "grain": "One row per order",
+      "in_repo": "present",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": "commerce",
+      "state": "designed_and_delivered",
+      "state_label": "Designed and delivered",
+      "state_meaning": "Working as intended.",
+      "technical_name": "wh_commerce__order_fact"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "returns",
+      "claim_matches_reality": true,
+      "claimed_status": "planned",
+      "conceptual": "present",
+      "design_file": null,
+      "designed": "absent",
+      "domain": "commerce",
+      "entity": "commerce/return",
+      "grain": null,
+      "in_repo": "absent",
+      "in_warehouse": "unknown",
+      "logical": "absent",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": null,
+      "state": "conceptual_only",
+      "state_label": "On the business model only",
+      "state_meaning": "Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog.",
+      "technical_name": null
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "customers",
+      "claim_matches_reality": true,
+      "claimed_status": "built",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "master",
+      "entity": "master/customer",
+      "grain": "One row per customer",
+      "in_repo": "present",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": null,
+      "state": "designed_and_delivered",
+      "state_label": "Designed and delivered",
+      "state_meaning": "Working as intended.",
+      "technical_name": "wh_master__customer_dim"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "products",
+      "claim_matches_reality": true,
+      "claimed_status": "built",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "master",
+      "entity": "master/product",
+      "grain": "One row per product",
+      "in_repo": "present",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": "commerce",
+      "state": "designed_and_delivered",
+      "state_label": "Designed and delivered",
+      "state_meaning": "Working as intended.",
+      "technical_name": "wh_master__product_dim"
+    },
+    {
+      "approval_reason": null,
+      "approved_off_plan": false,
+      "business_name": "suppliers",
+      "claim_matches_reality": true,
+      "claimed_status": "planned",
+      "conceptual": "present",
+      "design_file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "designed": "present",
+      "domain": "master",
+      "entity": "master/supplier",
+      "grain": "One row per supplier",
+      "in_repo": "absent",
+      "in_warehouse": "unknown",
+      "logical": "present",
+      "match_confidence": 1.0,
+      "match_method": "exact",
+      "notes": [],
+      "owner": null,
+      "state": "designed_not_started",
+      "state_label": "Designed, not started",
+      "state_meaning": "On the plan, no work done yet.",
+      "technical_name": "wh_master__supplier_dim"
+    }
+  ],
+  "conventions": {
+    "divergences": [
+      {
+        "house_value": true,
+        "kind": "disabled",
+        "level": "project",
+        "path": "rules.structure.model_too_long.enabled",
+        "project_value": false,
+        "reason": "this example has no long models, so the rule adds nothing here"
+      }
+    ],
+    "entities": [
+      {
+        "kind": "fact",
+        "suffix": "_fact"
+      },
+      {
+        "kind": "dimension",
+        "suffix": "_dim"
+      },
+      {
+        "kind": "aggregate",
+        "suffix": "_xa"
+      },
+      {
+        "kind": "bridge",
+        "suffix": "_bridge"
+      },
+      {
+        "kind": "snapshot",
+        "suffix": "_snapshot"
+      }
+    ],
+    "exposure_weighting": true,
+    "extends": "ra-house@1",
+    "fail_under": null,
+    "house_ruleset_version": "1",
+    "layers": [
+      {
+        "discovered": false,
+        "in_alignment": false,
+        "may_reference": [
+          "seeds"
+        ],
+        "name": "staging",
+        "persistence": "temporary",
+        "pipeline_stage": 1,
+        "prefix": "stg_"
+      },
+      {
+        "discovered": false,
+        "in_alignment": false,
+        "may_reference": [
+          "staging",
+          "integration",
+          "seeds"
+        ],
+        "name": "integration",
+        "persistence": "temporary",
+        "pipeline_stage": 2,
+        "prefix": "int_"
+      },
+      {
+        "discovered": false,
+        "in_alignment": true,
+        "may_reference": [
+          "staging",
+          "integration",
+          "warehouse",
+          "seeds"
+        ],
+        "name": "warehouse",
+        "persistence": "persistent",
+        "pipeline_stage": 3,
+        "prefix": "wh_"
+      },
+      {
+        "discovered": false,
+        "in_alignment": false,
+        "may_reference": [],
+        "name": "seeds",
+        "persistence": "persistent",
+        "pipeline_stage": 0,
+        "prefix": null
+      },
+      {
+        "discovered": false,
+        "in_alignment": true,
+        "may_reference": [
+          "warehouse",
+          "integration"
+        ],
+        "name": "reverse_etl",
+        "persistence": "persistent",
+        "pipeline_stage": 4,
+        "prefix": null
+      },
+      {
+        "discovered": false,
+        "in_alignment": true,
+        "may_reference": [
+          "warehouse",
+          "integration"
+        ],
+        "name": "ai",
+        "persistence": "persistent",
+        "pipeline_stage": 4,
+        "prefix": null
+      }
+    ],
+    "rules": [
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.ambiguous_match",
+        "plain_heading": "What was not checked",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.approved_off_plan",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "info"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.built_disabled",
+        "plain_heading": "What was designed against what exists",
+        "points": 0.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.built_off_plan",
+        "plain_heading": "What was designed against what exists",
+        "points": 1.2,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.design_backlog",
+        "plain_heading": "What is still to come",
+        "points": 0.0,
+        "ran": false,
+        "requires": [
+          "conceptual"
+        ],
+        "severity": "info"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.design_without_business_entity",
+        "plain_heading": "What was designed against what exists",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "dbml",
+          "conceptual"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.diagram_claim_stale",
+        "plain_heading": "Is the published picture still true",
+        "points": 0.6,
+        "ran": true,
+        "requires": [
+          "conceptual"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "alignment.unmanaged_production_object",
+        "plain_heading": "What was designed against what exists",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.column_missing_from_design",
+        "plain_heading": "Does what was built match the design",
+        "points": 0.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.column_missing_from_model",
+        "plain_heading": "Does what was built match the design",
+        "points": 1.2,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.design_entity_suffix_missing",
+        "plain_heading": "Naming conventions",
+        "points": 0.5,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.design_key_naming",
+        "plain_heading": "Naming conventions",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.design_no_primary_key",
+        "plain_heading": "Keys and joins",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.design_not_built",
+        "plain_heading": "What was designed against what exists",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.relationship_key_missing",
+        "plain_heading": "Keys and joins",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.relationship_not_tested",
+        "plain_heading": "Keys and joins",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.type_drift",
+        "plain_heading": "Does what was built match the design",
+        "points": 1.0,
+        "ran": false,
+        "requires": [
+          "manifest",
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "conformance.types_unavailable",
+        "plain_heading": "What was not checked",
+        "points": 0.0,
+        "ran": false,
+        "requires": [
+          "manifest",
+          "dbml"
+        ],
+        "severity": "info"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.duplicate_measure",
+        "plain_heading": "Where the numbers are worked out",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "lookml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.explore_no_caching_policy",
+        "plain_heading": "Reporting setup",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "lookml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.exposure_missing",
+        "plain_heading": "Do the reports still match the data",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "lookml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.field_references_missing_column",
+        "plain_heading": "Do the reports still match the data",
+        "points": 2.0,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "lookml"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.view_model_missing",
+        "plain_heading": "Do the reports still match the data",
+        "points": 2.0,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "lookml"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "crosslayer.view_table_unresolvable",
+        "plain_heading": "What was not checked",
+        "points": 0.3,
+        "ran": false,
+        "requires": [
+          "lookml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.column_description_missing",
+        "plain_heading": "What is documented",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.description_stale",
+        "plain_heading": "What is documented",
+        "points": 0.5,
+        "ran": false,
+        "requires": [
+          "manifest",
+          "git"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.design_column_notes_missing",
+        "plain_heading": "What is documented",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.design_grain_missing",
+        "plain_heading": "What one row means",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.design_note_missing",
+        "plain_heading": "What is documented",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.model_description_missing",
+        "plain_heading": "What is documented",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.model_description_placeholder",
+        "plain_heading": "What is documented",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "documentation.owner_missing",
+        "plain_heading": "Who owns what",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "droughty.description_empty",
+        "plain_heading": "What is documented",
+        "points": 0.6,
+        "ran": true,
+        "requires": [
+          "droughty"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "droughty.description_orphaned",
+        "plain_heading": "What is documented",
+        "points": 0.1,
+        "ran": true,
+        "requires": [
+          "droughty"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "documentation",
+        "enabled": true,
+        "id": "droughty.description_undefined",
+        "plain_heading": "What is documented",
+        "points": 0.6,
+        "ran": true,
+        "requires": [
+          "droughty"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "droughty.generated_test_missing",
+        "plain_heading": "What is tested",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "droughty"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "droughty.introspected_column_undesigned",
+        "plain_heading": "Does what was built match the design",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "droughty",
+          "dbml"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "droughty.model_not_covered",
+        "plain_heading": "What is documented",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "droughty"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "droughty.override_dropped",
+        "plain_heading": "What is tested",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "droughty"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "enabled": true,
+        "id": "droughty.schema_stale",
+        "plain_heading": "What was not checked",
+        "points": 1.0,
+        "ran": false,
+        "requires": [
+          "droughty"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "entity_modelling",
+        "enabled": true,
+        "id": "entity.declared_type_mismatch",
+        "plain_heading": "Are the tables the shape they claim",
+        "points": 2.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "entity_modelling",
+        "enabled": true,
+        "id": "entity.dimension_with_measures",
+        "plain_heading": "Are the tables the shape they claim",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "entity_modelling",
+        "enabled": true,
+        "id": "entity.fact_without_measures",
+        "plain_heading": "Are the tables the shape they claim",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "entity_modelling",
+        "enabled": true,
+        "id": "entity.surrogate_key_missing",
+        "plain_heading": "Keys and joins",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "entity_modelling",
+        "enabled": true,
+        "id": "entity.type_unclear",
+        "plain_heading": "Are the tables the shape they claim",
+        "points": 0.5,
+        "ran": false,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.dead_model",
+        "plain_heading": "What is not used",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.dependency_cycle",
+        "plain_heading": "How the tables fit together",
+        "points": 4.0,
+        "ran": false,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.high_fanout",
+        "plain_heading": "How the tables fit together",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.model_rejoin",
+        "plain_heading": "How the tables fit together",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.staging_bypassed",
+        "plain_heading": "How the layers fit together",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "lineage_health",
+        "enabled": true,
+        "id": "lineage.temporary_model_exposed",
+        "plain_heading": "Temporary against permanent",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.date_column_suffix",
+        "plain_heading": "Naming conventions",
+        "points": 0.4,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.direct_source_reference",
+        "plain_heading": "How the layers fit together",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.entity_suffix_missing",
+        "plain_heading": "Naming conventions",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.layer_boundary_violation",
+        "plain_heading": "How the layers fit together",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.layer_prefix_wrong",
+        "plain_heading": "Naming conventions",
+        "points": 0.6,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.materialisation_not_permitted",
+        "plain_heading": "How the layers fit together",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.model_outside_every_layer",
+        "plain_heading": "How the layers fit together",
+        "points": 1.0,
+        "ran": false,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "naming.primary_key_column_missing",
+        "plain_heading": "Keys and joins",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "register.approval_matches_no_model",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.3,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "register.approval_review_overdue",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.6,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "register.entry_matches_no_model",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.3,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "register.ignore_expired",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.6,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "register.ignore_names_unknown_rule",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.3,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "model_conformance",
+        "enabled": true,
+        "id": "register.review_overdue",
+        "plain_heading": "Agreed exceptions",
+        "points": 0.6,
+        "ran": false,
+        "requires": [],
+        "severity": "medium"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "structure.cte_name_invalid",
+        "plain_heading": "How the code is written",
+        "points": 0.3,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "structure.hardcoded_reference",
+        "plain_heading": "How the code is written",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": false,
+        "id": "structure.model_too_long",
+        "plain_heading": "How the code is written",
+        "points": 0.6,
+        "ran": false,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "structure.select_star_from_source",
+        "plain_heading": "How the code is written",
+        "points": 0.3,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "low"
+      },
+      {
+        "dimension": "conventions_structure",
+        "enabled": true,
+        "id": "structure.too_many_joins",
+        "plain_heading": "How the code is written",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.declared_grain_untested",
+        "plain_heading": "What one row means",
+        "points": 1.2,
+        "ran": true,
+        "requires": [
+          "manifest",
+          "dbml"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.key_not_null_missing",
+        "plain_heading": "What is tested",
+        "points": 1.5,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.key_test_warns_only",
+        "plain_heading": "What is tested",
+        "points": 0.8,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.key_uniqueness_missing",
+        "plain_heading": "What is tested",
+        "points": 2.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.no_tests_at_all",
+        "plain_heading": "What is tested",
+        "points": 2.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "high"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.only_weak_tests",
+        "plain_heading": "What is tested",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      },
+      {
+        "dimension": "testing",
+        "enabled": true,
+        "id": "testing.relationship_test_missing",
+        "plain_heading": "Keys and joins",
+        "points": 1.0,
+        "ran": true,
+        "requires": [
+          "manifest"
+        ],
+        "severity": "medium"
+      }
+    ],
+    "silences": [
+      {
+        "expired": false,
+        "expires": "2027-01-31",
+        "models": [
+          "wh_master__customer_dim"
+        ],
+        "reason": "the description is being written as part of the customer rework",
+        "rule": "documentation.model_description_missing"
+      }
+    ],
+    "weights": {
+      "conventions_structure": 13.0,
+      "cross_layer_sync": 13.0,
+      "documentation": 13.0,
+      "entity_modelling": 8.0,
+      "lineage_health": 13.0,
+      "model_conformance": 15.0,
+      "performance_cost": 7.0,
+      "testing": 18.0
+    }
+  },
+  "coverage": {
+    "built_disabled": 1,
+    "built_entities": 5,
+    "column_documentation_percent": 100.0,
+    "conceptual_entities": 7,
+    "delivery_coverage_percent": 66.7,
+    "design_coverage_percent": 85.7,
+    "designed_entities": 6,
+    "designed_not_started": 1,
+    "key_test_percent": 40.0,
+    "off_plan_approved": 0,
+    "off_plan_built": 1,
+    "state_counts": {
+      "built_disabled": 1,
+      "built_off_plan": 1,
+      "conceptual_only": 1,
+      "designed_and_delivered": 4,
+      "designed_not_started": 1
+    },
+    "table_documentation_percent": 80.0,
+    "unmanaged_production": 0
+  },
+  "findings": [
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_commerce__order_fact.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 5.808,
+      "evidence": {
+        "columns": "order_channel_name -> order_channel_name",
+        "count": 1,
+        "label": "orders",
+        "model": "wh_commerce__order_fact",
+        "phrase": "1 report field",
+        "subject": "wh_commerce__order_fact"
+      },
+      "file": "analytics_warehouse/lookml/base/_base.layer.lkml",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__order_fact",
+      "object_kind": "lookml_view",
+      "owner": "commerce",
+      "points": 5.808,
+      "rule": "crosslayer.field_references_missing_column",
+      "scored": true,
+      "severity": "high",
+      "summary": "1 report field in view wh_commerce__order_fact read columns wh_commerce__order_fact no longer produces: order_channel_name -> order_channel_name",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it.",
+      "dimension": "testing",
+      "effective_points": 5.322,
+      "evidence": {
+        "consumers": "7 report fields depend on it",
+        "grain": "one row per day",
+        "label": "daily sales",
+        "subject": "wh_commerce__daily_sales_xa"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__daily_sales_xa",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 5.322,
+      "rule": "testing.no_tests_at_all",
+      "scored": true,
+      "severity": "high",
+      "summary": "wh_commerce__daily_sales_xa has no tests of any kind",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 3.877,
+      "evidence": {
+        "count": 1,
+        "label": "customers",
+        "phrase": "1 test",
+        "subject": "wh_master__customer_dim",
+        "tests": "customer_pk: not_null"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 3.877,
+      "rule": "droughty.override_dropped",
+      "scored": true,
+      "severity": "high",
+      "summary": "1 test declared for wh_master__customer_dim never reached the generated schema: customer_pk: not_null",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why.",
+      "dimension": "testing",
+      "effective_points": 3.877,
+      "evidence": {
+        "consumers": "6 report fields depend on it",
+        "key": "customer_pk",
+        "label": "customers",
+        "subject": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 3.877,
+      "rule": "testing.key_not_null_missing",
+      "scored": true,
+      "severity": "high",
+      "summary": "Nothing tests that customer_pk is always populated on wh_master__customer_dim",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing checks that products holds one row per one row per product. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it.",
+      "dimension": "testing",
+      "effective_points": 2.0,
+      "evidence": {
+        "consumers": "nothing downstream depends on it",
+        "grain": "one row per product",
+        "key": "product_pk",
+        "label": "products",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 2.0,
+      "rule": "testing.key_uniqueness_missing",
+      "scored": true,
+      "severity": "high",
+      "summary": "Nothing tests that product_pk is unique on wh_master__product_dim",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing at all checks legacy. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and nothing downstream depends on it.",
+      "dimension": "testing",
+      "effective_points": 2.0,
+      "evidence": {
+        "consumers": "nothing downstream depends on it",
+        "grain": "one row per legacy order",
+        "label": "legacy",
+        "subject": "wh_commerce__legacy_fact"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__legacy_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 2.0,
+      "rule": "testing.no_tests_at_all",
+      "scored": true,
+      "severity": "high",
+      "summary": "wh_commerce__legacy_fact has no tests of any kind",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Because legacy does not go through dbt to reach this table, the dependency is invisible: it does not appear in the lineage, it is not built in the right order, and nothing warns you if the table it points at changes.",
+      "dimension": "conventions_structure",
+      "effective_points": 1.5,
+      "evidence": {
+        "label": "legacy",
+        "line": 17,
+        "reference": "`warehouse`.`old_shop`.`legacy_orders`",
+        "subject": "wh_commerce__legacy_fact"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "first_seen": null,
+      "line": 17,
+      "object": "wh_commerce__legacy_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.5,
+      "rule": "structure.hardcoded_reference",
+      "scored": true,
+      "severity": "high",
+      "summary": "wh_commerce__legacy_fact names the table '`warehouse`.`old_shop`.`legacy_orders`' directly on line 17",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Rows with no key can appear in products. They drop out of joins silently, so figures come out low with no error to explain why.",
+      "dimension": "testing",
+      "effective_points": 1.5,
+      "evidence": {
+        "consumers": "nothing downstream depends on it",
+        "key": "product_pk",
+        "label": "products",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.5,
+      "rule": "testing.key_not_null_missing",
+      "scored": true,
+      "severity": "high",
+      "summary": "Nothing tests that product_pk is always populated on wh_master__product_dim",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read.",
+      "dimension": "model_conformance",
+      "effective_points": 0.639,
+      "evidence": {
+        "columns": "daily_sales_returned_amount",
+        "count": 1,
+        "design": "wh_commerce__daily_sales_xa",
+        "label": "daily sales",
+        "phrase": "1 column",
+        "subject": "wh_commerce__daily_sales_xa"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__daily_sales_xa",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 0.639,
+      "rule": "conformance.column_missing_from_model",
+      "scored": true,
+      "severity": "high",
+      "summary": "wh_commerce__daily_sales_xa is missing 1 column that the design specifies: daily_sales_returned_amount",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "daily sales reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads.",
+      "dimension": "lineage_health",
+      "effective_points": 2.661,
+      "evidence": {
+        "label": "daily sales",
+        "referenced": "stg_shop__orders",
+        "skipped": "integration",
+        "subject": "wh_commerce__daily_sales_xa"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__daily_sales_xa",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 2.661,
+      "rule": "lineage.staging_bypassed",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_commerce__daily_sales_xa skips the integration layer to read stg_shop__orders",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nobody reading the catalogue can tell what customers is for or whether it is the right table to use. 6 report fields depend on it.",
+      "dimension": "documentation",
+      "effective_points": 0.0,
+      "evidence": {
+        "consumers": "6 report fields depend on it",
+        "label": "customers",
+        "layer": "warehouse",
+        "subject": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 2.585,
+      "rule": "documentation.model_description_missing",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__customer_dim has no description",
+      "suppressed": true,
+      "suppression_expires": "2027-01-31",
+      "suppression_reason": "the description is being written as part of the customer rework",
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "customers reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads.",
+      "dimension": "lineage_health",
+      "effective_points": 2.585,
+      "evidence": {
+        "label": "customers",
+        "referenced": "stg_shop__customers",
+        "skipped": "integration",
+        "subject": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 2.585,
+      "rule": "lineage.staging_bypassed",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__customer_dim skips the integration layer to read stg_shop__customers",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 2.129,
+      "evidence": {
+        "label": "daily sales",
+        "subject": "wh_commerce__daily_sales_xa"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__daily_sales_xa",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 2.129,
+      "rule": "droughty.model_not_covered",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_commerce__daily_sales_xa is not described in the generated schema",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "There is nobody to ask about customers and nobody to route a problem with it to. It is a persistent table, and 6 report fields depend on it.",
+      "dimension": "documentation",
+      "effective_points": 2.068,
+      "evidence": {
+        "consumers": "6 report fields depend on it",
+        "label": "customers",
+        "layer": "warehouse",
+        "subject": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 2.068,
+      "rule": "documentation.owner_missing",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__customer_dim names no owner",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 1.394,
+      "evidence": {
+        "count": 3,
+        "label": "orders",
+        "phrase": "3 tests",
+        "subject": "wh_commerce__order_fact",
+        "tests": "customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__order_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.394,
+      "rule": "droughty.generated_test_missing",
+      "scored": true,
+      "severity": "medium",
+      "summary": "3 tests in the generated schema for wh_commerce__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "legacy exists in production and appears on no design, so nothing records what it is for, what one row means or who owns it. If it should be there, add it to the design or record an approval in the register.",
+      "dimension": "model_conformance",
+      "effective_points": 1.2,
+      "evidence": {
+        "domain": "commerce",
+        "label": "legacy",
+        "reason": "none recorded",
+        "state": "built_off_plan",
+        "subject": "wh_commerce__legacy_fact"
+      },
+      "file": null,
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__legacy_fact",
+      "object_kind": "entity",
+      "owner": "commerce",
+      "points": 1.2,
+      "rule": "alignment.built_off_plan",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_commerce__legacy_fact is built but was never designed",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The design says products holds one row per product, and nothing checks that it does. If the grain is wrong, figures double-count with no test to catch it.",
+      "dimension": "testing",
+      "effective_points": 1.2,
+      "evidence": {
+        "design": "wh_master__product_dim",
+        "grain": "one row per product",
+        "label": "products",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.2,
+      "rule": "testing.declared_grain_untested",
+      "scored": true,
+      "severity": "medium",
+      "summary": "The declared grain of wh_master__product_dim is not tested",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The generated schema says these tests should exist on customers, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 1.034,
+      "evidence": {
+        "count": 1,
+        "label": "customers",
+        "phrase": "1 test",
+        "subject": "wh_master__customer_dim",
+        "tests": "customer_name: at_least_one"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 1.034,
+      "rule": "droughty.generated_test_missing",
+      "scored": true,
+      "severity": "medium",
+      "summary": "1 test in the generated schema for wh_master__customer_dim are not in the project: customer_name: at_least_one",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "suppliers was designed and agreed, and nothing in the repository produces it yet. It is on the plan and not started.",
+      "dimension": "model_conformance",
+      "effective_points": 1.0,
+      "evidence": {
+        "label": "suppliers",
+        "subject": "wh_master__supplier_dim"
+      },
+      "file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__supplier_dim",
+      "object_kind": "designed_entity",
+      "owner": null,
+      "points": 1.0,
+      "rule": "conformance.design_not_built",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__supplier_dim is designed but no model builds it",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "legacy is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it.",
+      "dimension": "lineage_health",
+      "effective_points": 1.0,
+      "evidence": {
+        "label": "legacy",
+        "subject": "wh_commerce__legacy_fact"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__legacy_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.0,
+      "rule": "lineage.dead_model",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_commerce__legacy_fact is built and stored but nothing reads it",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "products is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it.",
+      "dimension": "lineage_health",
+      "effective_points": 1.0,
+      "evidence": {
+        "label": "products",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.0,
+      "rule": "lineage.dead_model",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__product_dim is built and stored but nothing reads it",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The tests on products check that columns are not entirely empty. None of them check that it has one row per thing, or that its references resolve.",
+      "dimension": "testing",
+      "effective_points": 1.0,
+      "evidence": {
+        "consumers": "nothing downstream depends on it",
+        "count": 1,
+        "label": "products",
+        "phrase": "1 test",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.0,
+      "rule": "testing.only_weak_tests",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__product_dim has 1 test but none of them prove a key",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The generated schema says these tests should exist on products, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 0.8,
+      "evidence": {
+        "count": 2,
+        "label": "products",
+        "phrase": "2 tests",
+        "subject": "wh_master__product_dim",
+        "tests": "product_pk: not_null; product_pk: unique"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 0.8,
+      "rule": "droughty.generated_test_missing",
+      "scored": true,
+      "severity": "medium",
+      "summary": "2 tests in the generated schema for wh_master__product_dim are not in the project: product_pk: not_null; product_pk: unique",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "products is named as a lookup table but holds figures. Anyone joining it and summing those figures will multiply them by however many rows the join returns. Columns: product_list_price_amount.",
+      "dimension": "entity_modelling",
+      "effective_points": 0.2,
+      "evidence": {
+        "columns": "product_list_price_amount",
+        "count": 1,
+        "label": "products",
+        "phrase": "1 numeric column",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 0.2,
+      "rule": "entity.dimension_with_measures",
+      "scored": true,
+      "severity": "medium",
+      "summary": "wh_master__product_dim is named as a dimension but carries 1 numeric column",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 0.3,
+      "consequence_plain": "Hunter could not tell from its columns whether customers really is a dimension. Worth a human look rather than a change. Evidence: 0 foreign keys, 0 columns to add up, 1 descriptive column, a date grain (judged from names, since column types were not available).",
+      "dimension": "entity_modelling",
+      "effective_points": 0.0,
+      "evidence": {
+        "declared": "dimension",
+        "declared_article": "a",
+        "evidence_text": "0 foreign keys, 0 columns to add up, 1 descriptive column, a date grain (judged from names, since column types were not available)",
+        "inferred": "fact",
+        "inferred_article": "a",
+        "label": "customers",
+        "subject": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 1.292,
+      "rule": "entity.type_unclear",
+      "scored": false,
+      "severity": "low",
+      "summary": "wh_master__customer_dim is named as a dimension, and its shape neither clearly agrees nor disagrees",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 1.162,
+      "evidence": {
+        "count": 1,
+        "label": "orders",
+        "phrase": "1 report view",
+        "subject": "wh_commerce__order_fact",
+        "views": "wh_commerce__order_fact"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__order_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.162,
+      "rule": "crosslayer.exposure_missing",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_commerce__order_fact feeds 1 report view but declares no exposure",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing in the project records that reports depend on daily sales, so anyone changing it has no way to see what they would break.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 1.064,
+      "evidence": {
+        "count": 1,
+        "label": "daily sales",
+        "phrase": "1 report view",
+        "subject": "wh_commerce__daily_sales_xa",
+        "views": "wh_commerce__daily_sales_xa"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__daily_sales_xa",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 1.064,
+      "rule": "crosslayer.exposure_missing",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_commerce__daily_sales_xa feeds 1 report view but declares no exposure",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Nothing in the project records that reports depend on customers, so anyone changing it has no way to see what they would break.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 1.034,
+      "evidence": {
+        "count": 1,
+        "label": "customers",
+        "phrase": "1 report view",
+        "subject": "wh_master__customer_dim",
+        "views": "wh_master__customer_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__customer_dim",
+      "object_kind": "model",
+      "owner": null,
+      "points": 1.034,
+      "rule": "crosslayer.exposure_missing",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_master__customer_dim feeds 1 report view but declares no exposure",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "A column added at the source appears in stg_shop__orders without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here.",
+      "dimension": "conventions_structure",
+      "effective_points": 0.688,
+      "evidence": {
+        "form": "*",
+        "label": "stg_shop__orders",
+        "line": 13,
+        "subject": "stg_shop__orders",
+        "target": "a raw source"
+      },
+      "file": "models/staging/stg_shop/stg_shop__orders.sql",
+      "first_seen": null,
+      "line": 13,
+      "object": "stg_shop__orders",
+      "object_kind": "model",
+      "owner": null,
+      "points": 0.688,
+      "rule": "structure.select_star_from_source",
+      "scored": true,
+      "severity": "low",
+      "summary": "stg_shop__orders selects every column from a raw source on line 13",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The code for forecasts exists and is not running, so nothing is being produced from it. Either it is waiting to be turned on, or it was left behind and should be removed.",
+      "dimension": "model_conformance",
+      "effective_points": 0.5,
+      "evidence": {
+        "domain": "commerce",
+        "label": "forecasts",
+        "reason": "none recorded",
+        "state": "built_disabled",
+        "subject": "wh_commerce__forecast_fact"
+      },
+      "file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__forecast_fact",
+      "object_kind": "entity",
+      "owner": "commerce",
+      "points": 0.5,
+      "rule": "alignment.built_disabled",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_commerce__forecast_fact is built but switched off",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Every query against this explore goes to the warehouse, so it costs more than it needs to and is slower for whoever is waiting.",
+      "dimension": "cross_layer_sync",
+      "effective_points": 0.4,
+      "evidence": {
+        "label": "shop_analytics",
+        "subject": "shop_analytics"
+      },
+      "file": "analytics_warehouse/lookml/int/int_explore_shop.explore.lkml",
+      "first_seen": null,
+      "line": null,
+      "object": "shop_analytics",
+      "object_kind": "explore",
+      "owner": null,
+      "points": 0.4,
+      "rule": "crosslayer.explore_no_caching_policy",
+      "scored": true,
+      "severity": "low",
+      "summary": "Explore shop_analytics has no caching policy",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "A column added at the source appears in legacy without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here.",
+      "dimension": "conventions_structure",
+      "effective_points": 0.3,
+      "evidence": {
+        "form": "*",
+        "label": "legacy",
+        "line": 17,
+        "subject": "wh_commerce__legacy_fact",
+        "target": "'`warehouse`.`old_shop`.`legacy_orders`'"
+      },
+      "file": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "first_seen": null,
+      "line": 17,
+      "object": "wh_commerce__legacy_fact",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 0.3,
+      "rule": "structure.select_star_from_source",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_commerce__legacy_fact selects every column from '`warehouse`.`old_shop`.`legacy_orders`' on line 17",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "products holds columns nobody designed, so they are undocumented and their business meaning is not recorded anywhere.",
+      "dimension": "model_conformance",
+      "effective_points": 0.1,
+      "evidence": {
+        "columns": "product_list_price_amount",
+        "count": 1,
+        "design": "wh_master__product_dim",
+        "label": "products",
+        "phrase": "1 column",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "model",
+      "owner": "commerce",
+      "points": 0.1,
+      "rule": "conformance.column_missing_from_design",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_master__product_dim has 1 column the design does not include: product_list_price_amount",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The description file has grown past the model it describes. These entries describe columns that no longer exist, so anyone reading the file to understand the data will be misled by them.",
+      "dimension": "documentation",
+      "effective_points": 0.1,
+      "evidence": {
+        "blocks": "supplier_pk",
+        "count": 1,
+        "label": "field_descriptions",
+        "phrase": "1 description",
+        "subject": "field_descriptions"
+      },
+      "file": null,
+      "first_seen": null,
+      "line": null,
+      "object": "field_descriptions",
+      "object_kind": "droughty",
+      "owner": null,
+      "points": 0.1,
+      "rule": "droughty.description_orphaned",
+      "scored": true,
+      "severity": "low",
+      "summary": "1 description are defined and never used",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The warehouse picture taken by Droughty shows columns on products that nobody designed, so their business meaning is not recorded.",
+      "dimension": "model_conformance",
+      "effective_points": 0.08,
+      "evidence": {
+        "columns": "product_list_price_amount",
+        "count": 1,
+        "introspected_as": "wh_master__product_dim",
+        "label": "products",
+        "phrase": "1 column",
+        "subject": "wh_master__product_dim"
+      },
+      "file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_master__product_dim",
+      "object_kind": "designed_entity",
+      "owner": "commerce",
+      "points": 0.08,
+      "rule": "droughty.introspected_column_undesigned",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_master__product_dim holds 1 column in the warehouse that the design does not include: product_list_price_amount",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "The warehouse picture taken by Droughty shows columns on orders that nobody designed, so their business meaning is not recorded.",
+      "dimension": "model_conformance",
+      "effective_points": 0.067,
+      "evidence": {
+        "columns": "order_channel_name",
+        "count": 1,
+        "introspected_as": "wh_commerce__order_fact",
+        "label": "orders",
+        "phrase": "1 column",
+        "subject": "wh_commerce__order_fact"
+      },
+      "file": "analytics_warehouse/docs/data_model_design/physical_model.dbml",
+      "first_seen": null,
+      "line": null,
+      "object": "wh_commerce__order_fact",
+      "object_kind": "designed_entity",
+      "owner": "commerce",
+      "points": 0.067,
+      "rule": "droughty.introspected_column_undesigned",
+      "scored": true,
+      "severity": "low",
+      "summary": "wh_commerce__order_fact holds 1 column in the warehouse that the design does not include: order_channel_name",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "These are agreed with the business as things the warehouse should hold, and no design exists for them yet. This is the design backlog, not a list of faults. Examples: returns.",
+      "dimension": "model_conformance",
+      "effective_points": 0.0,
+      "evidence": {
+        "count": 1,
+        "examples": "returns",
+        "label": "conceptual model",
+        "phrase": "1 business entity",
+        "subject": "conceptual model"
+      },
+      "file": null,
+      "first_seen": null,
+      "line": null,
+      "object": "conceptual model",
+      "object_kind": "project",
+      "owner": null,
+      "points": 0.0,
+      "rule": "alignment.design_backlog",
+      "scored": true,
+      "severity": "info",
+      "summary": "1 business entity on the business model have not been designed yet",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    },
+    {
+      "age_days": null,
+      "confidence": 1.0,
+      "consequence_plain": "Hunter could not check whether columns are built with the types the design specifies, because the project has no catalogue file. Running 'dbt docs generate' alongside the build would let this run. Nothing here means the types are wrong; it means they were not checked.",
+      "dimension": "model_conformance",
+      "effective_points": 0.0,
+      "evidence": {
+        "label": "project",
+        "subject": "project"
+      },
+      "file": null,
+      "first_seen": null,
+      "line": null,
+      "object": "project",
+      "object_kind": "project",
+      "owner": null,
+      "points": 0.0,
+      "rule": "conformance.types_unavailable",
+      "scored": true,
+      "severity": "info",
+      "summary": "Column types were not available, so designed and built types were not compared",
+      "suppressed": false,
+      "suppression_expires": null,
+      "suppression_reason": null,
+      "team": null
+    }
+  ],
+  "inventory": [
+    {
+      "column_count": 4,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "shop",
+      "downstream_models": [
+        "wh_commerce__legacy_fact",
+        "wh_commerce__order_fact",
+        "wh_master__product_dim"
+      ],
+      "enabled": true,
+      "entity_type_declared": "unknown",
+      "entity_type_inferred": "unknown",
+      "exposure_weight": 2.0,
+      "file": "models/integration/int_shop/int_shop__orders.sql",
+      "has_description": true,
+      "inference_confidence": 0.0,
+      "last_modified_at": null,
+      "layer": "integration",
+      "materialisation": "view",
+      "name": "int_shop__orders",
+      "owner": null,
+      "package": "tiny_shop",
+      "persistence": "temporary",
+      "persistence_signal": "register_declaration",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 0,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": null,
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "unknown",
+      "entity_type_inferred": "unknown",
+      "exposure_weight": 1.0,
+      "file": "models/staging/stg_shop/stg_shop__customers.sql",
+      "has_description": true,
+      "inference_confidence": 0.0,
+      "last_modified_at": null,
+      "layer": "staging",
+      "materialisation": "view",
+      "name": "package_helper",
+      "owner": null,
+      "package": "some_package",
+      "persistence": "temporary",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": true
+    },
+    {
+      "column_count": 3,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "shop",
+      "downstream_models": [
+        "int_shop__orders",
+        "wh_commerce__legacy_fact",
+        "wh_commerce__order_fact",
+        "wh_master__customer_dim",
+        "wh_master__product_dim"
+      ],
+      "enabled": true,
+      "entity_type_declared": "unknown",
+      "entity_type_inferred": "unknown",
+      "exposure_weight": 2.292,
+      "file": "models/staging/stg_shop/stg_shop__customers.sql",
+      "has_description": true,
+      "inference_confidence": 0.0,
+      "last_modified_at": null,
+      "layer": "staging",
+      "materialisation": "view",
+      "name": "stg_shop__customers",
+      "owner": null,
+      "package": "tiny_shop",
+      "persistence": "temporary",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 4,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "shop",
+      "downstream_models": [
+        "int_shop__orders",
+        "wh_commerce__daily_sales_xa",
+        "wh_commerce__legacy_fact",
+        "wh_commerce__order_fact",
+        "wh_master__product_dim"
+      ],
+      "enabled": true,
+      "entity_type_declared": "unknown",
+      "entity_type_inferred": "unknown",
+      "exposure_weight": 2.292,
+      "file": "models/staging/stg_shop/stg_shop__orders.sql",
+      "has_description": true,
+      "inference_confidence": 0.0,
+      "last_modified_at": null,
+      "layer": "staging",
+      "materialisation": "view",
+      "name": "stg_shop__orders",
+      "owner": null,
+      "package": "tiny_shop",
+      "persistence": "temporary",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 4,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "commerce",
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "aggregate",
+      "entity_type_inferred": "fact",
+      "exposure_weight": 2.661,
+      "file": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "has_description": true,
+      "inference_confidence": 0.6,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_commerce__daily_sales_xa",
+      "owner": "commerce",
+      "package": "tiny_shop",
+      "persistence": "persistent",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 2,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "commerce",
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "fact",
+      "entity_type_inferred": "fact",
+      "exposure_weight": 1.0,
+      "file": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "has_description": true,
+      "inference_confidence": 0.3,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_commerce__legacy_fact",
+      "owner": "commerce",
+      "package": "tiny_shop",
+      "persistence": "persistent",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 5,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "commerce",
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "fact",
+      "entity_type_inferred": "fact",
+      "exposure_weight": 2.904,
+      "file": "models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
+      "has_description": true,
+      "inference_confidence": 0.65,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_commerce__order_fact",
+      "owner": "commerce",
+      "package": "tiny_shop",
+      "persistence": "verified",
+      "persistence_signal": "register_declaration",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 4,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "master",
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "dimension",
+      "entity_type_inferred": "fact",
+      "exposure_weight": 2.585,
+      "file": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "has_description": false,
+      "inference_confidence": 0.3,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_master__customer_dim",
+      "owner": null,
+      "package": "tiny_shop",
+      "persistence": "persistent",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 5,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "master",
+      "downstream_models": [],
+      "enabled": true,
+      "entity_type_declared": "dimension",
+      "entity_type_inferred": "fact",
+      "exposure_weight": 1.0,
+      "file": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "has_description": true,
+      "inference_confidence": 0.3,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_master__product_dim",
+      "owner": "commerce",
+      "package": "tiny_shop",
+      "persistence": "persistent",
+      "persistence_signal": "layer_persistence",
+      "resource_type": "model",
+      "vendored": false
+    },
+    {
+      "column_count": 4,
+      "created_at": null,
+      "created_by": null,
+      "created_in_pr": null,
+      "domain": "commerce",
+      "downstream_models": [],
+      "enabled": false,
+      "entity_type_declared": "fact",
+      "entity_type_inferred": "unknown",
+      "exposure_weight": 1.0,
+      "file": "models/warehouse/wh_commerce/wh_commerce__forecast_fact.sql",
+      "has_description": true,
+      "inference_confidence": 0.0,
+      "last_modified_at": null,
+      "layer": "warehouse",
+      "materialisation": "table",
+      "name": "wh_commerce__forecast_fact",
+      "owner": "commerce",
+      "package": "tiny_shop",
+      "persistence": "unknown",
+      "persistence_signal": "no_signal",
+      "resource_type": "model",
+      "vendored": false
+    }
+  ],
+  "parse_issues": [],
+  "score": {
+    "baseline": null,
+    "delta": null,
+    "dimensions": [
+      {
+        "dimension": "testing",
+        "effective_weight": 19.355,
+        "finding_count": 7,
+        "grade": "B",
+        "points_available": 64.58,
+        "points_lost": 16.9,
+        "score": 76.9,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 18.0
+      },
+      {
+        "dimension": "model_conformance",
+        "effective_weight": 16.129,
+        "finding_count": 9,
+        "grade": "A",
+        "points_available": 76.21,
+        "points_lost": 3.59,
+        "score": 95.6,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 15.0
+      },
+      {
+        "dimension": "lineage_health",
+        "effective_weight": 13.978,
+        "finding_count": 4,
+        "grade": "A",
+        "points_available": 73.45,
+        "points_lost": 7.25,
+        "score": 88.1,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 13.0
+      },
+      {
+        "dimension": "documentation",
+        "effective_weight": 13.978,
+        "finding_count": 3,
+        "grade": "A",
+        "points_available": 59.91,
+        "points_lost": 2.17,
+        "score": 96.1,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 13.0
+      },
+      {
+        "dimension": "cross_layer_sync",
+        "effective_weight": 13.978,
+        "finding_count": 10,
+        "grade": "C",
+        "points_available": 50.1,
+        "points_lost": 18.7,
+        "score": 69.1,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 13.0
+      },
+      {
+        "dimension": "conventions_structure",
+        "effective_weight": 13.978,
+        "finding_count": 3,
+        "grade": "A",
+        "points_available": 133.34,
+        "points_lost": 2.49,
+        "score": 98.5,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 13.0
+      },
+      {
+        "dimension": "entity_modelling",
+        "effective_weight": 8.602,
+        "finding_count": 2,
+        "grade": "A",
+        "points_available": 40.43,
+        "points_lost": 0.2,
+        "score": 96.4,
+        "scored": true,
+        "skipped_reason": null,
+        "weight": 8.0
+      },
+      {
+        "dimension": "performance_cost",
+        "effective_weight": 0.0,
+        "finding_count": 0,
+        "grade": "-",
+        "points_available": 0.0,
+        "points_lost": 0.0,
+        "score": 0.0,
+        "scored": false,
+        "skipped_reason": "No rule for this dimension could run, because the data it needs was not available.",
+        "weight": 7.0
+      }
+    ],
+    "grade": "A",
+    "interpretation": "Well maintained. Safe to build on",
+    "real_delta": null,
+    "total": 87.8,
+    "version_attributed_delta": null,
+    "weights_renormalised": true
+  },
+  "systemic_gaps": [
+    {
+      "checked": 3,
+      "consequence": "The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.",
+      "dimension": "cross_layer_sync",
+      "failed": 3,
+      "plain_heading": "What is tested",
+      "rule": "droughty.generated_test_missing",
+      "severity": "medium",
+      "summary": "{phrase} in the generated schema for {subject} are not in the project"
+    },
+    {
+      "checked": 3,
+      "consequence": "Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.",
+      "dimension": "cross_layer_sync",
+      "failed": 3,
+      "plain_heading": "Do the reports still match the data",
+      "rule": "crosslayer.exposure_missing",
+      "severity": "low",
+      "summary": "{subject} feeds {phrase} but declares no exposure"
+    }
+  ]
+}

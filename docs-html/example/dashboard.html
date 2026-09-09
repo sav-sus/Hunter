@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repository health · Rittman Hunter</title>
+<link rel="icon" href="data:image/x-icon;base64,AAABAAQAEBAAAAAAIAAcAQAARgAAACAgAAAAACAAMQEAAGIBAAAwMAAAAAAgAI4BAACTAgAAQEAAAAAAIAAgAQAAIQQAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAONJREFUeJzFkzuOwkAMhj9PUvEoaRAFIFFwgq22o6fYigPQ7bn2hFBkHjbFhACbKIlEgaXR2B77l/3bI4DRIyIlZpHV5sTX4Y/gEyJF8+76ksfI2wBll1PEAVLrBWC1bySAmT7pCYAYrsMAIg4zZbv/ZbH8JoZQk5iYzNZoolXJvwpy2Yvlge3+iK9AsgtVSPER09tCDBd8lfBVRKQkT9p18lDmgHsLRXPnYy8z7+TALDbGXVetepNeAFab08MSh1lkOt+hCmPWRH7O1lplTdQAIyoIPrVRnxZpEGCIpCH5/Ge6AZXHSWSgqAOsAAAAAElFTkSuQmCCiVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA+ElEQVR4nO2WsW7CMBRFz02zQDuVgaESYuETGBAdWPoJ/CPiD5vg9xhMYSJ2KkcsvpInXz+fxPa1BTilpAbc2B7OrDZH+i4gvQ0OaYpN/k9VgApQAdp8q5ASvGoA3VpxAMc9JCyx360rCSDAmc2/+FzuwY3nXyjcA/OPdbRl/IkkgNTgHlgsv9n9nAiX4bpOZAyB9JLlANwLuxEusTFYWKBJ9gBxYpEAGKeXH8MKUAHa5I6WEH8ROwVAjKyn8lu/2e80ANvDedgh4dYze19jxqiQyQJYbY5JkwRmxBguvBRt3yVuuAdGVraPBki926fWy49hBagAFeAKYIFEAP6CjOsAAAAASUVORK5CYIKJUE5HDQoaCgAAAA1JSERSAAAAMAAAADAIBgAAAFcC+YcAAAFVSURBVHic7ZhBasMwEEX/KIpxcOxumk1JCoXQC3RZ6LL0Ar1h79HD9BIpaEZdOC40q0gTOjHMA3s3Zp5kWV8mABn/DFFAzoKu3+P57RPdsAUnAVEoflZ5xZXhAta4gDUuYI0LWOMC1sxeIKqfQAFUWjKFtorwdopeIEtxnM1ZAADCB2jDsEqAaIGm3SCEBsiCc6eCMMbpVXcPIt0YVlVPeb5pN3h6+cB6eICkBIQzX4k83igs0bS3EEbVWQBQzkAIDdbDI/qbHZgBKl0MAEQ0HajXQAbzAcwC5roTVe3IT6gXMVE4Xvpmapj9PuAC1riANS5gjQtYEzXbv8XOe0qcsnkJUw3zNwx+bv8hdv2+uGiM0wnt6u43z1cE0YtAr+9flUMoIIrHA83ysl0VELthW1+d9XleS+Sk68B6IVd9ha6JeXcPF7DHBaxxAWtcwBoXsGb2Aj8dVEnG6XTQzAAAAABJRU5ErkJggolQTkcNChoKAAAADUlIRFIAAABAAAAAQAgGAAAAqmlx3gAAAOdJREFUeJztmrEJw0AQBE9GiUChAiWWHXwDzg1yBy7B35lLlSN3cM8gfqaAZRi47IaIOOIEbKXG4/lN372kL54MA9ACNAagBWgMQAvQGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNN0HGFuMbqXGsu6pm9N8T9370yTAsr7iWj4tptPp/gQMQAvQGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNAagBWgMQAvQjFup6aPTfEvfbMXwrscpXmVb0f0JGIAWoDEALUBjAFqAxgC0AI0BaAEaA9ACNAagBWgMQAvQGIAWoOk+wA9DwgkDi16L4gAAAABJRU5ErkJggg==">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --ink: #151d2d;
+  --primary: #525aff;
+  --accent: #ad93f1;
+  --sky: #88d7fb;
+  --peach: #ff9a75;
+  --border: #e5e7eb;
+  --muted: #f7f7f7;
+  --muted-ink: #94a3b8;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(21,29,45,0.06), 0 8px 24px rgba(21,29,45,0.06);
+  --shadow-soft: 0 1px 2px rgba(21,29,45,0.05), 0 4px 12px rgba(21,29,45,0.05);
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: #f4f5f9;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+/* ---- top bar ---- */
+.topbar {
+  background: #fff; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 20;
+}
+.topbar .wrap { display: flex; align-items: center; gap: 20px; height: 68px; }
+.topbar img { height: 26px; width: auto; display: block; }
+.brandmark { display: flex; align-items: center; gap: 14px; }
+.brandmark .divider { width: 1px; height: 26px; background: var(--border); }
+.brandmark .product { font-weight: 700; letter-spacing: -0.01em; font-size: 17px; }
+.topbar nav { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+.topbar nav a {
+  color: var(--ink); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  padding: 7px 11px; border-radius: 8px;
+}
+.topbar nav a:hover { background: var(--muted); color: var(--primary); }
+
+/* ---- coloured header bands, shared by the first cards and the checklist ---- */
+.band {
+  --tone: #525aff;
+  background: var(--tone); color: #fff; padding: 12px 20px; margin: -22px -24px 18px;
+  border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.band h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: #fff; }
+.band-note { font-size: 12px; opacity: 0.8; }
+
+/* ---- the first card ---- */
+.hero .band { display: block; padding: 22px 24px 20px; }
+.eyebrow {
+  margin: 0 0 8px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.6); font-weight: 700; display: flex; gap: 10px; align-items: center;
+}
+.eyebrow .client {
+  text-transform: none; letter-spacing: 0; font-weight: 600; color: #fff;
+  background: rgba(255,255,255,0.12); padding: 2px 9px; border-radius: 6px; font-size: 12px;
+}
+.hero h1 {
+  margin: 0 0 8px; font-size: 44px; line-height: 1; font-weight: 800; color: #fff;
+  letter-spacing: -0.035em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; word-break: break-all;
+}
+.stamp { margin: 0; color: rgba(255,255,255,0.6); font-size: 13px; }
+.hero-body { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 10px 34px; }
+.hero-score {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding-right: 34px; border-right: 1px solid var(--border);
+}
+.hero-ring { margin-bottom: 8px; }
+.hero-rest { min-width: 0; }
+.hero-verdict { margin: 6px 0 4px; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }
+@media (max-width: 860px) {
+  .hero-body { grid-template-columns: 1fr; }
+  .hero-score {
+    padding-right: 0; border-right: 0; border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+  }
+}
+.ring-value { font: 800 44px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: var(--ink); letter-spacing: -0.03em; }
+.ring-label { font: 500 12px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #6b7280; }
+.ring-track { stroke: #eceef4; }
+.verdict { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.grade {
+  font-weight: 700; font-size: 13px; padding: 4px 11px; border-radius: 6px; color: #fff;
+  letter-spacing: 0.02em;
+}
+.hero-sub { margin: 0; color: #6b7280; font-size: 12.5px; max-width: 24ch; }
+.delta { font-size: 12.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+.delta.up { background: #d6ffd6; color: #15803d; }
+.delta.down { background: #ffc2bd; color: #9f1d1d; }
+.delta.flat { background: var(--muted); color: #52525b; }
+
+/* the tiles */
+.tiles {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;
+}
+.tile {
+  background: #fff; border: 1px solid rgba(21,29,45,0.06); border-radius: 12px;
+  padding: 14px 16px 12px; box-shadow: var(--shadow-soft);
+}
+.tile b {
+  display: block; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+}
+.tile span {
+  display: block; font-size: 12.5px; color: #6b7280; margin-top: 6px; font-weight: 500;
+}
+.tile .bar {
+  display: block; height: 4px; border-radius: 2px; background: #eceef4; margin-top: 12px;
+  overflow: hidden;
+}
+.tile .bar u { display: block; height: 100%; text-decoration: none; }
+.tile.yes .bar u { background: #16a34a; }
+.tile.mostly .bar u { background: #d97706; }
+.tile.no .bar u { background: #ef4444; }
+
+/* the journey strip */
+.journey { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+.journey-title {
+  margin: 0 0 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em;
+  color: #6b7280; font-weight: 700; display: flex; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap;
+}
+.journey-title span { text-transform: none; letter-spacing: 0; font-weight: 500; color: #9aa1ad; }
+.journey-row {
+  display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto;
+  padding: 4px 0 6px;
+}
+.stage { flex: 0 0 auto; min-width: 72px; }
+.stage b {
+  display: block; font-size: 30px; line-height: 1; font-weight: 800; letter-spacing: -0.03em;
+}
+.stage span {
+  display: block; margin-top: 6px; font-size: 12px; color: #6b7280; font-weight: 500;
+  max-width: 12ch; line-height: 1.3;
+}
+.hop {
+  flex: 1 1 96px; min-width: 88px; position: relative; height: 46px;
+  display: flex; align-items: flex-start; justify-content: center;
+}
+.hop::before {
+  content: ""; position: absolute; left: 0; right: 10px; top: 38px; height: 2px;
+  background: #16a34a;
+}
+.hop::after {
+  content: ""; position: absolute; right: 4px; top: 33px; width: 0; height: 0;
+  border-left: 8px solid #16a34a; border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+.hop.loss::before { background: #ef4444; }
+.hop.loss::after { border-left-color: #ef4444; }
+.hop em {
+  font-style: normal; font-size: 10.5px; font-weight: 700; color: #9f1d1d;
+  background: #ffc2bd; padding: 3px 7px; border-radius: 6px; position: relative;
+  z-index: 1; max-width: calc(100% - 6px); text-align: center; line-height: 1.2;
+}
+.hop em.none { color: #15803d; background: #d6ffd6; font-weight: 600; }
+@media (max-width: 720px) {
+  .hero h1 { font-size: 32px; }
+  .stage b { font-size: 28px; }
+}
+
+/* ---- cards ---- */
+main { padding: 30px 0 12px; }
+.grid { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
+.card {
+  background: #fff; border: 1px solid rgba(21,29,45,0.04); border-radius: var(--radius);
+  padding: 22px 24px; grid-column: span 12; min-width: 0; box-shadow: var(--shadow);
+}
+.card.half { grid-column: span 6; }
+.card.third { grid-column: span 4; }
+.card.two-thirds { grid-column: span 8; }
+@media (max-width: 940px) {
+  .card.half, .card.third, .card.two-thirds { grid-column: span 12; }
+}
+.card > h2 {
+  margin: 0 0 3px; font-size: 16.5px; font-weight: 700; letter-spacing: -0.015em;
+}
+.card > .sub { margin: 0 0 18px; font-size: 13px; color: #6b7280; max-width: 80ch; }
+.card .foot {
+  margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--border);
+  font-size: 12.5px; color: #6b7280;
+}
+.split { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.split > .chart { flex: 0 0 auto; }
+.split > .side { flex: 1 1 200px; min-width: 180px; }
+
+/* ---- charts ---- */
+.bar-track { fill: #eceef4; }
+.bar-label { font: 500 13px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: var(--ink); }
+.bar-value { font: 700 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; fill: var(--ink); }
+.bar-note { font: 400 10.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #9aa1ad; }
+.funnel-value { font: 700 19px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #fff; }
+.funnel-label { font: 600 11.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: rgba(255,255,255,0.85); }
+.funnel-drop { font: 600 11.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: #9aa1ad; }
+.donut-centre { font: 700 20px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; fill: var(--ink); }
+.stack { border-radius: 6px; overflow: hidden; display: block; }
+.legend { list-style: none; margin: 14px 0 0; padding: 0; }
+.legend li {
+  display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid #f1f2f6;
+}
+.legend li:last-child { border-bottom: 0; }
+.legend b { font-weight: 500; flex: 1; }
+.legend em { font-style: normal; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+.heat { display: block; }
+.heat-key {
+  display: flex; gap: 16px; margin-top: 14px; font-size: 12px; color: #6b7280;
+  flex-wrap: wrap;
+}
+.heat-key span { display: flex; align-items: center; gap: 6px; }
+
+/* ---- tables ---- */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: #6b7280; font-weight: 700; padding: 0 12px 9px 0; border-bottom: 1px solid var(--border);
+}
+tbody tr:hover td { background: #fafbfe; }
+td { padding: 11px 12px 11px 0; border-bottom: 1px solid #f1f2f6; vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-weight: 700; white-space: nowrap; }
+.pill {
+  display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px;
+  border-radius: 6px; color: #fff; white-space: nowrap; letter-spacing: 0.01em;
+}
+.chip {
+  display: inline-block; font-style: normal; font: 600 11px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  padding: 4px 7px; border-radius: 5px; margin: 2px 4px 2px 0; white-space: nowrap;
+}
+.chip.gap { background: #ffc2bd; color: #9f1d1d; }
+.chip.ready { background: #d6ffd6; color: #15803d; }
+.chip.grey { background: var(--muted); color: #52525b; }
+.chip.status-verified { background: #d6ffd6; color: #15803d; }
+.chip.status-permanent { background: #e0e0ff; color: #3730a3; }
+.chip.status-temporary { background: #fff1d6; color: #92400e; }
+.chip.status-not-determined { background: var(--muted); color: #52525b; }
+
+/* ---- roadmap ---- */
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.lane {
+  background: var(--muted); border-radius: 12px; padding: 12px;
+  border-top: 3px solid var(--tone, #94a3b8);
+}
+.lane h3 {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  font-size: 13px; margin: 0 0 2px;
+}
+.lane h3 b { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 15px; color: var(--tone, var(--ink)); }
+.lane .meaning { font-size: 11.5px; color: #6b7280; margin: 0 0 10px; line-height: 1.4; }
+.lane ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lane li {
+  background: #fff; border-radius: 8px; padding: 8px 10px; font-size: 12px;
+  box-shadow: var(--shadow-soft);
+}
+.lane li .tname { margin-bottom: 2px; }
+.lane li .objects { display: block; }
+.lane li .when { display: block; font-size: 11px; color: #6b7280; margin-top: 4px; }
+.lane .empty { margin: 0; font-size: 12px; color: #9ca3af; }
+.tname {
+  --tone: #525aff;
+  display: inline-block; font: 700 12.5px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; color: var(--ink);
+  padding: 4px 8px; border-radius: 6px; background: var(--muted);
+  border-left: 3px solid var(--tone); margin-bottom: 4px;
+}
+td .objects { display: block; }
+.area-tabs { margin-bottom: 12px; }
+.area-tabs .tab { --tone: #94a3b8; }
+.area-tabs .tab .dot { width: 8px; height: 8px; margin-right: 6px; }
+.area-tabs .tab.on .dot { background: #fff; }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 12px; background: var(--muted);
+  padding: 1.5px 5px; border-radius: 4px;
+}
+.objects { color: #6b7280; font-size: 12px; }
+
+/* ---- the checklist ---- */
+.card.cl { --tone: #525aff; padding: 0 16px 6px; }
+.card.cl .band { margin: 0 -16px 4px; }
+.cl ul { padding: 0; }
+.badge {
+  font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+  white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; letter-spacing: 0.03em;
+}
+.badge.yes { background: rgba(255,255,255,0.92); color: #15803d; }
+.badge.mostly { background: rgba(255,255,255,0.92); color: #b45309; }
+.badge.no { background: rgba(255,255,255,0.92); color: #b91c1c; }
+.cl ul { list-style: none; margin: 0; }
+.cl li {
+  display: flex; align-items: flex-start; gap: 10px; padding: 9px 0;
+  border-top: 1px solid #f1f2f6; font-size: 13.5px;
+}
+.cl .tick {
+  flex: 0 0 auto; width: 18px; height: 18px; border-radius: 50%; margin-top: 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.cl li.yes .tick { background: #16a34a; }
+.cl li.yes .tick::before { content: "✓"; }
+.cl li.mostly .tick { background: #d97706; }
+.cl li.mostly .tick::before { content: "!"; }
+.cl li.no .tick { background: #ef4444; }
+.cl li.no .tick::before { content: "✗"; }
+.cl .say { flex: 1; font-weight: 500; }
+.cl .miss {
+  display: block; font-weight: 400; font-size: 12px; color: #6b7280; margin-top: 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.cl .n {
+  flex: 0 0 auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 12.5px; font-weight: 700;
+  color: #6b7280; padding-top: 1px;
+}
+.cl li.no .n { color: #ef4444; }
+.cl li.mostly .n { color: #b45309; }
+
+/* ---- model diagrams ---- */
+.tabs {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 14px;
+}
+.tab {
+  font: 600 13.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #52525b; background: none; border: 0;
+  padding: 9px 13px; border-radius: 8px; cursor: pointer;
+}
+.tab:hover { background: var(--muted); }
+.tab.on { background: var(--ink); color: #fff; }
+.zoom { margin-left: auto; display: flex; gap: 4px; }
+.zoom button {
+  font: 600 13px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: var(--ink); background: #fff;
+  border: 1px solid var(--border); border-radius: 7px; padding: 7px 11px; cursor: pointer;
+}
+.zoom button:hover { border-color: var(--primary); color: var(--primary); }
+.pane .blurb { margin: 0 0 12px; font-size: 13px; color: #6b7280; }
+.canvas {
+  overflow: auto; max-height: 720px; border: 1px solid rgba(21,29,45,0.05); border-radius: 12px;
+  background: #fafbfe; padding: 18px; box-shadow: inset 0 1px 3px rgba(21,29,45,0.04);
+}
+.canvas pre.mermaid {
+  margin: 0; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; color: #52525b; white-space: pre;
+}
+.canvas pre.mermaid[data-processed] { font: inherit; color: inherit; }
+.canvas svg { display: block; height: auto; }
+.pane .heat-key { margin-top: 12px; }
+.pane .heat-key .swatch { width: 14px; height: 14px; border-radius: 3px; }
+.selector { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.selector .select {
+  flex: 1 1 360px; min-width: 240px; font: 500 13.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; color: var(--ink);
+}
+.selector .select:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+.selector .clear {
+  font: 600 13px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: var(--ink); background: #fff;
+  border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; cursor: pointer;
+}
+.selector .sel-help { flex: 1 1 100%; margin: 0; font-size: 12.5px; color: #6b7280; }
+.offline {
+  margin: 0 0 12px; padding: 10px 14px; border-radius: 9px; font-size: 13px;
+  background: #fdebc8; color: #92400e;
+}
+
+/* ---- modelling alignment ---- */
+.align .finder { margin-bottom: 12px; }
+.align-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.align-stats .stat {
+  display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; border-radius: 10px;
+  border: 1px solid rgba(21,29,45,0.05); background: #fff; font-size: 12.5px; color: #52525b;
+  box-shadow: var(--shadow-soft);
+}
+.align-stats .stat b {
+  font-size: 17px; letter-spacing: -0.02em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.align-stats .stat.yes b { color: #15803d; }
+.align-stats .stat.mostly b { color: #b45309; }
+.align-stats .stat.no b { color: #ef4444; }
+.align-head, .arow > summary { display: grid; align-items: center; column-gap: 0; }
+.align-head {
+  padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.07em; color: #6b7280; font-weight: 700;
+}
+.align-head .st { text-align: right; }
+.align-group {
+  --tone: #94a3b8;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 14px 10px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--tone); font-weight: 700;
+}
+.dot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 3px; background: var(--tone);
+  margin-right: 7px; vertical-align: 0;
+}
+.align-group em { color: #9aa1ad; }
+.align-group em { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 500; }
+.arow { border-bottom: 1px solid #f1f2f6; position: relative; }
+.arow > summary {
+  padding: 7px 10px 7px 26px; cursor: pointer; list-style: none; position: relative;
+}
+.arow > summary::-webkit-details-marker { display: none; }
+.arow > summary::before {
+  content: ""; position: absolute; left: 9px; top: 50%; width: 6px; height: 6px;
+  border-right: 2px solid #9aa1ad; border-bottom: 2px solid #9aa1ad;
+  transform: translateY(-60%) rotate(-45deg); transition: transform 0.15s;
+}
+.arow > summary:hover { background: #fafbfe; }
+.arow[open] {
+  background: #f7f8fc; border-radius: 10px; border-bottom-color: transparent;
+  box-shadow: inset 0 0 0 2px var(--primary); margin: 6px 0;
+}
+.arow[open] > summary { border-bottom: 1px dashed #d3d7e0; }
+.arow[open] > summary::before {
+  transform: translateY(-30%) rotate(45deg); border-color: var(--primary);
+}
+.cell {
+  display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--primary);
+  font: 600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; color: var(--ink); background: #fff;
+}
+.cell.off {
+  border: 1.5px dashed #d3d7e0; color: #b0b6c2; font: 400 12px/1.2 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.lane-link { display: block; height: 2px; margin: 0 4px; position: relative; }
+.lane-link::after {
+  content: ""; position: absolute; right: -1px; top: -3px; border-left: 6px solid;
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+}
+.lane-link.ok { background: #16a34a; }
+.lane-link.ok::after { border-left-color: #16a34a; }
+.lane-link.broken {
+  background: repeating-linear-gradient(90deg, #ef4444 0 5px, transparent 5px 9px);
+}
+.lane-link.broken::after { border-left-color: #ef4444; }
+.lane-link.unplanned {
+  background: repeating-linear-gradient(90deg, #d97706 0 2px, transparent 2px 6px);
+}
+.lane-link.unplanned::after { border-left-color: #d97706; }
+.lane-link.none { background: #e2e5ec; }
+.lane-link.none::after { display: none; }
+.arow .pill { justify-self: end; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.arow-detail { padding: 8px 26px 18px; font-size: 13.5px; }
+.arow-detail p { margin: 8px 0; max-width: 90ch; }
+.arow-detail dl {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px 22px;
+  margin: 14px 0 0;
+}
+.arow-detail dl > div { min-width: 0; }
+.arow-detail dt {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280;
+  font-weight: 700; white-space: nowrap;
+}
+.arow-detail dd { margin: 3px 0 0; font-size: 13px; overflow-wrap: anywhere; }
+
+/* ---- the conceptual model as cards ---- */
+.erd-group h4 em {
+  font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 500; color: #9aa1ad;
+  margin-left: 10px;
+}
+.ents { display: flex; flex-wrap: wrap; gap: 12px; }
+.ent {
+  --state: #94a3b8;
+  min-width: 170px; background: #fff; border-radius: 10px; padding: 12px 14px 10px;
+  border: 1px solid rgba(21,29,45,0.06); border-top: 4px solid var(--state);
+  box-shadow: var(--shadow-soft); transition: opacity 0.15s;
+}
+.ent b { display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.ent span {
+  display: block; font-size: 11.5px; color: var(--state); font-weight: 700; margin-top: 4px;
+}
+.ent code { display: inline-block; margin-top: 8px; font-size: 11px; }
+.ent.dim { opacity: 0.18; }
+.ent.hit { box-shadow: 0 0 0 3px var(--primary); }
+
+/* ---- Mermaid drawings take the page's look ---- */
+.canvas svg { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+.canvas svg .node rect, .canvas svg .node polygon { rx: 8; ry: 8; }
+.canvas svg .node .label { font-weight: 600; }
+.canvas svg .cluster rect {
+  rx: 12; ry: 12; fill: #fafbfe !important; stroke: #e2e5ec !important;
+}
+.canvas svg .cluster-label, .canvas svg .cluster-label .nodeLabel {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: #6b7280; fill: #6b7280;
+}
+.canvas svg .edgePath path, .canvas svg .flowchart-link {
+  stroke: #9aa1ad !important; stroke-width: 1.5px;
+}
+.canvas svg .marker { fill: #9aa1ad !important; stroke: #9aa1ad !important; }
+
+/* ---- the physical model as cards ---- */
+.canvas.html { overflow: auto; position: relative; }
+.erd { position: relative; }
+.erd-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  overflow: visible;
+}
+.erd-lines path { fill: none; stroke: #9aa1ad; stroke-width: 1.5; }
+.erd-lines circle { fill: #fff; stroke: #9aa1ad; stroke-width: 1.5; }
+.erd-lines line { stroke: #9aa1ad; stroke-width: 1.5; }
+.erd-group { margin-bottom: 22px; }
+.erd-group h4 {
+  margin: 0 0 10px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.erd-cards { display: flex; flex-wrap: wrap; gap: 26px 34px; align-items: flex-start; }
+.erd-card {
+  min-width: 260px; max-width: 360px; border-radius: 9px; overflow: hidden; background: #fff;
+  box-shadow: 0 1px 2px rgba(21,29,45,0.08), 0 6px 18px rgba(21,29,45,0.06);
+  border: 1px solid var(--border); transition: opacity 0.15s;
+}
+.erd-card header { padding: 10px 14px; color: #fff; }
+.erd-card header b { display: block; font: 700 13px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.erd-card header .grain { display: block; font-size: 11.5px; opacity: 0.85; margin-top: 3px; }
+.erd-row {
+  display: flex; align-items: center; gap: 10px; padding: 7px 14px; font-size: 13px;
+  border-top: 1px solid #f1f2f6;
+}
+.erd-row:hover { background: #f7f8fc; }
+.erd-row .nm { flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 12.5px; }
+.erd-row.pk .nm { font-weight: 700; }
+.erd-row .ty { color: #6b7280; font: 400 11.5px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.erd-row .bd em {
+  font-style: normal; font: 700 9.5px/1 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; padding: 3px 5px; border-radius: 4px;
+  margin-left: 3px; letter-spacing: 0.04em;
+}
+.erd-row .bd .pk { background: #fdebc8; color: #92400e; }
+.erd-row .bd .fk { background: #e0e0ff; color: #3730a3; }
+.erd-row .bd .nn { background: var(--muted); color: #52525b; }
+.erd-card.dim, .canvas svg .dim { opacity: 0.18; }
+.erd-card.hit { box-shadow: 0 0 0 3px var(--primary); }
+.canvas svg g.hit rect, .canvas svg g.hit polygon, .canvas svg g.hit path.basic {
+  stroke: var(--primary) !important; stroke-width: 3px !important;
+}
+
+/* ---- searchable catalogue ---- */
+.finder {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;
+}
+.finder input {
+  flex: 1 1 260px; min-width: 200px; font: 400 14px/1.4 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; color: var(--ink);
+  background: #fff; box-shadow: inset 0 1px 2px rgba(21,29,45,0.04);
+}
+.finder input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+.finder .tally { font-size: 12.5px; color: #6b7280; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.finder .toggle {
+  display: flex; align-items: center; gap: 6px; font-size: 13px; color: #52525b;
+  white-space: nowrap;
+}
+.finder .toggle input { flex: 0 0 auto; min-width: 0; width: 15px; height: 15px; margin: 0; }
+td.gaps { max-width: 34ch; }
+.mark {
+  display: inline-block; width: 20px; text-align: center; font-weight: 700; font-size: 14px;
+}
+.mark.yes { color: #16a34a; }
+.mark.no { color: #ef4444; }
+.mark.off { color: #d97706; font-size: 11px; }
+.mark.dash { color: #c3c8d2; }
+.scroller { overflow-x: auto; }
+.empty { padding: 18px 0; color: #6b7280; font-size: 13.5px; }
+[hidden] { display: none !important; }
+
+/* ---- footer ---- */
+footer {
+  margin-top: 34px; border-top: 1px solid var(--border); background: #fff;
+  padding: 24px 0; font-size: 12.5px; color: #6b7280;
+}
+footer .wrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+footer img { height: 19px; opacity: 0.75; }
+footer .meta { margin-left: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 11.5px; }
+a { color: var(--primary); }
+@media print {
+  body { background: #fff; }
+  .topbar { position: static; }
+  .card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <div class="brandmark">
+    <img src="data:image/png;base64,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" alt="Rittman Analytics">
+    <span class="divider"></span>
+    <span class="product">Hunter</span>
+  </div>
+  <nav><a href='#top'>Score</a><a href='#checklist'>Checklist</a><a href='#roadmap'>Roadmap</a><a href='#alignment'>Modelling alignment</a><a href='#diagrams'>Diagrams</a><a href='#dag'>Data flow</a><a href='#readiness'>Table readiness</a><a href='scorecard/'>Full report</a></nav>
+</div></header>
+
+<main><div class="wrap"><div class="grid"><section class="card hero" id="top">
+  <header class="band" style="--tone:#151d2d">
+    <p class="eyebrow">Analytics repository health </p>
+    <h1>tiny-shop</h1>
+    <p class="stamp">Scored 9 September 2026 &middot; read from the repository, nothing written back</p>
+  </header>
+  <div class="hero-body">
+    <div class="hero-score">
+      <div class="hero-ring"><svg class="ring" viewBox="0 0 200 200" width="200"
+     height="200" role="img" aria-label="Score 87.8 out of 100, grade A">
+  <circle cx="100" cy="100" r="84" fill="none"
+          class="ring-track" stroke="#eceef4" stroke-width="14"/>
+  <circle cx="100" cy="100" r="84" fill="none"
+          stroke="#65a30d" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="463.4 64.39"
+          transform="rotate(-90 100 100)"/>
+  <text x="100" y="96" class="ring-value"
+        text-anchor="middle">87.8</text>
+  <text x="100" y="122" class="ring-label"
+        text-anchor="middle">out of 100</text>
+</svg></div>
+      <p class="verdict"><span class="grade" style="background:#16a34a">
+         Grade A</span></p>
+      <p class="hero-verdict">Well maintained. Safe to build on</p>
+      <p class="hero-sub">6 built tables, 8 entities tracked,
+         20 statements checked.</p>
+    </div>
+    <div class="hero-rest">
+      <div class="tiles"><div class='tile no'><b>4 of 20</b><span>checks hold</span><i class='bar'><u style='width:20%'></u></i></div><div class='tile no'><b>5 of 7</b><span>business entities built</span><i class='bar'><u style='width:71.4%'></u></i></div><div class='tile no'><b>3 of 6</b><span>built tables reachable in Looker</span><i class='bar'><u style='width:50%'></u></i></div><div class='tile mostly'><b>1</b><span>built with no design behind it</span><i class='bar'><u style='width:16.7%'></u></i></div></div>
+      <div class='journey' id='journey'><p class='journey-title'>From what the business asked for to what people can use<span>each drop counted on its own terms</span></p><div class='journey-row'><div class='stage'><b>7</b><span>Asked for by the business</span></div><div class='hop loss'><em>&minus;1 not designed</em></div><div class='stage'><b>6</b><span>Designed</span></div><div class='hop loss'><em>&minus;1 not built</em></div><div class='stage'><b>6</b><span>Built</span></div><div class='hop loss'><em>&minus;2 not live</em></div><div class='stage'><b>4</b><span>Live in the warehouse</span></div><div class='hop loss'><em>&minus;3 not in Looker</em></div><div class='stage'><b>3</b><span>Reachable in Looker</span></div></div></div>
+    </div>
+  </div>
+</section><section class='card third cl' id='checklist' style='--tone:#525aff'><header class='band'><h2>Design to build</h2><span class='badge mostly'>1 of 6 hold</span></header><ul><li class='mostly'><span class='tick'></span><span class='say'>Every business entity has a design<span class='miss'>returns</span></span><span class='n'>6 of 7</span></li><li class='mostly'><span class='tick'></span><span class='say'>Every designed table is built<span class='miss'>wh_master__supplier_dim</span></span><span class='n'>5 of 6</span></li><li class='mostly'><span class='tick'></span><span class='say'>Every built table has a design<span class='miss'>wh_commerce__legacy_fact</span></span><span class='n'>5 of 6</span></li><li class='no'><span class='tick'></span><span class='say'>Every built column is in the design<span class='miss'>wh_master__product_dim</span></span><span class='n'>3 of 4</span></li><li class='no'><span class='tick'></span><span class='say'>Every designed column is built<span class='miss'>wh_commerce__daily_sales_xa</span></span><span class='n'>3 of 4</span></li><li class='yes'><span class='tick'></span><span class='say'>The business diagram matches what is built</span><span class='n'>6 of 6</span></li></ul></section><section class='card third cl' style='--tone:#2f6690'><header class='band'><h2>Warehouse to Looker</h2><span class='badge mostly'>1 of 4 hold</span></header><ul><li class='no'><span class='tick'></span><span class='say'>Every built table has a LookML view<span class='miss'>wh_commerce__forecast_fact, wh_commerce__legacy_fact, wh_master__product_dim</span></span><span class='n'>3 of 6</span></li><li class='yes'><span class='tick'></span><span class='say'>Every LookML view points at a table that exists</span><span class='n'>3 of 3</span></li><li class='no'><span class='tick'></span><span class='say'>Every LookML field points at a real column<span class='miss'>wh_commerce__order_fact</span></span><span class='n'>2 of 3</span></li><li class='no'><span class='tick'></span><span class='say'>Every table reports read from is declared as an exposure<span class='miss'>wh_commerce__daily_sales_xa, wh_commerce__order_fact, wh_master__customer_dim</span></span><span class='n'>0 of 3</span></li></ul></section><section class='card third cl' style='--tone:#7c5cbf'><header class='band'><h2>Droughty</h2><span class='badge no'>0 of 4 hold</span></header><ul><li class='no'><span class='tick'></span><span class='say'>Every built table is live in the warehouse<span class='miss'>wh_commerce__forecast_fact, wh_commerce__legacy_fact</span></span><span class='n'>4 of 6</span></li><li class='no'><span class='tick'></span><span class='say'>Every built table is covered by Droughty tests<span class='miss'>wh_commerce__daily_sales_xa</span></span><span class='n'>3 of 4</span></li><li class='no'><span class='tick'></span><span class='say'>Every Droughty test is applied in dbt<span class='miss'>wh_commerce__order_fact, wh_master__customer_dim, wh_master__product_dim</span></span><span class='n'>0 of 3</span></li><li class='no'><span class='tick'></span><span class='say'>Every warehouse column is in the design<span class='miss'>wh_commerce__order_fact, wh_master__product_dim</span></span><span class='n'>2 of 4</span></li></ul></section><section class='card third cl' style='--tone:#0f766e'><header class='band'><h2>Documentation</h2><span class='badge mostly'>2 of 3 hold</span></header><ul><li class='yes'><span class='tick'></span><span class='say'>Every table carries a description</span><span class='n'>5 of 5</span></li><li class='yes'><span class='tick'></span><span class='say'>Every column carries a description</span><span class='n'>8 of 8</span></li><li class='mostly'><span class='tick'></span><span class='say'>Every table has a named owner<span class='miss'>wh_master__customer_dim</span></span><span class='n'>4 of 5</span></li></ul></section><section class='card third cl' style='--tone:#b45309'><header class='band'><h2>Tests</h2><span class='badge no'>0 of 3 hold</span></header><ul><li class='no'><span class='tick'></span><span class='say'>Every table has at least one test<span class='miss'>wh_commerce__daily_sales_xa, wh_commerce__legacy_fact</span></span><span class='n'>3 of 5</span></li><li class='no'><span class='tick'></span><span class='say'>Every key is tested for uniqueness<span class='miss'>wh_master__product_dim</span></span><span class='n'>2 of 3</span></li><li class='no'><span class='tick'></span><span class='say'>Every key is tested for nulls<span class='miss'>wh_master__customer_dim, wh_master__product_dim</span></span><span class='n'>1 of 3</span></li></ul></section><section class='card' id="roadmap"><h2>Roadmap: what is planned, live, temporary and on its way out</h2><p class='sub'>Every table Hunter tracks, in one lane. The register decides first; the chain from design to build decides the rest.</p><div class='align-stats'><div class='stat mostly'><b>1 of 7</b><span>built tables confirmed to stay</span></div><div class='stat'><b>1</b><span>temporary by design</span></div></div><div class='lanes'><div class='lane' style='--tone:#94a3b8' data-lane='planned'><h3>Planned<b>2</b></h3><p class='meaning'>Agreed with the business or designed. No code yet.</p><ul><li data-find="returns commerce"><b class='tname' style='--tone:#525aff'>returns</b><span class='objects'></span><span class='when'>agreed, not designed yet</span></li><li data-find="suppliers wh_master__supplier_dim master"><b class='tname' style='--tone:#2f6690'>suppliers</b><span class='objects'>wh_master__supplier_dim</span><span class='when'>designed, waiting to be built</span></li></ul></div><div class='lane' style='--tone:#d97706' data-lane='building'><h3>Being built<b>1</b></h3><p class='meaning'>Code exists but is switched off or not yet live.</p><ul><li data-find="forecasts wh_commerce__forecast_fact commerce not determined commerce"><b class='tname' style='--tone:#525aff'>forecasts</b><em class='chip status-not-determined'>not determined</em><span class='objects'>wh_commerce__forecast_fact · owner: commerce</span><span class='when'>switched off by a project variable</span></li></ul></div><div class='lane' style='--tone:#16a34a' data-lane='live'><h3>Live<b>4</b></h3><p class='meaning'>Built and in use. The chip says whether it is confirmed to stay.</p><ul><li data-find="daily sales wh_commerce__daily_sales_xa commerce permanent commerce"><b class='tname' style='--tone:#525aff'>daily sales</b><em class='chip status-permanent'>permanent</em><span class='objects'>wh_commerce__daily_sales_xa · owner: commerce</span><span class='when'>assumed permanent; mark it verified once someone has checked it</span></li><li data-find="orders wh_commerce__order_fact commerce verified commerce"><b class='tname' style='--tone:#525aff'>orders</b><em class='chip status-verified'>verified</em><span class='objects'>wh_commerce__order_fact · owner: commerce</span><span class='when'>verified by sav on 8 September 2026</span></li><li data-find="customers wh_master__customer_dim permanent master"><b class='tname' style='--tone:#2f6690'>customers</b><em class='chip status-permanent'>permanent</em><span class='objects'>wh_master__customer_dim</span><span class='when'>assumed permanent; mark it verified once someone has checked it</span></li><li data-find="products wh_master__product_dim commerce permanent master"><b class='tname' style='--tone:#2f6690'>products</b><em class='chip status-permanent'>permanent</em><span class='objects'>wh_master__product_dim · owner: commerce</span><span class='when'>assumed permanent; mark it verified once someone has checked it</span></li></ul></div><div class='lane' style='--tone:#b45309' data-lane='temporary'><h3>Temporary by design<b>1</b></h3><p class='meaning'>Working steps and one-off tables. Each carries a review date so none becomes permanent by accident.</p><ul><li data-find="orders int_shop__orders temporary shop"><b class='tname' style='--tone:#94a3b8'>orders</b><em class='chip status-temporary'>temporary</em><span class='objects'>int_shop__orders</span><span class='when'>review by 31 January 2027</span></li></ul></div><div class='lane' style='--tone:#ff9a75' data-lane='phasing_out'><h3>Being phased out<b>1</b></h3><p class='meaning'>Marked deprecated in the register. Still running until its review date.</p><ul><li data-find="legacy wh_commerce__legacy_fact commerce permanent commerce"><b class='tname' style='--tone:#525aff'>legacy</b><em class='chip status-permanent'>permanent</em><span class='objects'>wh_commerce__legacy_fact · owner: commerce</span><span class='when'>review by 31 March 2027</span></li></ul></div><div class='lane' style='--tone:#6b7280' data-lane='retired'><h3>Retired<b>0</b></h3><p class='meaning'>Declared retired. Kept on the roadmap so the history is visible.</p><p class='empty'>Nothing here</p></div></div></section><section class='card' id="alignment"><h2>Modelling alignment</h2><p class='sub'>The conceptual, logical and physical models against what is built. Read across one band to follow a single table; open a row for what to do about it.</p><div class='align'><div class='finder'><input type='search' class='find' autocomplete='off' placeholder='Find an entity, table, area, owner or state' aria-label='Find in the alignment'><span class='tally'>8 entities</span></div><div class='align-stats'><div class='stat no'><b>5 of 7</b><span>asked for and now in the repository</span></div><div class='stat no'><b>1</b><span>built with no design</span></div><div class='stat no'><b>1</b><span>asked for, never designed</span></div><div class='stat no'><b>1</b><span>designed, not started</span></div><div class='stat no'><b>1</b><span>built, switched off</span></div></div><div class='align-head' style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span>Conceptual · the business model</span><i></i><span>Logical · the data flow</span><i></i><span>Physical · the DBML design</span><i></i><span>Built · in the repository</span><span class='st'>Where it stands</span></div><div class='align-group' data-group='commerce' style='--tone:#525aff'><span><i class='dot'></i>commerce</span><em>2 of 5 designed and delivered</em></div><details class='arow' data-group='commerce' data-find="designed and delivered commerce daily sales wh_commerce__daily_sales_xa"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>daily sales</span><i class='lane-link ok'></i><span class='cell on'>daily sales</span><i class='lane-link ok'></i><span class='cell on'>wh_commerce__daily_sales_xa</span><i class='lane-link ok'></i><span class='cell on'>wh_commerce__daily_sales_xa</span><span class='pill' style='background:#16a34a'>Designed and delivered</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Working as intended.</p><p><b>Do next.</b> Nothing. It is where it should be.</p><dl><div><dt>Owner</dt><dd>commerce</dd></div><div><dt>One row is</dt><dd>One row per day</dd></div><div><dt>Looker views</dt><dd>wh_commerce__daily_sales_xa</dd></div><div><dt>In the warehouse</dt><dd>yes</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>built, which agrees with what Hunter found</dd></div></dl></div></details><details class='arow' data-group='commerce' data-find="built, switched off commerce forecasts wh_commerce__forecast_fact"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>forecasts</span><i class='lane-link ok'></i><span class='cell on'>forecasts</span><i class='lane-link ok'></i><span class='cell on'>wh_commerce__forecast_fact</span><i class='lane-link broken'></i><span class='cell off'>not here</span><span class='pill' style='background:#94a3b8'>Built, switched off</span></summary><div class='arow-detail'><p><b>Where it stands.</b> The code exists but is switched off, so nothing is being produced from it.</p><p><b>Do next.</b> Switch it on or remove it. Code that is kept but switched off still costs review time and delivers nothing.</p><dl><div><dt>Owner</dt><dd>commerce</dd></div><div><dt>One row is</dt><dd>One row per product per week</dd></div><div><dt>Looker views</dt><dd>none</dd></div><div><dt>In the warehouse</dt><dd>no</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>flagged, which disagrees with what Hunter found</dd></div></dl></div></details><details class='arow' data-group='commerce' data-find="built off-plan commerce legacy wh_commerce__legacy_fact"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell off'>not here</span><i class='lane-link none'></i><span class='cell off'>not here</span><i class='lane-link none'></i><span class='cell off'>not here</span><i class='lane-link unplanned'></i><span class='cell on'>wh_commerce__legacy_fact</span><span class='pill' style='background:#ff9a75'>Built off-plan</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Delivered but never designed, so it is undocumented and has no named owner.</p><p><b>Do next.</b> Write the design entry, or approve it in the register with a reason and a review date.</p><dl><div><dt>Owner</dt><dd>commerce</dd></div><div><dt>Looker views</dt><dd>none</dd></div><div><dt>In the warehouse</dt><dd>no</dd></div></dl></div></details><details class='arow' data-group='commerce' data-find="designed and delivered commerce orders wh_commerce__order_fact"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>orders</span><i class='lane-link ok'></i><span class='cell on'>orders</span><i class='lane-link ok'></i><span class='cell on'>wh_commerce__order_fact</span><i class='lane-link ok'></i><span class='cell on'>wh_commerce__order_fact</span><span class='pill' style='background:#16a34a'>Designed and delivered</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Working as intended.</p><p><b>Do next.</b> Nothing. It is where it should be.</p><dl><div><dt>Owner</dt><dd>commerce</dd></div><div><dt>One row is</dt><dd>One row per order</dd></div><div><dt>Looker views</dt><dd>wh_commerce__order_fact</dd></div><div><dt>In the warehouse</dt><dd>yes</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>built, which agrees with what Hunter found</dd></div></dl></div></details><details class='arow' data-group='commerce' data-find="on the business model only commerce returns"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>returns</span><i class='lane-link broken'></i><span class='cell off'>not here</span><i class='lane-link none'></i><span class='cell off'>not here</span><i class='lane-link none'></i><span class='cell off'>not here</span><span class='pill' style='background:#525aff'>On the business model only</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog.</p><p><b>Do next.</b> Design it, or agree with the business that it is not needed yet.</p><dl><div><dt>Owner</dt><dd>nobody named</dd></div><div><dt>Diagram says</dt><dd>planned, which agrees with what Hunter found</dd></div></dl></div></details><div class='align-group' data-group='master' style='--tone:#2f6690'><span><i class='dot'></i>master</span><em>2 of 3 designed and delivered</em></div><details class='arow' data-group='master' data-find="designed and delivered customers master wh_master__customer_dim"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>customers</span><i class='lane-link ok'></i><span class='cell on'>customers</span><i class='lane-link ok'></i><span class='cell on'>wh_master__customer_dim</span><i class='lane-link ok'></i><span class='cell on'>wh_master__customer_dim</span><span class='pill' style='background:#16a34a'>Designed and delivered</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Working as intended.</p><p><b>Do next.</b> Nothing. It is where it should be.</p><dl><div><dt>Owner</dt><dd>nobody named</dd></div><div><dt>One row is</dt><dd>One row per customer</dd></div><div><dt>Looker views</dt><dd>wh_master__customer_dim</dd></div><div><dt>In the warehouse</dt><dd>yes</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>built, which agrees with what Hunter found</dd></div></dl></div></details><details class='arow' data-group='master' data-find="designed and delivered commerce master products wh_master__product_dim"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>products</span><i class='lane-link ok'></i><span class='cell on'>products</span><i class='lane-link ok'></i><span class='cell on'>wh_master__product_dim</span><i class='lane-link ok'></i><span class='cell on'>wh_master__product_dim</span><span class='pill' style='background:#16a34a'>Designed and delivered</span></summary><div class='arow-detail'><p><b>Where it stands.</b> Working as intended.</p><p><b>Do next.</b> Nothing. It is where it should be.</p><dl><div><dt>Owner</dt><dd>commerce</dd></div><div><dt>One row is</dt><dd>One row per product</dd></div><div><dt>Looker views</dt><dd>none</dd></div><div><dt>In the warehouse</dt><dd>yes</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>built, which agrees with what Hunter found</dd></div></dl></div></details><details class='arow' data-group='master' data-find="designed, not started master suppliers wh_master__supplier_dim"><summary style='grid-template-columns:minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr) 190px'><span class='cell on'>suppliers</span><i class='lane-link ok'></i><span class='cell on'>suppliers</span><i class='lane-link ok'></i><span class='cell on'>wh_master__supplier_dim</span><i class='lane-link broken'></i><span class='cell off'>not here</span><span class='pill' style='background:#d97706'>Designed, not started</span></summary><div class='arow-detail'><p><b>Where it stands.</b> On the plan, no work done yet.</p><p><b>Do next.</b> Build it, or take it off the design if it is no longer wanted.</p><dl><div><dt>Owner</dt><dd>nobody named</dd></div><div><dt>One row is</dt><dd>One row per supplier</dd></div><div><dt>Designed in</dt><dd>analytics_warehouse/docs/data_model_design/physical_model.dbml</dd></div><div><dt>Diagram says</dt><dd>planned, which agrees with what Hunter found</dd></div></dl></div></details><p class='empty' hidden>Nothing matches that.</p></div><p class='foot'>Green means the two levels agree. Red is a break: the level on the left has it, the level on the right does not. Amber is the other way round, something built that the level above never asked for.</p></section><section class='card' id="diagrams"><h2>Model diagrams</h2><p class='sub'>Conceptual is what the business asked for, logical is how data flows, physical is the designed tables. Type to find something; use the buttons to zoom.</p><div class='tabbed'><div class='tabs' role='tablist'><button type='button' class='tab on' data-pane='conceptual' aria-selected='true'>Conceptual</button><button type='button' class='tab' data-pane='logical' aria-selected='false'>Logical</button><button type='button' class='tab' data-pane='physical' aria-selected='false'>Physical</button><div class='zoom' hidden><button type='button' data-zoom='out' aria-label='Zoom out'>&minus;</button><button type='button' data-zoom='reset'>Fit</button><button type='button' data-zoom='in' aria-label='Zoom in'>+</button></div></div><div class='finder'><input type='search' class='find' autocomplete='off' placeholder='Find a table or entity in this diagram' aria-label='Find in this diagram'><span class='tally find-tally'></span></div><p class='offline' hidden>The diagram library could not be loaded, so the diagram source is shown as text. Open this page with a connection to see it drawn.</p><div class='pane' data-key='conceptual'><p class='blurb'>What the business asked for, in its own words, by area. Under each entity is where it stands; hover for what that means.</p><div class='canvas html'><div class='concept'><section class='erd-group'><h4 style='color:#525aff'><i class='dot' style='--tone:#525aff'></i>commerce<em>2 of 4 designed and delivered</em></h4><div class='ents'><div class='ent' style='--state:#16a34a' data-find="daily sales designed and delivered" title='Working as intended.'><b>daily sales</b><span>Designed and delivered</span><code>wh_commerce__daily_sales_xa</code></div><div class='ent' style='--state:#94a3b8' data-find="forecasts built, switched off" title='The code exists but is switched off, so nothing is being produced from it.'><b>forecasts</b><span>Built, switched off</span><code>wh_commerce__forecast_fact</code></div><div class='ent' style='--state:#16a34a' data-find="orders designed and delivered" title='Working as intended.'><b>orders</b><span>Designed and delivered</span><code>wh_commerce__order_fact</code></div><div class='ent' style='--state:#525aff' data-find="returns on the business model only" title='Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog.'><b>returns</b><span>On the business model only</span></div></div></section><section class='erd-group'><h4 style='color:#2f6690'><i class='dot' style='--tone:#2f6690'></i>master<em>2 of 3 designed and delivered</em></h4><div class='ents'><div class='ent' style='--state:#16a34a' data-find="customers designed and delivered" title='Working as intended.'><b>customers</b><span>Designed and delivered</span><code>wh_master__customer_dim</code></div><div class='ent' style='--state:#16a34a' data-find="products designed and delivered" title='Working as intended.'><b>products</b><span>Designed and delivered</span><code>wh_master__product_dim</code></div><div class='ent' style='--state:#d97706' data-find="suppliers designed, not started" title='On the plan, no work done yet.'><b>suppliers</b><span>Designed, not started</span><code>wh_master__supplier_dim</code></div></div></section></div></div><div class='heat-key'><span><i class='swatch' style='background:#e8e8e8;border:1.5px dashed #777'></i>Built, switched off</span><span><i class='swatch' style='background:#fbe3de;border:1.5px solid #c0392b'></i>Built off-plan</span><span><i class='swatch' style='background:#fafafa;border:1.5px dashed #bbb'></i>On the business model only</span><span><i class='swatch' style='background:#d6ead6;border:1.5px solid #4a7a4a'></i>Designed and delivered</span><span><i class='swatch' style='background:#f2f2f2;border:1.5px dashed #999'></i>Designed, not started</span></div></div><div class='pane' data-key='logical' hidden><p class='blurb'>The data flow diagram as the team drew it: where data comes from, which entities it becomes, and what reads them. Colour is Hunter&#x27;s, from the same states as the conceptual model.</p><div class='canvas'><pre class='mermaid'>%%{init: {&quot;flowchart&quot;: {&quot;subGraphTitleMargin&quot;: {&quot;top&quot;: 12, &quot;bottom&quot;: 12}}}}%%
+flowchart LR
+    %% diagram structure
+    %% 1. subgraph groups related data sources in grey containers
+    %% 2. entities are associated with data source class definitions
+    %% 3. data flow follows dependency: source --&gt; staging --&gt; integration --&gt; warehouse
+
+subgraph dfd_container[&quot;Tiny Shop Analytics Warehouse&quot;]
+
+  %% -------------------------------------------------------------
+  %% 1. Data sources
+  %% -------------------------------------------------------------
+subgraph subgraph__shop_platform[&quot;Shop Platform&quot;]
+    data_source__database__shop[(shop orders and customers)]:::classdef__database_sources
+end
+
+subgraph subgraph__purchasing[&quot;Purchasing&quot;]
+    data_source__database__purchasing[(supplier master)]:::classdef__database_sources
+end
+
+  %% -------------------------------------------------------------
+  %% 2. Entities
+  %% -------------------------------------------------------------
+    wh_commerce__orders[&quot;orders&quot;]
+    wh_master__customers[&quot;customers&quot;]
+    wh_master__products[&quot;products&quot;]
+    wh_commerce__daily_sales[&quot;daily sales&quot;]
+    wh_commerce__forecasts[&quot;forecasts&quot;]
+    wh_master__suppliers[&quot;suppliers&quot;]
+
+  %% -------------------------------------------------------------
+  %% 3. Consumers
+  %% -------------------------------------------------------------
+    dashboard__shop_performance[&quot;Shop performance&quot;]
+
+  %% -------------------------------------------------------------
+  %% 4. Flow
+  %% -------------------------------------------------------------
+    data_source__database__shop --&gt; wh_commerce__orders
+    data_source__database__shop --&gt; wh_master__customers
+    data_source__database__shop --&gt; wh_master__products
+    data_source__database__purchasing --&gt; wh_master__suppliers
+    wh_commerce__orders --&gt; wh_commerce__daily_sales
+    wh_master__products --&gt; wh_commerce__forecasts
+    wh_commerce__daily_sales --&gt; dashboard__shop_performance
+    wh_commerce__orders --&gt; dashboard__shop_performance
+
+end
+
+classDef classdef__database_sources fill:#e8e8e8,stroke:#999
+  style wh_commerce__daily_sales fill:#d6ead6,stroke:#4a7a4a
+  style wh_commerce__forecasts fill:#e8e8e8,stroke:#777,stroke-dasharray:4 3
+  style wh_commerce__orders fill:#d6ead6,stroke:#4a7a4a
+  style wh_master__customers fill:#d6ead6,stroke:#4a7a4a
+  style wh_master__products fill:#d6ead6,stroke:#4a7a4a
+  style wh_master__suppliers fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3
+  style data_source__database__shop fill:#e1f6fe,stroke:#4a90b8
+  style data_source__database__purchasing fill:#e1f6fe,stroke:#4a90b8
+  style dashboard__shop_performance fill:#e8e0fa,stroke:#7c5cbf</pre></div><div class='heat-key'><span><i class='swatch' style='background:#e8e8e8;border:1.5px dashed #777'></i>Built, switched off</span><span><i class='swatch' style='background:#fbe3de;border:1.5px solid #c0392b'></i>Built off-plan</span><span><i class='swatch' style='background:#fafafa;border:1.5px dashed #bbb'></i>On the business model only</span><span><i class='swatch' style='background:#d6ead6;border:1.5px solid #4a7a4a'></i>Designed and delivered</span><span><i class='swatch' style='background:#f2f2f2;border:1.5px dashed #999'></i>Designed, not started</span><span><i class='swatch' style='background:#e1f6fe;border:1.5px solid #4a90b8'></i>data source</span><span><i class='swatch' style='background:#e8e0fa;border:1.5px solid #7c5cbf'></i>report or dashboard</span></div></div><div class='pane' data-key='physical' hidden><p class='blurb'>The designed tables from the DBML, by area. Under each name is what one row means; hover a table for what it is for, and a column for its note. Lines join a foreign key to the key it points at.</p><div class='canvas html'><div class='erd'><svg class='erd-lines' aria-hidden='true'></svg><section class='erd-group'><h4 style='color:#525aff'>commerce</h4><div class='erd-cards'><div class='erd-card' data-table='wh_commerce__daily_sales_xa' data-find="wh_commerce__daily_sales_xa"><header style='background:#525aff' title='Source System: derived from wh_commerce__order_fact.'><b>wh_commerce__daily_sales_xa</b><span class='grain'>One row per day</span></header><div class='erd-row pk' data-col='daily_sales_pk' title='Surrogate key for the day.'><span class='nm'>daily_sales_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row attr' data-col='daily_sales_order_count' title='Orders placed that day.'><span class='nm'>daily_sales_order_count</span><span class='ty'>numeric</span><span class='bd'></span></div><div class='erd-row attr' data-col='daily_sales_total_amount' title='Order value that day, before returns.'><span class='nm'>daily_sales_total_amount</span><span class='ty'>numeric</span><span class='bd'></span></div><div class='erd-row attr' data-col='daily_sales_returned_amount' title='Value returned that day. Designed and not yet built.'><span class='nm'>daily_sales_returned_amount</span><span class='ty'>numeric</span><span class='bd'></span></div><div class='erd-row date' data-col='daily_sales_dt' title='The day summarised.'><span class='nm'>daily_sales_dt</span><span class='ty'>date</span><span class='bd'></span></div></div><div class='erd-card' data-table='wh_commerce__forecast_fact' data-find="wh_commerce__forecast_fact"><header style='background:#525aff' title='Source System: the forecasting service.'><b>wh_commerce__forecast_fact</b><span class='grain'>One row per product per week</span></header><div class='erd-row pk' data-col='forecast_pk' title='Surrogate key for the product and week.'><span class='nm'>forecast_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row fk' data-col='product_fk' data-ref='wh_master__product_dim.product_pk' title='The product forecast. Points at wh_master__product_dim.product_pk.'><span class='nm'>product_fk</span><span class='ty'>varchar</span><span class='bd'><em class='fk'>FK</em></span></div><div class='erd-row attr' data-col='forecast_units' title='Units expected to sell that week.'><span class='nm'>forecast_units</span><span class='ty'>numeric</span><span class='bd'></span></div><div class='erd-row date' data-col='forecast_week_dt' title='Monday of the week forecast.'><span class='nm'>forecast_week_dt</span><span class='ty'>date</span><span class='bd'></span></div></div><div class='erd-card' data-table='wh_commerce__order_fact' data-find="wh_commerce__order_fact"><header style='background:#525aff' title='Source System: the shop platform&#x27;s daily export.'><b>wh_commerce__order_fact</b><span class='grain'>One row per order</span></header><div class='erd-row pk' data-col='order_pk' title='Surrogate key for the order.'><span class='nm'>order_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row fk' data-col='customer_fk' data-ref='wh_master__customer_dim.customer_pk' title='The customer who placed the order. Points at wh_master__customer_dim.customer_pk.'><span class='nm'>customer_fk</span><span class='ty'>varchar</span><span class='bd'><em class='fk'>FK</em></span></div><div class='erd-row attr' data-col='order_natural_key' title='The order reference from the shop platform.'><span class='nm'>order_natural_key</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='order_total_amount' title='Order value before returns, in the order&#x27;s own currency.'><span class='nm'>order_total_amount</span><span class='ty'>numeric</span><span class='bd'></span></div><div class='erd-row date' data-col='order_placed_dt' title='Date the order was placed.'><span class='nm'>order_placed_dt</span><span class='ty'>date</span><span class='bd'></span></div></div></div></section><section class='erd-group'><h4 style='color:#2f6690'>master</h4><div class='erd-cards'><div class='erd-card' data-table='wh_master__customer_dim' data-find="wh_master__customer_dim"><header style='background:#2f6690' title='Source System: the shop platform&#x27;s daily export.'><b>wh_master__customer_dim</b><span class='grain'>One row per customer</span></header><div class='erd-row pk' data-col='customer_pk' title='Surrogate key for the customer.'><span class='nm'>customer_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row attr' data-col='customer_natural_key' title='The customer reference from the shop platform.'><span class='nm'>customer_natural_key</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='customer_name' title='Customer name, as the platform holds it.'><span class='nm'>customer_name</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row date' data-col='customer_joined_dt' title='Date of the customer&#x27;s first order, not the account creation date.'><span class='nm'>customer_joined_dt</span><span class='ty'>date</span><span class='bd'></span></div></div><div class='erd-card' data-table='wh_master__product_dim' data-find="wh_master__product_dim"><header style='background:#2f6690' title='Source System: the shop platform&#x27;s daily export.'><b>wh_master__product_dim</b><span class='grain'>One row per product</span></header><div class='erd-row pk' data-col='product_pk' title='Surrogate key for the product.'><span class='nm'>product_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row attr' data-col='product_natural_key' title='The product reference from the shop platform.'><span class='nm'>product_natural_key</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='product_name' title='Product name.'><span class='nm'>product_name</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='product_category_name' title='Category the product sits in. Last year&#x27;s categories are kept here too.'><span class='nm'>product_category_name</span><span class='ty'>varchar</span><span class='bd'></span></div></div><div class='erd-card' data-table='wh_master__supplier_dim' data-find="wh_master__supplier_dim"><header style='background:#2f6690' title='Source System: the purchasing system. Designed, not yet built.'><b>wh_master__supplier_dim</b><span class='grain'>One row per supplier</span></header><div class='erd-row pk' data-col='supplier_pk' title='Surrogate key for the supplier.'><span class='nm'>supplier_pk</span><span class='ty'>varchar</span><span class='bd'><em class='pk'>PK</em></span></div><div class='erd-row attr' data-col='supplier_natural_key' title='The supplier reference from the purchasing system.'><span class='nm'>supplier_natural_key</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='supplier_name' title='Supplier name.'><span class='nm'>supplier_name</span><span class='ty'>varchar</span><span class='bd'></span></div><div class='erd-row attr' data-col='supplier_country_code' title='Two-letter country code the supplier ships from.'><span class='nm'>supplier_country_code</span><span class='ty'>varchar</span><span class='bd'></span></div></div></div></section></div></div></div></div></section><section class='card' id="dag"><h2>Data flow</h2><p class='sub'>How data moves through the repository, area by area. Type a table name to follow it.</p><div class='tabbed'><div class='tabs' role='tablist'><button type='button' class='tab on' data-pane='all' aria-selected='true'>All areas</button><button type='button' class='tab' data-pane='dag-commerce' aria-selected='false'>commerce</button><button type='button' class='tab' data-pane='dag-master' aria-selected='false'>master</button><div class='zoom' hidden><button type='button' data-zoom='out' aria-label='Zoom out'>&minus;</button><button type='button' data-zoom='reset'>Fit</button><button type='button' data-zoom='in' aria-label='Zoom in'>+</button></div></div><div class='selector' hidden><input type='text' list='dag-names' class='select' autocomplete='off' spellcheck='false' placeholder='Select tables the dbt way: +name+  2+name  name+1' aria-label='Select tables'><button type='button' class='clear'>Clear</button><span class='tally sel-tally'></span><datalist id='dag-names'><option value='int_shop__orders'><option value='stg_shop__customers'><option value='stg_shop__orders'><option value='wh_commerce__daily_sales_xa'><option value='wh_commerce__legacy_fact'><option value='wh_commerce__order_fact'><option value='wh_master__customer_dim'><option value='wh_master__product_dim'></datalist><p class='sel-help'>+name shows everything that feeds it, name+ everything that reads from it, +name+ both. A number limits the steps: 1+name is direct parents only. * matches many names.</p></div><p class='offline' hidden>The diagram library could not be loaded, so the diagram source is shown as text. Open this page with a connection to see it drawn.</p><div class='pane' data-key='all'><p class='blurb'>Raw sources on the left, then each layer, then the Looker views and the explores people open. Red: built with no design. Amber dashed: nothing tests it. Grey rounded: a temporary working step.</p><div class='canvas'><pre class='mermaid'>flowchart LR
+  subgraph sources[&quot;raw sources&quot;]
+    src__shop_source_customers[(&quot;customers&quot;)]
+    src__shop_source_orders[(&quot;orders&quot;)]
+  end
+  subgraph staging[&quot;staging&quot;]
+    stg_shop__customers(&quot;stg_shop__customers&quot;)
+    stg_shop__orders(&quot;stg_shop__orders&quot;)
+  end
+  subgraph integration[&quot;integration&quot;]
+    int_shop__orders(&quot;int_shop__orders&quot;)
+  end
+  subgraph warehouse[&quot;warehouse&quot;]
+    wh_commerce__daily_sales_xa[&quot;wh_commerce__daily_sales_xa&quot;]
+    wh_commerce__legacy_fact[&quot;wh_commerce__legacy_fact&quot;]
+    wh_commerce__order_fact[&quot;wh_commerce__order_fact&quot;]
+    wh_master__customer_dim[&quot;wh_master__customer_dim&quot;]
+    wh_master__product_dim[&quot;wh_master__product_dim&quot;]
+  end
+  subgraph looker_views[&quot;Looker views (base layer)&quot;]
+    view__wh_commerce__daily_sales_xa[/&quot;wh_commerce__daily_sales_xa&quot;/]
+    view__wh_commerce__order_fact[/&quot;wh_commerce__order_fact&quot;/]
+    view__wh_master__customer_dim[/&quot;wh_master__customer_dim&quot;/]
+  end
+  subgraph looker_explores[&quot;Looker explores&quot;]
+    explore__shop_analytics{{&quot;Shop Orders&quot;}}
+    explore__shop_daily_sales{{&quot;Shop Daily Sales&quot;}}
+  end
+  stg_shop__customers --&gt; int_shop__orders
+  stg_shop__orders --&gt; int_shop__orders
+  src__shop_source_customers --&gt; stg_shop__customers
+  src__shop_source_orders --&gt; stg_shop__orders
+  stg_shop__orders --&gt; wh_commerce__daily_sales_xa
+  int_shop__orders --&gt; wh_commerce__legacy_fact
+  int_shop__orders --&gt; wh_commerce__order_fact
+  stg_shop__customers --&gt; wh_master__customer_dim
+  int_shop__orders --&gt; wh_master__product_dim
+  wh_commerce__daily_sales_xa --&gt; view__wh_commerce__daily_sales_xa
+  wh_commerce__order_fact --&gt; view__wh_commerce__order_fact
+  wh_master__customer_dim --&gt; view__wh_master__customer_dim
+  view__wh_commerce__order_fact --&gt; explore__shop_analytics
+  view__wh_master__customer_dim --&gt; explore__shop_analytics
+  view__wh_commerce__daily_sales_xa --&gt; explore__shop_daily_sales
+  style src__shop_source_customers fill:#e1f6fe,stroke:#4a90b8
+  style src__shop_source_orders fill:#e1f6fe,stroke:#4a90b8
+  style stg_shop__customers fill:#f4f4f6,stroke:#9aa1ad
+  style stg_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style int_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style wh_commerce__daily_sales_xa fill:#fdf2cc,stroke:#b7791f,stroke-dasharray:4 3
+  style wh_commerce__legacy_fact fill:#fbe3de,stroke:#c0392b,stroke-width:2px
+  style view__wh_commerce__daily_sales_xa fill:#e8e0fa,stroke:#7c5cbf
+  style view__wh_commerce__order_fact fill:#e8e0fa,stroke:#7c5cbf
+  style view__wh_master__customer_dim fill:#e8e0fa,stroke:#7c5cbf
+  style explore__shop_analytics fill:#525aff,stroke:#3a40c4,color:#fff
+  style explore__shop_daily_sales fill:#525aff,stroke:#3a40c4,color:#fff</pre></div><script type='application/json' class='dag-spec'>{"edges":[["stg_shop__customers","int_shop__orders"],["stg_shop__orders","int_shop__orders"],["src__shop_source_customers","stg_shop__customers"],["src__shop_source_orders","stg_shop__orders"],["stg_shop__orders","wh_commerce__daily_sales_xa"],["int_shop__orders","wh_commerce__legacy_fact"],["int_shop__orders","wh_commerce__order_fact"],["stg_shop__customers","wh_master__customer_dim"],["int_shop__orders","wh_master__product_dim"],["wh_commerce__daily_sales_xa","view__wh_commerce__daily_sales_xa"],["wh_commerce__order_fact","view__wh_commerce__order_fact"],["wh_master__customer_dim","view__wh_master__customer_dim"],["view__wh_commerce__order_fact","explore__shop_analytics"],["view__wh_master__customer_dim","explore__shop_analytics"],["view__wh_commerce__daily_sales_xa","explore__shop_daily_sales"]],"groups":[{"id":"sources","label":"raw sources"},{"id":"staging","label":"staging"},{"id":"integration","label":"integration"},{"id":"warehouse","label":"warehouse"},{"id":"looker_views","label":"Looker views (base layer)"},{"id":"looker_explores","label":"Looker explores"}],"nodes":[{"group":"sources","id":"src__shop_source_customers","kind":"source","label":"customers","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"sources","id":"src__shop_source_orders","kind":"source","label":"orders","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"staging","id":"stg_shop__customers","kind":"model","label":"stg_shop__customers","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"staging","id":"stg_shop__orders","kind":"model","label":"stg_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"integration","id":"int_shop__orders","kind":"model","label":"int_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"warehouse","id":"wh_commerce__daily_sales_xa","kind":"model","label":"wh_commerce__daily_sales_xa","shape":"box","style":"fill:#fdf2cc,stroke:#b7791f,stroke-dasharray:4 3"},{"group":"warehouse","id":"wh_commerce__legacy_fact","kind":"model","label":"wh_commerce__legacy_fact","shape":"box","style":"fill:#fbe3de,stroke:#c0392b,stroke-width:2px"},{"group":"warehouse","id":"wh_commerce__order_fact","kind":"model","label":"wh_commerce__order_fact","shape":"box","style":""},{"group":"warehouse","id":"wh_master__customer_dim","kind":"model","label":"wh_master__customer_dim","shape":"box","style":""},{"group":"warehouse","id":"wh_master__product_dim","kind":"model","label":"wh_master__product_dim","shape":"box","style":""},{"group":"looker_views","id":"view__wh_commerce__daily_sales_xa","kind":"view","label":"wh_commerce__daily_sales_xa","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_views","id":"view__wh_commerce__order_fact","kind":"view","label":"wh_commerce__order_fact","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_views","id":"view__wh_master__customer_dim","kind":"view","label":"wh_master__customer_dim","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_explores","id":"explore__shop_analytics","kind":"explore","label":"  Shop Orders","shape":"hexagon","style":"fill:#525aff,stroke:#3a40c4,color:#fff"},{"group":"looker_explores","id":"explore__shop_daily_sales","kind":"explore","label":"  Shop Daily Sales","shape":"hexagon","style":"fill:#525aff,stroke:#3a40c4,color:#fff"}]}</script></div><div class='pane' data-key='dag-commerce' hidden><p class='blurb'>Raw sources on the left, then each layer, then the Looker views and the explores people open. Red: built with no design. Amber dashed: nothing tests it. Grey rounded: a temporary working step.</p><div class='canvas'><pre class='mermaid'>flowchart LR
+  subgraph sources[&quot;raw sources&quot;]
+    src__shop_source_customers[(&quot;customers&quot;)]
+    src__shop_source_orders[(&quot;orders&quot;)]
+  end
+  subgraph staging[&quot;staging&quot;]
+    stg_shop__customers(&quot;stg_shop__customers&quot;)
+    stg_shop__orders(&quot;stg_shop__orders&quot;)
+  end
+  subgraph integration[&quot;integration&quot;]
+    int_shop__orders(&quot;int_shop__orders&quot;)
+  end
+  subgraph warehouse[&quot;warehouse&quot;]
+    wh_commerce__daily_sales_xa[&quot;wh_commerce__daily_sales_xa&quot;]
+    wh_commerce__legacy_fact[&quot;wh_commerce__legacy_fact&quot;]
+    wh_commerce__order_fact[&quot;wh_commerce__order_fact&quot;]
+  end
+  subgraph looker_views[&quot;Looker views (base layer)&quot;]
+    view__wh_commerce__daily_sales_xa[/&quot;wh_commerce__daily_sales_xa&quot;/]
+    view__wh_commerce__order_fact[/&quot;wh_commerce__order_fact&quot;/]
+  end
+  subgraph looker_explores[&quot;Looker explores&quot;]
+    explore__shop_analytics{{&quot;Shop Orders&quot;}}
+    explore__shop_daily_sales{{&quot;Shop Daily Sales&quot;}}
+  end
+  stg_shop__customers --&gt; int_shop__orders
+  stg_shop__orders --&gt; int_shop__orders
+  src__shop_source_customers --&gt; stg_shop__customers
+  src__shop_source_orders --&gt; stg_shop__orders
+  stg_shop__orders --&gt; wh_commerce__daily_sales_xa
+  int_shop__orders --&gt; wh_commerce__legacy_fact
+  int_shop__orders --&gt; wh_commerce__order_fact
+  wh_commerce__daily_sales_xa --&gt; view__wh_commerce__daily_sales_xa
+  wh_commerce__order_fact --&gt; view__wh_commerce__order_fact
+  view__wh_commerce__order_fact --&gt; explore__shop_analytics
+  view__wh_commerce__daily_sales_xa --&gt; explore__shop_daily_sales
+  style src__shop_source_customers fill:#e1f6fe,stroke:#4a90b8
+  style src__shop_source_orders fill:#e1f6fe,stroke:#4a90b8
+  style stg_shop__customers fill:#f4f4f6,stroke:#9aa1ad
+  style stg_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style int_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style wh_commerce__daily_sales_xa fill:#fdf2cc,stroke:#b7791f,stroke-dasharray:4 3
+  style wh_commerce__legacy_fact fill:#fbe3de,stroke:#c0392b,stroke-width:2px
+  style view__wh_commerce__daily_sales_xa fill:#e8e0fa,stroke:#7c5cbf
+  style view__wh_commerce__order_fact fill:#e8e0fa,stroke:#7c5cbf
+  style explore__shop_analytics fill:#525aff,stroke:#3a40c4,color:#fff
+  style explore__shop_daily_sales fill:#525aff,stroke:#3a40c4,color:#fff</pre></div><script type='application/json' class='dag-spec'>{"edges":[["stg_shop__customers","int_shop__orders"],["stg_shop__orders","int_shop__orders"],["src__shop_source_customers","stg_shop__customers"],["src__shop_source_orders","stg_shop__orders"],["stg_shop__orders","wh_commerce__daily_sales_xa"],["int_shop__orders","wh_commerce__legacy_fact"],["int_shop__orders","wh_commerce__order_fact"],["wh_commerce__daily_sales_xa","view__wh_commerce__daily_sales_xa"],["wh_commerce__order_fact","view__wh_commerce__order_fact"],["view__wh_commerce__order_fact","explore__shop_analytics"],["view__wh_commerce__daily_sales_xa","explore__shop_daily_sales"]],"groups":[{"id":"sources","label":"raw sources"},{"id":"staging","label":"staging"},{"id":"integration","label":"integration"},{"id":"warehouse","label":"warehouse"},{"id":"looker_views","label":"Looker views (base layer)"},{"id":"looker_explores","label":"Looker explores"}],"nodes":[{"group":"sources","id":"src__shop_source_customers","kind":"source","label":"customers","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"sources","id":"src__shop_source_orders","kind":"source","label":"orders","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"staging","id":"stg_shop__customers","kind":"model","label":"stg_shop__customers","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"staging","id":"stg_shop__orders","kind":"model","label":"stg_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"integration","id":"int_shop__orders","kind":"model","label":"int_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"warehouse","id":"wh_commerce__daily_sales_xa","kind":"model","label":"wh_commerce__daily_sales_xa","shape":"box","style":"fill:#fdf2cc,stroke:#b7791f,stroke-dasharray:4 3"},{"group":"warehouse","id":"wh_commerce__legacy_fact","kind":"model","label":"wh_commerce__legacy_fact","shape":"box","style":"fill:#fbe3de,stroke:#c0392b,stroke-width:2px"},{"group":"warehouse","id":"wh_commerce__order_fact","kind":"model","label":"wh_commerce__order_fact","shape":"box","style":""},{"group":"looker_views","id":"view__wh_commerce__daily_sales_xa","kind":"view","label":"wh_commerce__daily_sales_xa","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_views","id":"view__wh_commerce__order_fact","kind":"view","label":"wh_commerce__order_fact","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_explores","id":"explore__shop_analytics","kind":"explore","label":"  Shop Orders","shape":"hexagon","style":"fill:#525aff,stroke:#3a40c4,color:#fff"},{"group":"looker_explores","id":"explore__shop_daily_sales","kind":"explore","label":"  Shop Daily Sales","shape":"hexagon","style":"fill:#525aff,stroke:#3a40c4,color:#fff"}]}</script></div><div class='pane' data-key='dag-master' hidden><p class='blurb'>Raw sources on the left, then each layer, then the Looker views and the explores people open. Red: built with no design. Amber dashed: nothing tests it. Grey rounded: a temporary working step.</p><div class='canvas'><pre class='mermaid'>flowchart LR
+  subgraph sources[&quot;raw sources&quot;]
+    src__shop_source_customers[(&quot;customers&quot;)]
+    src__shop_source_orders[(&quot;orders&quot;)]
+  end
+  subgraph staging[&quot;staging&quot;]
+    stg_shop__customers(&quot;stg_shop__customers&quot;)
+    stg_shop__orders(&quot;stg_shop__orders&quot;)
+  end
+  subgraph integration[&quot;integration&quot;]
+    int_shop__orders(&quot;int_shop__orders&quot;)
+  end
+  subgraph warehouse[&quot;warehouse&quot;]
+    wh_master__customer_dim[&quot;wh_master__customer_dim&quot;]
+    wh_master__product_dim[&quot;wh_master__product_dim&quot;]
+  end
+  subgraph looker_views[&quot;Looker views (base layer)&quot;]
+    view__wh_master__customer_dim[/&quot;wh_master__customer_dim&quot;/]
+  end
+  subgraph looker_explores[&quot;Looker explores&quot;]
+    explore__shop_analytics{{&quot;Shop Orders&quot;}}
+  end
+  stg_shop__customers --&gt; int_shop__orders
+  stg_shop__orders --&gt; int_shop__orders
+  src__shop_source_customers --&gt; stg_shop__customers
+  src__shop_source_orders --&gt; stg_shop__orders
+  stg_shop__customers --&gt; wh_master__customer_dim
+  int_shop__orders --&gt; wh_master__product_dim
+  wh_master__customer_dim --&gt; view__wh_master__customer_dim
+  view__wh_master__customer_dim --&gt; explore__shop_analytics
+  style src__shop_source_customers fill:#e1f6fe,stroke:#4a90b8
+  style src__shop_source_orders fill:#e1f6fe,stroke:#4a90b8
+  style stg_shop__customers fill:#f4f4f6,stroke:#9aa1ad
+  style stg_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style int_shop__orders fill:#f4f4f6,stroke:#9aa1ad
+  style view__wh_master__customer_dim fill:#e8e0fa,stroke:#7c5cbf
+  style explore__shop_analytics fill:#525aff,stroke:#3a40c4,color:#fff</pre></div><script type='application/json' class='dag-spec'>{"edges":[["stg_shop__customers","int_shop__orders"],["stg_shop__orders","int_shop__orders"],["src__shop_source_customers","stg_shop__customers"],["src__shop_source_orders","stg_shop__orders"],["stg_shop__customers","wh_master__customer_dim"],["int_shop__orders","wh_master__product_dim"],["wh_master__customer_dim","view__wh_master__customer_dim"],["view__wh_master__customer_dim","explore__shop_analytics"]],"groups":[{"id":"sources","label":"raw sources"},{"id":"staging","label":"staging"},{"id":"integration","label":"integration"},{"id":"warehouse","label":"warehouse"},{"id":"looker_views","label":"Looker views (base layer)"},{"id":"looker_explores","label":"Looker explores"}],"nodes":[{"group":"sources","id":"src__shop_source_customers","kind":"source","label":"customers","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"sources","id":"src__shop_source_orders","kind":"source","label":"orders","shape":"cylinder","style":"fill:#e1f6fe,stroke:#4a90b8"},{"group":"staging","id":"stg_shop__customers","kind":"model","label":"stg_shop__customers","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"staging","id":"stg_shop__orders","kind":"model","label":"stg_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"integration","id":"int_shop__orders","kind":"model","label":"int_shop__orders","shape":"round","style":"fill:#f4f4f6,stroke:#9aa1ad"},{"group":"warehouse","id":"wh_master__customer_dim","kind":"model","label":"wh_master__customer_dim","shape":"box","style":""},{"group":"warehouse","id":"wh_master__product_dim","kind":"model","label":"wh_master__product_dim","shape":"box","style":""},{"group":"looker_views","id":"view__wh_master__customer_dim","kind":"view","label":"wh_master__customer_dim","shape":"parallelogram","style":"fill:#e8e0fa,stroke:#7c5cbf"},{"group":"looker_explores","id":"explore__shop_analytics","kind":"explore","label":"  Shop Orders","shape":"hexagon","style":"fill:#525aff,stroke:#3a40c4,color:#fff"}]}</script></div></div></section><section class='card' id="readiness"><h2>Built tables: what each one still needs</h2><p class='sub'>One row per table in the repository. The alignment card says whether a table should exist; this says whether it is finished.</p><div class='tabs area-tabs' id='table-areas'><button type='button' class='tab on' data-area=''>All areas</button><button type='button' class='tab' data-area='commerce' style='--tone:#525aff'><i class='dot'></i>commerce</button><button type='button' class='tab' data-area='master' style='--tone:#2f6690'><i class='dot'></i>master</button></div><div class='finder'><input type='search' id='table-search' autocomplete='off' placeholder='Find a table, an area or a gap, such as "no owner"' aria-label='Search the table list'><label class='toggle'><input type='checkbox' id='table-gaps'> only tables with gaps</label><span class='tally' id='table-tally'>6 tables</span></div><div class='align-stats'><div class='stat no'><b>0 of 6</b><span>built tables ready: described, owned, tested, in Looker</span></div></div><div class='scroller'><table id='table-list'><thead><tr><th>Table</th><th>Status</th><th>Described</th><th>Columns described</th><th>Owner</th><th>Key tests</th><th>LookML view</th><th>Droughty</th><th>In the warehouse</th><th>What it still needs</th></tr></thead><tbody><tr data-find="wh_commerce__daily_sales_xa daily sales commerce permanent gaps no tests not covered by droughty" data-gaps='1' data-area='commerce'><td><b class='tname' style='--tone:#525aff'>wh_commerce__daily_sales_xa</b><span class='objects'>daily sales · commerce</span></td><td><em class='chip status-permanent' title='worked out from the layer persistence'>permanent</em></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='all 4 columns described'>&#10003;</span> <span class='objects'>4/4</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark no' title='no tests at all'>&#10007;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td class='gaps'><em class='chip gap'>no tests</em><em class='chip gap'>not covered by Droughty</em></td></tr><tr data-find="wh_commerce__forecast_fact forecasts commerce not determined gaps switched off no tests no lookml view not covered by droughty not in the warehouse" data-gaps='1' data-area='commerce'><td><b class='tname' style='--tone:#525aff'>wh_commerce__forecast_fact</b><span class='objects'>forecasts · commerce</span><em class='chip grey'>switched off</em></td><td><em class='chip status-not-determined' title='worked out from the no signal'>not determined</em></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='all 4 columns described'>&#10003;</span> <span class='objects'>4/4</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark no' title='no tests at all'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td class='gaps'><em class='chip gap'>switched off</em><em class='chip gap'>no tests</em><em class='chip gap'>no LookML view</em><em class='chip gap'>not covered by Droughty</em><em class='chip gap'>not in the warehouse</em></td></tr><tr data-find="wh_commerce__legacy_fact commerce permanent gaps no tests no lookml view not covered by droughty not in the warehouse" data-gaps='1' data-area='commerce'><td><b class='tname' style='--tone:#525aff'>wh_commerce__legacy_fact</b><span class='objects'>commerce</span></td><td><em class='chip status-permanent' title='worked out from the layer persistence'>permanent</em></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='all 2 columns described'>&#10003;</span> <span class='objects'>2/2</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark no' title='no tests at all'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td class='gaps'><em class='chip gap'>no tests</em><em class='chip gap'>no LookML view</em><em class='chip gap'>not covered by Droughty</em><em class='chip gap'>not in the warehouse</em></td></tr><tr data-find="wh_commerce__order_fact orders commerce verified gaps droughty tests not applied" data-gaps='1' data-area='commerce'><td><b class='tname' style='--tone:#525aff'>wh_commerce__order_fact</b><span class='objects'>orders · commerce</span></td><td><em class='chip status-verified' title='verified by sav on 8 September 2026'>verified</em></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='all 5 columns described'>&#10003;</span> <span class='objects'>5/5</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='unique and not null tested · 3 tests in all'>&#10003;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark off' title='partly'>&#9679;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td class='gaps'><em class='chip gap'>Droughty tests not applied</em></td></tr><tr data-find="wh_master__customer_dim customers master permanent gaps no description no owner key tested for uniqueness only droughty tests not applied" data-gaps='1' data-area='master'><td><b class='tname' style='--tone:#2f6690'>wh_master__customer_dim</b><span class='objects'>customers · master</span></td><td><em class='chip status-permanent' title='worked out from the layer persistence'>permanent</em></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark yes' title='all 4 columns described'>&#10003;</span> <span class='objects'>4/4</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark off' title='only one of the two key tests · 1 tests in all'>&#9679;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark off' title='partly'>&#9679;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td class='gaps'><em class='chip gap'>no description</em><em class='chip gap'>no owner</em><em class='chip gap'>key tested for uniqueness only</em><em class='chip gap'>Droughty tests not applied</em></td></tr><tr data-find="wh_master__product_dim products master permanent gaps no key tests no lookml view droughty tests not applied" data-gaps='1' data-area='master'><td><b class='tname' style='--tone:#2f6690'>wh_master__product_dim</b><span class='objects'>products · master</span></td><td><em class='chip status-permanent' title='worked out from the layer persistence'>permanent</em></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark yes' title='all 5 columns described'>&#10003;</span> <span class='objects'>5/5</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td><span class='mark no' title='no test proves the key'>&#10007;</span></td><td><span class='mark no' title='no'>&#10007;</span></td><td><span class='mark off' title='partly'>&#9679;</span></td><td><span class='mark yes' title='yes'>&#10003;</span></td><td class='gaps'><em class='chip gap'>no key tests</em><em class='chip gap'>no LookML view</em><em class='chip gap'>Droughty tests not applied</em></td></tr></tbody></table></div><p class='empty' id='table-empty' hidden>Nothing matches that.</p><div class='heat-key'><span><em class='chip status-verified'>verified</em> confirmed to stay by a named person</span><span><em class='chip status-permanent'>permanent</em> meant to stay</span><span><em class='chip status-temporary'>temporary</em> a working step or a one-off</span><span><b class='mark yes'>&#10003;</b> in place</span><span><b class='mark off'>&#9679;</b> partly</span><span><b class='mark no'>&#10007;</b> missing</span><span><b class='mark dash'>&#8211;</b> Hunter had nothing to read</span></div></section></div></div></main>
+
+<footer><div class="wrap">
+  <img src="data:image/png;base64,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" alt="Rittman Analytics">
+  <span>Generated by Rittman Hunter, from Rittman Analytics. Read from the repository, nothing written back.</span>
+  <span class="meta">hunter 0.1.0.dev0 · house 1</span>
+</div></footer>
+<script>
+(function () {
+  var box = document.getElementById('table-search');
+  var table = document.getElementById('table-list');
+  if (!box || !table) { return; }
+  var tally = document.getElementById('table-tally');
+  var empty = document.getElementById('table-empty');
+  var rows = Array.prototype.slice.call(table.tBodies[0].rows);
+  var gapsOnly = document.getElementById('table-gaps');
+  var areaTabs = document.getElementById('table-areas');
+  var area = '';
+  function filter() {
+    var needle = box.value.trim().toLowerCase();
+    var onlyGaps = !!(gapsOnly && gapsOnly.checked);
+    var shown = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var hit = (!needle || rows[i].getAttribute('data-find').indexOf(needle) !== -1)
+        && (!onlyGaps || rows[i].getAttribute('data-gaps') === '1')
+        && (!area || rows[i].getAttribute('data-area') === area);
+      rows[i].hidden = !hit;
+      if (hit) { shown++; }
+    }
+    if (tally) {
+      tally.textContent = (shown === rows.length && !needle && !onlyGaps && !area)
+        ? rows.length + ' tables'
+        : shown + ' of ' + rows.length + ' tables';
+    }
+    if (empty) { empty.hidden = shown !== 0; }
+  }
+  box.addEventListener('input', filter);
+  if (gapsOnly) { gapsOnly.addEventListener('change', filter); }
+  if (areaTabs) {
+    areaTabs.addEventListener('click', function (event) {
+      var tab = event.target.closest('.tab');
+      if (!tab) { return; }
+      area = tab.getAttribute('data-area') || '';
+      Array.prototype.forEach.call(areaTabs.querySelectorAll('.tab'), function (t) {
+        t.classList.toggle('on', t === tab);
+      });
+      filter();
+    });
+  }
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" onerror="window.hunterDiagramsOffline=true"></script>
+<script>
+(function () {
+  var groups = document.querySelectorAll('.tabbed');
+  if (!groups.length) { return; }
+  var ready = typeof window.mermaid !== 'undefined' && !window.hunterDiagramsOffline;
+  if (ready) {
+    window.mermaid.initialize({ startOnLoad: false, theme: 'base', securityLevel: 'antiscript',
+      themeVariables: {
+        fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontSize: '13px',
+        primaryColor: '#ffffff', primaryBorderColor: '#525aff', primaryTextColor: '#151d2d',
+        lineColor: '#9aa1ad', clusterBkg: '#fafbfe', clusterBorder: '#e2e5ec',
+        edgeLabelBackground: '#ffffff', tertiaryColor: '#fafbfe'
+      } });
+  }
+  var renders = 0;
+  var SHAPES = { box: ['["', '"]'], round: ['("', '")'], cylinder: ['[("', '")]'],
+                 parallelogram: ['[/"', '"/]'], hexagon: ['{{"', '"}}'] };
+  function esc(text) {
+    return String(text).replace(/"/g, "'").replace(/\n/g, ' ').trim();
+  }
+  function assemble(spec, keep) {
+    var kept = {};
+    var nodes = spec.nodes.filter(function (n) { return !keep || keep[n.id]; });
+    nodes.forEach(function (n) { kept[n.id] = true; });
+    var lines = ['flowchart LR'];
+    spec.groups.forEach(function (g) {
+      var members = nodes.filter(function (n) { return n.group === g.id; });
+      if (!members.length) { return; }
+      lines.push('  subgraph ' + g.id + '["' + esc(g.label) + '"]');
+      members.forEach(function (n) {
+        var shape = SHAPES[n.shape] || SHAPES.box;
+        lines.push('    ' + n.id + shape[0] + esc(n.label) + shape[1]);
+      });
+      lines.push('  end');
+    });
+    spec.edges.forEach(function (e) {
+      if (kept[e[0]] && kept[e[1]]) { lines.push('  ' + e[0] + ' --> ' + e[1]); }
+    });
+    nodes.forEach(function (n) { if (n.style) { lines.push('  style ' + n.id + ' ' + n.style); } });
+    return lines.join('\n') + '\n';
+  }
+  function walk(spec, seeds, direction, depth) {
+    var next = {}, seen = {};
+    spec.edges.forEach(function (e) {
+      var from = direction === 'up' ? e[1] : e[0], to = direction === 'up' ? e[0] : e[1];
+      (next[from] = next[from] || []).push(to);
+    });
+    var frontier = Object.keys(seeds), steps = 0;
+    while (frontier.length && (depth === null || steps < depth)) {
+      var fresh = [];
+      frontier.forEach(function (id) {
+        (next[id] || []).forEach(function (n) {
+          if (!seen[n] && !seeds[n]) { seen[n] = true; fresh.push(n); }
+        });
+      });
+      frontier = fresh; steps++;
+    }
+    return seen;
+  }
+  function select(spec, text) {
+    var m = /^\s*(?:(\d*)\+)?([^+\s]+)(?:\+(\d*))?\s*$/.exec(text);
+    if (!m) { return null; }
+    var up = m[1] !== undefined, down = m[3] !== undefined;
+    var upDepth = m[1] ? parseInt(m[1], 10) : null, downDepth = m[3] ? parseInt(m[3], 10) : null;
+    var name = m[2].toLowerCase();
+    var seeds = {};
+    var exact = spec.nodes.filter(function (n) { return n.label.toLowerCase() === name; });
+    if (exact.length) { exact.forEach(function (n) { seeds[n.id] = true; }); }
+    else {
+      var pattern = name.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+      var re = new RegExp('^' + pattern + '$');
+      var loose = spec.nodes.filter(function (n) {
+        var l = n.label.toLowerCase();
+        return re.test(l) || (name.indexOf('*') === -1 && l.indexOf(name) !== -1);
+      });
+      loose.forEach(function (n) { seeds[n.id] = true; });
+    }
+    if (!Object.keys(seeds).length) { return {}; }
+    var keep = {};
+    Object.keys(seeds).forEach(function (id) { keep[id] = true; });
+    function add(found) { Object.keys(found).forEach(function (id) { keep[id] = true; }); }
+    if (up) { add(walk(spec, seeds, 'up', upDepth)); }
+    if (down) { add(walk(spec, seeds, 'down', downDepth)); }
+    return keep;
+  }
+  // ---- the alignment card: filter rows as you type
+  var align = document.querySelector('.align');
+  if (align) {
+    var abox = align.querySelector('.find');
+    var arows = Array.prototype.slice.call(align.querySelectorAll('details.arow'));
+    var agroups = Array.prototype.slice.call(align.querySelectorAll('.align-group'));
+    var atally = align.querySelector('.tally');
+    var aempty = align.querySelector('.empty');
+    abox.addEventListener('input', function () {
+      var needle = abox.value.trim().toLowerCase();
+      var shown = 0, byGroup = {};
+      arows.forEach(function (row) {
+        var hit = !needle || row.getAttribute('data-find').indexOf(needle) !== -1;
+        row.hidden = !hit;
+        if (hit) { shown++; byGroup[row.getAttribute('data-group')] = true; }
+      });
+      agroups.forEach(function (g) {
+        g.hidden = !!needle && !byGroup[g.getAttribute('data-group')];
+      });
+      if (atally) {
+        atally.textContent = (needle ? shown + ' of ' + arows.length : arows.length) + ' entities';
+      }
+      if (aempty) { aempty.hidden = shown !== 0; }
+    });
+  }
+  // ---- relationship lines for the physical model cards
+  function drawErd(erd) {
+    var svg = erd.querySelector('.erd-lines');
+    if (!svg) { return; }
+    var origin = erd.getBoundingClientRect();
+    var z = parseFloat(erd.style.zoom || '1') || 1;
+    var parts = [];
+    Array.prototype.forEach.call(erd.querySelectorAll('.erd-row[data-ref]'), function (row) {
+      var ref = row.getAttribute('data-ref').split('.');
+      var card = erd.querySelector('.erd-card[data-table="' + ref[0] + '"]');
+      if (!card) { return; }
+      var target = card.querySelector('.erd-row[data-col="' + ref[1] + '"]')
+        || card.querySelector('header');
+      var a = row.getBoundingClientRect(), b = target.getBoundingClientRect();
+      var ay = (a.top + a.height / 2 - origin.top) / z;
+      var by = (b.top + b.height / 2 - origin.top) / z;
+      // Leave from whichever side of each row is nearest the other, so a line
+      // never crosses the card it came from. Same-side pairs bow outward.
+      var sides = [
+        [a.right, b.left, 1, -1], [a.left, b.right, -1, 1],
+        [a.left, b.left, -1, -1], [a.right, b.right, 1, 1]
+      ];
+      var best = sides[0], gap = Infinity;
+      sides.forEach(function (s) {
+        var d = Math.abs(s[0] - s[1]) + (s[2] === s[3] ? 80 : 0);
+        if (d < gap) { gap = d; best = s; }
+      });
+      var ax = (best[0] - origin.left) / z, bx = (best[1] - origin.left) / z;
+      var reach = Math.max(36, Math.abs(bx - ax) / 2);
+      var c1 = ax + best[2] * reach, c2 = bx + best[3] * reach;
+      parts.push('<path d="M' + ax + ' ' + ay + ' C' + c1 + ' ' + ay + ' '
+        + c2 + ' ' + by + ' ' + bx + ' ' + by + '"/>');
+      parts.push('<circle cx="' + ax + '" cy="' + ay + '" r="3.5"/>');
+      parts.push('<line x1="' + bx + '" y1="' + (by - 6) + '" x2="' + bx + '" y2="'
+        + (by + 6) + '"/>');
+    });
+    svg.setAttribute('viewBox', '0 0 ' + (erd.scrollWidth) + ' ' + (erd.scrollHeight));
+    svg.setAttribute('width', erd.scrollWidth); svg.setAttribute('height', erd.scrollHeight);
+    svg.innerHTML = parts.join('');
+  }
+  window.addEventListener('resize', function () {
+    Array.prototype.forEach.call(document.querySelectorAll('.pane:not([hidden]) .erd'), drawErd);
+  });
+  // ---- find within a diagram: dim what does not match
+  function highlight(p, needle) {
+    var targets = p.querySelectorAll(
+      '.erd-card, .ent, .canvas svg g.node, .canvas svg g[id^="entity-"]');
+    var hits = 0;
+    Array.prototype.forEach.call(targets, function (el) {
+      var text = (el.getAttribute('data-find') || el.textContent || '').toLowerCase();
+      var hit = !!needle && text.indexOf(needle) !== -1;
+      el.classList.toggle('dim', !!needle && !hit);
+      el.classList.toggle('hit', hit);
+      if (hit) { hits++; }
+    });
+    var edges = p.querySelectorAll(
+      '.canvas svg .edgePaths, .canvas svg .edgeLabels, .canvas svg .relationshipLine, '
+      + '.canvas svg .relationshipLabelBox, .erd-lines');
+    Array.prototype.forEach.call(edges, function (el) { el.classList.toggle('dim', !!needle); });
+    return hits;
+  }
+  Array.prototype.forEach.call(groups, function (group) {
+    var tabs = group.querySelectorAll('.tab');
+    var zoom = group.querySelector('.zoom');
+    var note = group.querySelector('.offline');
+    var selector = group.querySelector('.selector');
+    var finder = group.querySelector('.finder .find');
+    var findTally = group.querySelector('.find-tally');
+    var scale = {};
+    var current = null;
+    function refind() {
+      if (!finder || !current) { return; }
+      var p = pane(current);
+      var needle = finder.value.trim().toLowerCase();
+      var hits = p ? highlight(p, needle) : 0;
+      if (findTally) { findTally.textContent = needle ? hits + ' found' : ''; }
+    }
+    if (finder) { finder.addEventListener('input', refind); }
+    if (!ready && note && group.querySelector('pre.mermaid')) { note.hidden = false; }
+    if (ready && selector) { selector.hidden = false; }
+    function pane(key) { return group.querySelector('.pane[data-key="' + key + '"]'); }
+    function specOf(key) {
+      var p = pane(key);
+      var holder = p ? p.querySelector('script.dag-spec') : null;
+      if (!holder) { return null; }
+      try { return JSON.parse(holder.textContent); } catch (err) { return null; }
+    }
+    function redraw(key, keep) {
+      var p = pane(key), spec = specOf(key);
+      if (!ready || !p || !spec) { return; }
+      var canvas = p.querySelector('.canvas');
+      var tally = selector ? selector.querySelector('.sel-tally') : null;
+      var models = spec.nodes.filter(function (n) { return n.kind === 'model'; }).length;
+      var shown = keep
+        ? spec.nodes.filter(function (n) { return keep[n.id] && n.kind === 'model'; }).length
+        : models;
+      if (tally) {
+        tally.textContent = keep ? shown + ' of ' + models + ' tables' : models + ' tables';
+      }
+      if (keep && !shown) {
+        canvas.innerHTML = "<p class='empty'>Nothing matches that selection.</p>";
+        return;
+      }
+      renders++;
+      window.mermaid.render('hunter-dag-' + renders, assemble(spec, keep)).then(function (out) {
+        canvas.innerHTML = out.svg;
+        scale[key] = fit(key); apply(key);
+      }).catch(function () { if (note) { note.hidden = false; } });
+    }
+    function applySelection() {
+      if (!selector || !current) { return; }
+      var text = selector.querySelector('.select').value;
+      if (!text.trim()) { redraw(current, null); return; }
+      var keep = select(specOf(current) || { nodes: [], edges: [], groups: [] }, text);
+      redraw(current, keep || {});
+    }
+    if (selector) {
+      var timer = null;
+      selector.querySelector('.select').addEventListener('input', function () {
+        clearTimeout(timer); timer = setTimeout(applySelection, 250);
+      });
+      selector.querySelector('.clear').addEventListener('click', function () {
+        selector.querySelector('.select').value = ''; applySelection();
+      });
+    }
+    function natural(svg) {
+      var box = svg.viewBox && svg.viewBox.baseVal;
+      return (box && box.width) || svg.getBoundingClientRect().width || 800;
+    }
+    function fit(key) {
+      var p = pane(key);
+      var svg = p ? p.querySelector('.canvas svg') : null;
+      var canvas = p ? p.querySelector('.canvas') : null;
+      if (!svg || !canvas) { return 1; }
+      // Shrink to fit the canvas, but never so far that labels stop being
+      // readable; past that point the canvas scrolls sideways instead.
+      var room = canvas.clientWidth - 36;
+      return Math.max(0.8, Math.min(1, room > 0 ? room / natural(svg) : 1));
+    }
+    function apply(key) {
+      var p = pane(key);
+      var erd = p ? p.querySelector('.erd') : null;
+      if (erd) {
+        erd.style.zoom = String(scale[key] || 1);
+        drawErd(erd);
+        return;
+      }
+      var svg = p ? p.querySelector('.canvas svg') : null;
+      if (!svg) { return; }
+      svg.style.maxWidth = 'none';
+      svg.style.width = (natural(svg) * (scale[key] || 1)) + 'px';
+    }
+    function draw(key) {
+      var p = pane(key);
+      if (!p) { return; }
+      if (p.querySelector('.erd')) {
+        if (!(key in scale)) { scale[key] = 1; }
+        apply(key); refind();
+        if (zoom) { zoom.hidden = false; }
+        return;
+      }
+      if (!ready) { return; }
+      var pre = p.querySelector('pre.mermaid');
+      if (!pre || pre.getAttribute('data-processed')) { apply(key); refind(); return; }
+      window.mermaid.run({ nodes: [pre] }).then(function () {
+        scale[key] = fit(key); apply(key); refind();
+        if (zoom) { zoom.hidden = false; }
+      }).catch(function () { if (note) { note.hidden = false; } });
+    }
+    function show(key) {
+      current = key;
+      for (var i = 0; i < tabs.length; i++) {
+        var k = tabs[i].getAttribute('data-pane');
+        var on = k === key;
+        tabs[i].classList.toggle('on', on);
+        tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+        var p = pane(k);
+        if (p) { p.hidden = !on; }
+      }
+      draw(key);
+      if (selector && selector.querySelector('.select').value.trim()) { applySelection(); }
+    }
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener('click', function (event) {
+        show(event.currentTarget.getAttribute('data-pane'));
+      });
+    }
+    if (zoom) {
+      zoom.addEventListener('click', function (event) {
+        var what = event.target.getAttribute('data-zoom');
+        if (!what || !current) { return; }
+        var s = scale[current] || 1;
+        if (what === 'in') { s = Math.min(4, s * 1.25); }
+        else if (what === 'out') { s = Math.max(0.2, s / 1.25); }
+        else { s = fit(current); }
+        scale[current] = s;
+        apply(current);
+      });
+    }
+    if (tabs.length) { show(tabs[0].getAttribute('data-pane')); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+# Rittman Analytics house ruleset, version 1.
+#
+# This is the standard a repository is measured against when a project has not
+# said otherwise. It is version-pinned: a project names `extends: ra-house@1`
+# and stays on it until someone deliberately bumps that string. FR15.8 exists
+# so RA changing its own standard mid-engagement cannot move a client's score.
+#
+# Every threshold a check uses is declared here or defaults on the schema.
+# NFR6 forbids hidden thresholds.
+
+version: "1"
+
+# ---------------------------------------------------------------------------
+# Layers
+#
+# Three delivery layers plus two optional ones. The reference rules encode the
+# rule that matters: staging reads sources, integration reads staging,
+# warehouse reads integration. A mart reaching straight into a source is the
+# thing FR2.2 is looking for.
+# ---------------------------------------------------------------------------
+layers:
+  - name: staging
+    pipeline_stage: 1
+    paths: ["models/staging/**", "models/stg_*/**"]
+    prefix: stg_
+    materialisations: [view, ephemeral, incremental]
+    persistence: temporary
+    may_reference: [seeds]
+    may_reference_sources: true
+    requires_model_description: false
+    requires_column_descriptions: true
+    requires_owner: false
+    requires_key_tests: false
+
+  - name: integration
+    pipeline_stage: 2
+    paths: ["models/integration/**", "models/int_*/**"]
+    prefix: int_
+    materialisations: [view, ephemeral, table, incremental]
+    persistence: temporary
+    may_reference: [staging, integration, seeds]
+    may_reference_sources: false
+    requires_model_description: false
+    requires_column_descriptions: true
+    requires_owner: false
+    requires_key_tests: false
+
+  - name: warehouse
+    pipeline_stage: 3
+    paths: ["models/warehouse/**", "models/wh_*/**"]
+    prefix: wh_
+    materialisations: [table, incremental]
+    persistence: persistent
+    may_reference: [staging, integration, warehouse, seeds]
+    may_reference_sources: false
+    requires_model_description: true
+    requires_column_descriptions: true
+    requires_owner: true
+    requires_key_tests: true
+    expected_entity_kinds: [fact, dimension, aggregate, bridge, snapshot]
+    in_alignment: true
+
+  - name: seeds
+    pipeline_stage: 0
+    paths: ["seeds/**", "data/**"]
+    prefix: null
+    materialisations: [seed]
+    persistence: persistent
+    may_reference: []
+    may_reference_sources: false
+    requires_model_description: false
+    requires_column_descriptions: false
+    requires_owner: false
+    requires_key_tests: false
+
+  - name: reverse_etl
+    pipeline_stage: 4
+    paths: ["models/reverse_etl/**"]
+    prefix: null
+    materialisations: [table, view, incremental]
+    persistence: persistent
+    may_reference: [warehouse, integration]
+    may_reference_sources: false
+    requires_model_description: true
+    requires_column_descriptions: false
+    requires_owner: true
+    requires_key_tests: false
+    in_alignment: true
+
+  - name: ai
+    pipeline_stage: 4
+    paths: ["models/ai/**"]
+    prefix: null
+    materialisations: [table, incremental]
+    persistence: persistent
+    may_reference: [warehouse, integration]
+    may_reference_sources: false
+    requires_model_description: true
+    requires_column_descriptions: true
+    requires_owner: true
+    requires_key_tests: false
+    in_alignment: true
+
+# ---------------------------------------------------------------------------
+# Entities
+#
+# Suffix declares intent. FR3.2 compares that declaration against how the
+# table actually behaves, and reports the mismatch.
+# ---------------------------------------------------------------------------
+entities:
+  - kind: fact
+    suffix: _fact
+    requires_surrogate_key: true
+    requires_unique_test: true
+    requires_not_null_key_test: true
+    expects_measures: true
+    expects_date_grain: true
+    expects_foreign_keys: true
+    min_descriptive_attributes: 0
+
+  - kind: dimension
+    suffix: _dim
+    requires_surrogate_key: true
+    requires_unique_test: true
+    requires_not_null_key_test: true
+    expects_measures: false
+    expects_date_grain: false
+    expects_foreign_keys: false
+    min_descriptive_attributes: 3
+
+  - kind: aggregate
+    suffix: _xa
+    requires_surrogate_key: true
+    requires_unique_test: true
+    requires_not_null_key_test: true
+    expects_measures: true
+    expects_date_grain: true
+    expects_foreign_keys: true
+    min_descriptive_attributes: 0
+
+  - kind: bridge
+    suffix: _bridge
+    requires_surrogate_key: true
+    requires_unique_test: true
+    requires_not_null_key_test: true
+    expects_measures: false
+    expects_date_grain: false
+    expects_foreign_keys: true
+    min_descriptive_attributes: 0
+
+  - kind: snapshot
+    suffix: _snapshot
+    requires_surrogate_key: true
+    requires_unique_test: true
+    requires_not_null_key_test: true
+    expects_measures: false
+    expects_date_grain: true
+    expects_foreign_keys: false
+    min_descriptive_attributes: 0
+
+# ---------------------------------------------------------------------------
+# Column naming
+# ---------------------------------------------------------------------------
+column_naming:
+  primary_key_suffix: _pk
+  foreign_key_suffix: _fk
+  natural_key_suffix: _natural_key
+  date_suffix: _dt
+  timestamp_suffix: _ts
+  boolean_prefixes: [is_, has_]
+  boolean_suffixes: [_flag]
+  require_timezone_in_non_utc_timestamps: true
+
+# ---------------------------------------------------------------------------
+# SQL structure
+# ---------------------------------------------------------------------------
+structure:
+  max_model_lines: 400
+  max_joins: 7
+  forbid_select_star: true
+  forbid_hardcoded_refs: true
+  cte_name_pattern: "^[a-z][a-z0-9_]*$"
+
+# ---------------------------------------------------------------------------
+# Lineage
+# ---------------------------------------------------------------------------
+lineage:
+  max_fanout: 12
+  flag_dead_models: true
+  flag_direct_source_joins_outside_staging: true
+  flag_staging_bypass: true
+  flag_model_rejoins: true
+
+# ---------------------------------------------------------------------------
+# Documentation
+# ---------------------------------------------------------------------------
+documentation:
+  min_description_words: 3
+  min_column_description_words: 1
+  require_owner_in_meta: true
+  owner_meta_keys: [owner, team]
+  stale_after_days: 180
+  flag_stale_descriptions: true
+
+# ---------------------------------------------------------------------------
+# Testing
+#
+# `at_least_one` proves a column is not entirely null. It does not prove a key.
+# The pilot repository has 3,492 of them against 100 uniqueness tests, so
+# counting tests would score it well while its keys go unverified.
+# ---------------------------------------------------------------------------
+testing:
+  key_test_names: [unique, not_null]
+  relationship_test_names: [relationships]
+  weak_test_names: [at_least_one, dbt_utils.at_least_one]
+  require_relationship_test_per_foreign_key: true
+  require_unique_test_on_declared_grain: true
+
+# ---------------------------------------------------------------------------
+# Entity inference
+#
+# Findings below the confidence floor are reported as suggestions and excluded
+# from the score. FR3.6, and risk "entity type inference produces false
+# positives".
+# ---------------------------------------------------------------------------
+entity_inference:
+  min_confidence_to_score: 0.7
+  fact_min_foreign_keys: 2
+  fact_min_measures: 1
+  dimension_max_foreign_keys: 1
+  dimension_min_attributes: 3
+  aggregate_min_measures: 2
+
+# ---------------------------------------------------------------------------
+# Cross-layer
+# ---------------------------------------------------------------------------
+cross_layer:
+  require_datagroup_on_explores: true
+  flag_duplicate_measures: true
+  generate_missing_exposures: true
+  skip_derived_tables: true
+
+# ---------------------------------------------------------------------------
+# Scoring
+#
+# Weights are section 9 of the requirements document and total 100. They are
+# published on the conventions page so the score is auditable, which is the
+# mitigation for the risk that weights look arbitrary to a client.
+# ---------------------------------------------------------------------------
+scoring:
+  weights:
+    testing: 18
+    model_conformance: 15
+    lineage_health: 13
+    documentation: 13
+    cross_layer_sync: 13
+    conventions_structure: 13
+    entity_modelling: 8
+    performance_cost: 7
+  exposure_weighting: true
+  exposure_weight_cap: 3.0
+  fail_under: null
+  fail_on_regression: false
+  min_confidence_to_score: 0.7
+
+# ---------------------------------------------------------------------------
+# Integrations
+#
+# Droughty reads committed output only at this version. Live introspection
+# needs warehouse credentials and is milestone M1.
+# ---------------------------------------------------------------------------
+integrations:
+  droughty:
+    enabled: true
+    run_introspection: false
+    stale_after_days: 30
+    flag_orphan_descriptions: true
+    flag_dropped_overrides: true
+  bigquery:
+    enabled: false
+  jira:
+    enabled: false
+    ticket_pattern: "[A-Z]+-[0-9]+"
+    fallback_window_days: 14
+
+# ---------------------------------------------------------------------------
+# Branding and pull request behaviour
+# ---------------------------------------------------------------------------
+branding:
+  theme: rittman-analytics
+  report_mode: internal
+  site_name: Repository health
+  attribution: Generated by Rittman Hunter, from Rittman Analytics
+
+pull_request:
+  mode: advisory
+  new_violations_only: true
+  include_blast_radius: true
+  include_subgraph: true
+  collapse_subgraph: true
+  max_findings_shown: 20

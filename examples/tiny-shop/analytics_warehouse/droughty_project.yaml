@@ -1,0 +1,35 @@
+profile: tiny_shop
+
+dimensional_inference: enabled
+
+field_description_path: analytics_warehouse/models
+field_description_file_name: field_descriptions.md
+
+dbt_path: analytics_warehouse/models/
+dbml_path: analytics_warehouse/docs/db_docs/
+
+lookml_base_path: /analytics_warehouse/lookml/base/_base.layer.lkml
+lookml_path: analytics_warehouse/lookml/base/
+lookml_base_filename: _base.layer
+lookml_measures_filename: _aggregate.layer
+dbt_tests_filename: droughty_schema
+
+test_overwrite:
+  models:
+    wh_commerce__order_fact:
+      order_pk:
+        - not_null
+        - unique
+    wh_master__customer_dim:
+      # Two overrides on one column. Droughty has previously applied only the
+      # first per model and dropped the rest with no warning, so Hunter checks
+      # that both reached droughty_schema.yml. Here the not_null did not.
+      customer_pk:
+        - unique
+        - not_null
+
+test_ignore:
+  models:
+    # Excluded on purpose. Hunter reads this as authored intent and does not
+    # re-report a decision already recorded here.
+    - wh_commerce__legacy_fact

@@ -1,0 +1,139 @@
+# The tiny shop's register: what the team has decided about particular tables.
+#
+# THIS IS THE FILE THAT MARKS THINGS TEMPORARY.
+#
+# hunter.yml says what correct looks like. This file records the decisions
+# Hunter cannot work out by reading code: that a table is a working step on
+# purpose, that a table built ahead of its design is accepted, who owns what,
+# and what one row of a table means.
+#
+# THE RULES OF THIS FILE
+#
+#   Plain information needs no reason. An owner or a grain is a fact.
+#   An override needs a reason. Contradicting what Hunter inferred is a claim.
+#   An approval needs a reason and a name.
+#   A silence needs an end date, so nothing goes quiet for good.
+#
+# NOTHING HERE HIDES A FINDING. An accepted exception still appears on the
+# report with its reason and its review date. The register makes a decision
+# visible; it does not make a problem disappear.
+#
+# Hunter also checks this file: an entry that matches no table, a reason that is
+# a placeholder, and an expiry date that has passed are all reported. A stale
+# exception is itself a finding.
+#
+# `hunter init` writes this file pre-filled with the tables Hunter would flag,
+# each with a blank reason, so the team fills in reasons against a list rather
+# than authoring from nothing.
+
+version: 1
+
+models:
+  # ---- 1. Plain information. No reason needed. ----
+  #
+  # Hunter cannot infer who owns a table or what one row of it means. Recording
+  # it here closes the "no identifiable owner" finding and puts the grain in
+  # plain English on the report.
+  wh_commerce__legacy_fact:
+    owner: commerce
+    grain: one row per legacy order
+    # Lifecycle status is plain information too. `deprecated` puts the table in
+    # the "being phased out" lane of the roadmap, with the review date as the
+    # date it should be gone by.
+    status: deprecated
+    review_by: 2027-03-31
+
+  # ---- 1b. Confirming a table is here to stay. ----
+  #
+  # Status is one of three words. `temporary` is a working step, or a table
+  # only ever meant to run once. `permanent` is what Hunter infers for a
+  # warehouse table. `verified` is permanent plus a named person saying so:
+  # the table has been checked and is confirmed as the one to build on.
+  #
+  # Verified is a confirmation, so it needs a reason and `verified_by`. The
+  # report shows the three words side by side, so a reader can see at a glance
+  # what is confirmed, what is assumed, and what is on its way out.
+  wh_commerce__order_fact:
+    persistence: verified
+    verified_by: sav
+    verified_on: 2026-09-08
+    reason: signed off at the design review as the order fact of record
+
+  # ---- 2. Declaring a table temporary. ----
+  #
+  # This is what people usually come to this file for.
+  #
+  # Hunter works out whether a table is a working step or a finished table from
+  # five signals, in order: this declaration, then `materialized: ephemeral`,
+  # then the layer's declared persistence, then the materialisation, then how
+  # many things read from it. A declaration here wins over all of them, and the
+  # report says which signal decided.
+  #
+  # Declaring it temporary stops the table being judged as a finished table: it
+  # is not expected to carry a description for consumers, an owner, or key
+  # tests, and nothing complains that reports do not read from it.
+  #
+  # This overrides what Hunter inferred, so a reason is required. review_by
+  # brings it back for a look rather than leaving it true forever.
+  int_shop__orders:
+    persistence: temporary
+    reason: a working step feeding the order fact, not for reporting from
+    review_by: 2027-01-31
+
+  # ---- 3. Everything else a table entry accepts. ----
+  #
+  # Commented out because this example does not need it, and because a register
+  # entry that matches no table is reported as stale. Copy the shape.
+  #
+  # wh_master__supplier_dim:
+  #   status: planned          # planned | building | live | deprecated | retired
+  #   owner: procurement
+  #   entity_type: dimension   # fact | dimension | aggregate | bridge | mapping
+  #   grain: one row per supplier
+  #   business_name: Supplier
+  #   domain: procurement
+  #   source_of_truth: the supplier master in NetSuite
+  #   scd_type: 2
+  #   implements: dim_supplier  # the design's name for it, where they differ
+  #   reason: agreed for next sprint, design entry already written
+  #   review_by: 2027-03-31
+
+# ---------------------------------------------------------------- off-plan builds
+#
+# A table built before its design entry exists. Hunter reports these as "built
+# off-plan", which is a real finding: an undesigned table has no agreed grain
+# and no owner.
+#
+# Approving one here changes how it is reported, from "built off-plan" to
+# "approved off-plan". It stays on the report either way, with the reason and
+# the review date next to it.
+#
+# Left empty on purpose here, so this example still demonstrates the off-plan
+# finding on wh_commerce__legacy_fact. The shape is:
+#
+#   off_plan_approved:
+#     - model: wh_commerce__legacy_fact
+#       reason: built for the finance close, design entry to follow next sprint
+#       approved_by: sav
+#       approved_on: 2026-09-08
+#       review_by: 2026-12-31
+
+off_plan_approved: []
+
+# ---------------------------------------------------------------- timed silences
+#
+# A finding somebody has agreed to leave for now.
+#
+# `expires` is required and has no "never" value. On that date the finding comes
+# back on its own, so an accepted problem cannot quietly become a permanent one.
+# Until then it still appears on the report, marked as accepted, with this
+# reason shown.
+#
+# `models` accepts globs, so a whole family of legacy tables can be covered by
+# one entry: ['stg_legacy__*'].
+
+ignores:
+  - rule: documentation.model_description_missing
+    models: ['wh_master__customer_dim']
+    reason: the description is being written as part of the customer rework
+    expires: 2027-01-31

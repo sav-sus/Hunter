@@ -1,0 +1,669 @@
+{
+  "child_map": {},
+  "disabled": {
+    "model.tiny_shop.wh_commerce__forecast_fact": [
+      {
+        "alias": "wh_commerce__forecast_fact",
+        "columns": {
+          "forecast_pk": {
+            "description": "Surrogate key for the product and week.",
+            "meta": {},
+            "name": "forecast_pk",
+            "tags": []
+          },
+          "forecast_units": {
+            "description": "Units expected to sell that week.",
+            "meta": {},
+            "name": "forecast_units",
+            "tags": []
+          },
+          "forecast_week_dt": {
+            "description": "Monday of the week forecast.",
+            "meta": {},
+            "name": "forecast_week_dt",
+            "tags": []
+          },
+          "product_fk": {
+            "description": "The product forecast.",
+            "meta": {},
+            "name": "product_fk",
+            "tags": []
+          }
+        },
+        "config": {
+          "enabled": false,
+          "materialized": "table",
+          "meta": {
+            "owner": "commerce"
+          }
+        },
+        "database": "pj-tiny-shop-warehouse-dev",
+        "depends_on": {
+          "nodes": [
+            "model.tiny_shop.wh_master__product_dim"
+          ]
+        },
+        "description": "Demand forecast by product and week. Grain is one row per product per week. Switched off by a project variable.",
+        "meta": {
+          "owner": "commerce"
+        },
+        "name": "wh_commerce__forecast_fact",
+        "original_file_path": "models/warehouse/wh_commerce/wh_commerce__forecast_fact.sql",
+        "package_name": "tiny_shop",
+        "patch_path": "tiny_shop://models/warehouse/wh_commerce/_source.yml",
+        "path": "models/warehouse/wh_commerce/wh_commerce__forecast_fact.sql",
+        "raw_code": "{{\n    config(\n        enabled = var('include_forecast_models', false),\n        description = \"\"\"\n        Demand forecast by product and week. Grain is one row per product per week.\n\n        Switched off by a project variable, so it sits in the manifest's disabled\n        section rather than its nodes. Hunter reports it as built and switched\n        off, which is not the same as not built.\n        \"\"\"\n    )\n}}\n\nwith s_products as (\n\n    select * from {{ ref('wh_master__product_dim') }}\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['product_pk', 'forecast_week_dt']) }} as forecast_pk,\n\n        -- Foreign Keys\n        product_pk                          as product_fk,\n\n        -- Temporal\n        forecast_week_dt,\n\n        -- Metrics\n        forecast_units\n\n    from s_products\n\n)\n\nselect * from final\n",
+        "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_commerce__forecast_fact`",
+        "resource_type": "model",
+        "schema": "analytics_warehouse",
+        "tags": [],
+        "unique_id": "model.tiny_shop.wh_commerce__forecast_fact"
+      }
+    ]
+  },
+  "exposures": {},
+  "macros": {},
+  "metadata": {
+    "dbt_schema_version": "https://schemas.getdbt.com/dbt/manifest/v12.json",
+    "dbt_version": "1.10.3",
+    "generated_at": "2026-09-08T00:00:00Z",
+    "project_name": "tiny_shop"
+  },
+  "metrics": {},
+  "nodes": {
+    "model.some_package.package_helper": {
+      "alias": "package_helper",
+      "columns": {},
+      "config": {
+        "enabled": true,
+        "materialized": "view",
+        "meta": {}
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": []
+      },
+      "description": "A helper table an installed package builds.",
+      "meta": {},
+      "name": "package_helper",
+      "original_file_path": "models/staging/stg_shop/stg_shop__customers.sql",
+      "package_name": "some_package",
+      "patch_path": "tiny_shop://models/staging/stg_shop/_source.yml",
+      "path": "models/staging/stg_shop/stg_shop__customers.sql",
+      "raw_code": "{{\n    config(\n        description = 'Customers as the shop platform exports them. Grain is one row per customer.\n                    joined_at is the first order date rather than the account creation date.',\n    )\n}}\n\nwith s_shop_customers as (\n\n    select * from {{ source('shop_source', 'customers') }}\n\n),\n\nrename_and_cast as (\n\n    select\n\n        -- Keys\n        cast(customer_id as {{ dbt.type_string() }})   as customer_natural_key,\n\n        -- Attributes\n        cast(name as {{ dbt.type_string() }})          as customer_name,\n\n        -- Temporal\n        cast(joined_at as {{ ra_type_date() }})        as customer_joined_dt\n\n    from s_shop_customers\n\n),\n\nfinal as (\n\n    select * from rename_and_cast\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`package_helper`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.some_package.package_helper"
+    },
+    "model.tiny_shop.int_shop__orders": {
+      "alias": "int_shop__orders",
+      "columns": {
+        "customer_natural_key": {
+          "description": "The customer reference.",
+          "meta": {},
+          "name": "customer_natural_key",
+          "tags": []
+        },
+        "order_natural_key": {
+          "description": "The order reference.",
+          "meta": {},
+          "name": "order_natural_key",
+          "tags": []
+        },
+        "order_placed_dt": {
+          "description": "Date the order was placed.",
+          "meta": {},
+          "name": "order_placed_dt",
+          "tags": []
+        },
+        "order_total_amount": {
+          "description": "Order value before returns.",
+          "meta": {},
+          "name": "order_total_amount",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "view",
+        "meta": {}
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.stg_shop__orders",
+          "model.tiny_shop.stg_shop__customers"
+        ]
+      },
+      "description": "Orders joined to the customer who placed them. A working step on the way to the order fact, not a table to report from. Grain is one row per order.",
+      "meta": {},
+      "name": "int_shop__orders",
+      "original_file_path": "models/integration/int_shop/int_shop__orders.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/integration/int_shop/_source.yml",
+      "path": "models/integration/int_shop/int_shop__orders.sql",
+      "raw_code": "{{\n    config(\n        description = 'Orders joined to the customer who placed them. A working step on the way to\n                    the order fact, not a table to report from. Grain is one row per order.',\n    )\n}}\n\nwith s_orders as (\n\n    select * from {{ ref('stg_shop__orders') }}\n\n),\n\ns_customers as (\n\n    select * from {{ ref('stg_shop__customers') }}\n\n),\n\njoined as (\n\n    select\n\n        -- Keys\n        s_orders.order_natural_key,\n        s_orders.customer_natural_key,\n\n        -- Temporal\n        s_orders.order_placed_dt,\n\n        -- Metrics\n        s_orders.order_total_amount\n\n    from s_orders\n\n    left join s_customers\n        on s_customers.customer_natural_key = s_orders.customer_natural_key\n\n),\n\nfinal as (\n\n    select * from joined\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`int_shop__orders`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.int_shop__orders"
+    },
+    "model.tiny_shop.stg_shop__customers": {
+      "alias": "stg_shop__customers",
+      "columns": {
+        "customer_joined_dt": {
+          "description": "Date of the customer's first order.",
+          "meta": {},
+          "name": "customer_joined_dt",
+          "tags": []
+        },
+        "customer_name": {
+          "description": "Customer name.",
+          "meta": {},
+          "name": "customer_name",
+          "tags": []
+        },
+        "customer_natural_key": {
+          "description": "The customer reference from the shop platform.",
+          "meta": {},
+          "name": "customer_natural_key",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "view",
+        "meta": {}
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "source.tiny_shop.shop_source.customers"
+        ]
+      },
+      "description": "Customers as the shop platform exports them. Grain is one row per customer. joined_at is the first order date rather than the account creation date.",
+      "meta": {},
+      "name": "stg_shop__customers",
+      "original_file_path": "models/staging/stg_shop/stg_shop__customers.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/staging/stg_shop/_source.yml",
+      "path": "models/staging/stg_shop/stg_shop__customers.sql",
+      "raw_code": "{{\n    config(\n        description = 'Customers as the shop platform exports them. Grain is one row per customer.\n                    joined_at is the first order date rather than the account creation date.',\n    )\n}}\n\nwith s_shop_customers as (\n\n    select * from {{ source('shop_source', 'customers') }}\n\n),\n\nrename_and_cast as (\n\n    select\n\n        -- Keys\n        cast(customer_id as {{ dbt.type_string() }})   as customer_natural_key,\n\n        -- Attributes\n        cast(name as {{ dbt.type_string() }})          as customer_name,\n\n        -- Temporal\n        cast(joined_at as {{ ra_type_date() }})        as customer_joined_dt\n\n    from s_shop_customers\n\n),\n\nfinal as (\n\n    select * from rename_and_cast\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`stg_shop__customers`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.stg_shop__customers"
+    },
+    "model.tiny_shop.stg_shop__orders": {
+      "alias": "stg_shop__orders",
+      "columns": {
+        "customer_natural_key": {
+          "description": "The customer who placed the order.",
+          "meta": {},
+          "name": "customer_natural_key",
+          "tags": []
+        },
+        "order_natural_key": {
+          "description": "The order reference from the shop platform.",
+          "meta": {},
+          "name": "order_natural_key",
+          "tags": []
+        },
+        "order_placed_dt": {
+          "description": "Date the order was placed.",
+          "meta": {},
+          "name": "order_placed_dt",
+          "tags": []
+        },
+        "order_total_amount": {
+          "description": "Order value before returns.",
+          "meta": {},
+          "name": "order_total_amount",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "view",
+        "meta": {}
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "source.tiny_shop.shop_source.orders"
+        ]
+      },
+      "description": "Orders as the shop platform exports them. Grain is one row per order. order_id is used as the natural key; total is the order value before returns.",
+      "meta": {},
+      "name": "stg_shop__orders",
+      "original_file_path": "models/staging/stg_shop/stg_shop__orders.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/staging/stg_shop/_source.yml",
+      "path": "models/staging/stg_shop/stg_shop__orders.sql",
+      "raw_code": "{{\n    config(\n        description = 'Orders as the shop platform exports them. Grain is one row per order.\n                    order_id is used as the natural key; total is the order value before returns.',\n    )\n}}\n\n-- Deliberately takes every column from the source rather than naming them, so\n-- Hunter reports structure.select_star_from_source. A column added at the\n-- source arrives here without anyone deciding to take it.\nwith s_shop_orders as (\n\n    select * from {{ source('shop_source', 'orders') }}\n\n),\n\nfinal as (\n\n    select * from s_shop_orders\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`stg_shop__orders`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.stg_shop__orders"
+    },
+    "model.tiny_shop.wh_commerce__daily_sales_xa": {
+      "alias": "wh_commerce__daily_sales_xa",
+      "columns": {
+        "daily_sales_dt": {
+          "description": "The day summarised.",
+          "meta": {},
+          "name": "daily_sales_dt",
+          "tags": []
+        },
+        "daily_sales_order_count": {
+          "description": "Orders placed that day.",
+          "meta": {},
+          "name": "daily_sales_order_count",
+          "tags": []
+        },
+        "daily_sales_pk": {
+          "description": "Surrogate key for the day.",
+          "meta": {},
+          "name": "daily_sales_pk",
+          "tags": []
+        },
+        "daily_sales_total_amount": {
+          "description": "Order value that day.",
+          "meta": {},
+          "name": "daily_sales_total_amount",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "table",
+        "meta": {
+          "owner": "commerce"
+        }
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.stg_shop__orders"
+        ]
+      },
+      "description": "Daily order totals for the shop. Grain is one row per day. Reads staging directly rather than going through the integration layer.",
+      "meta": {
+        "owner": "commerce"
+      },
+      "name": "wh_commerce__daily_sales_xa",
+      "original_file_path": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/warehouse/wh_commerce/_source.yml",
+      "path": "models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
+      "raw_code": "{{\n    config(\n        description = \"\"\"\n        Daily order totals for the shop. Grain is one row per day.\n\n        Reads `stg_shop__orders` directly rather than going through the\n        integration layer, so Hunter reports lineage.staging_bypassed. It also\n        carries no tests at all, so testing.no_tests_at_all fires.\n        \"\"\"\n    )\n}}\n\nwith s_orders as (\n\n    select * from {{ ref('stg_shop__orders') }}\n\n),\n\naggregated as (\n\n    select\n\n        -- Temporal\n        order_placed_dt                     as daily_sales_dt,\n\n        -- Metrics\n        count(*)                            as daily_sales_order_count,\n        sum(order_total_amount)             as daily_sales_total_amount\n\n    from s_orders\n\n    group by 1\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['daily_sales_dt']) }} as daily_sales_pk,\n\n        -- Temporal\n        daily_sales_dt,\n\n        -- Metrics\n        daily_sales_order_count,\n        daily_sales_total_amount\n\n    from aggregated\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_commerce__daily_sales_xa`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.wh_commerce__daily_sales_xa"
+    },
+    "model.tiny_shop.wh_commerce__legacy_fact": {
+      "alias": "wh_commerce__legacy_fact",
+      "columns": {
+        "legacy_amount": {
+          "description": "A value carried over from the previous warehouse.",
+          "meta": {},
+          "name": "legacy_amount",
+          "tags": []
+        },
+        "legacy_pk": {
+          "description": "Surrogate key.",
+          "meta": {},
+          "name": "legacy_pk",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "table",
+        "meta": {
+          "owner": "commerce"
+        }
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.int_shop__orders"
+        ]
+      },
+      "description": "Kept from the previous warehouse while reports move across.",
+      "meta": {
+        "owner": "commerce"
+      },
+      "name": "wh_commerce__legacy_fact",
+      "original_file_path": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/warehouse/wh_commerce/_source.yml",
+      "path": "models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
+      "raw_code": "{{\n    config(\n        description = \"\"\"\n        Kept from the previous warehouse while reports move across.\n\n        Three deliberate problems. It appears on no design, so Hunter reports\n        alignment.built_off_plan. Nothing reads it, so lineage.dead_model fires.\n        And it names a table directly instead of going through dbt, so\n        structure.hardcoded_reference fires and the dependency is invisible to\n        the lineage graph.\n        \"\"\"\n    )\n}}\n\nwith s_legacy as (\n\n    select * from `warehouse`.`old_shop`.`legacy_orders`\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['legacy_natural_key']) }} as legacy_pk,\n\n        -- Metrics\n        legacy_amount\n\n    from s_legacy\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_commerce__legacy_fact`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.wh_commerce__legacy_fact"
+    },
+    "model.tiny_shop.wh_commerce__order_fact": {
+      "alias": "wh_commerce__order_fact",
+      "columns": {
+        "customer_fk": {
+          "description": "The customer who placed it.",
+          "meta": {},
+          "name": "customer_fk",
+          "tags": []
+        },
+        "order_natural_key": {
+          "description": "The order reference from the shop platform.",
+          "meta": {},
+          "name": "order_natural_key",
+          "tags": []
+        },
+        "order_pk": {
+          "description": "Surrogate key for the order.",
+          "meta": {},
+          "name": "order_pk",
+          "tags": []
+        },
+        "order_placed_dt": {
+          "description": "Date the order was placed.",
+          "meta": {},
+          "name": "order_placed_dt",
+          "tags": []
+        },
+        "order_total_amount": {
+          "description": "Order value before returns.",
+          "meta": {},
+          "name": "order_total_amount",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "table",
+        "meta": {
+          "owner": "commerce"
+        }
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.int_shop__orders"
+        ]
+      },
+      "description": "Warehouse order fact. Built from int_shop__orders, which joins the shop platform's orders to the customer who placed them. Carries the order value before returns; returns are held separately.",
+      "meta": {
+        "owner": "commerce"
+      },
+      "name": "wh_commerce__order_fact",
+      "original_file_path": "models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/warehouse/wh_commerce/_source.yml",
+      "path": "models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
+      "raw_code": "{{\n    config(\n        description = \"\"\"\n        Warehouse order fact. Built from `int_shop__orders`, which joins the shop\n        platform's orders to the customer who placed them. Carries the order value\n        before returns; returns are held separately.\n        \"\"\"\n    )\n}}\n\n-- The control. Described, owned, keyed and tested, so Hunter reports nothing\n-- against it.\nwith s_orders as (\n\n    select * from {{ ref('int_shop__orders') }}\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['order_natural_key']) }}   as order_pk,\n\n        -- Foreign Keys\n        {{ dbt_utils.generate_surrogate_key(['customer_natural_key']) }} as customer_fk,\n\n        -- Natural Keys\n        order_natural_key,\n\n        -- Metrics\n        order_total_amount,\n\n        -- Temporal\n        order_placed_dt\n\n    from s_orders\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_commerce__order_fact`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.wh_commerce__order_fact"
+    },
+    "model.tiny_shop.wh_master__customer_dim": {
+      "alias": "wh_master__customer_dim",
+      "columns": {
+        "customer_joined_dt": {
+          "description": "Date of the customer's first order.",
+          "meta": {},
+          "name": "customer_joined_dt",
+          "tags": []
+        },
+        "customer_name": {
+          "description": "Customer name.",
+          "meta": {},
+          "name": "customer_name",
+          "tags": []
+        },
+        "customer_natural_key": {
+          "description": "The customer reference.",
+          "meta": {},
+          "name": "customer_natural_key",
+          "tags": []
+        },
+        "customer_pk": {
+          "description": "Surrogate key for the customer.",
+          "meta": {},
+          "name": "customer_pk",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "table",
+        "meta": {}
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.stg_shop__customers"
+        ]
+      },
+      "description": "",
+      "meta": {},
+      "name": "wh_master__customer_dim",
+      "original_file_path": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/warehouse/wh_master/_source.yml",
+      "path": "models/warehouse/wh_master/wh_master__customer_dim.sql",
+      "raw_code": "-- Deliberately carries no config block, so Hunter reports\n-- documentation.model_description_missing and documentation.owner_missing.\n-- Its key is tested for uniqueness but not for being populated, so\n-- testing.key_not_null_missing fires too.\n\nwith s_customers as (\n\n    select * from {{ ref('stg_shop__customers') }}\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['customer_natural_key']) }} as customer_pk,\n\n        -- Natural Keys\n        customer_natural_key,\n\n        -- Attributes\n        customer_name,\n\n        -- Temporal\n        customer_joined_dt\n\n    from s_customers\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_master__customer_dim`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.wh_master__customer_dim"
+    },
+    "model.tiny_shop.wh_master__product_dim": {
+      "alias": "wh_master__product_dim",
+      "columns": {
+        "product_category_name": {
+          "description": "Category the product sits in.",
+          "meta": {},
+          "name": "product_category_name",
+          "tags": []
+        },
+        "product_list_price_amount": {
+          "description": "Current list price.",
+          "meta": {},
+          "name": "product_list_price_amount",
+          "tags": []
+        },
+        "product_name": {
+          "description": "Product name.",
+          "meta": {},
+          "name": "product_name",
+          "tags": []
+        },
+        "product_natural_key": {
+          "description": "The product reference.",
+          "meta": {},
+          "name": "product_natural_key",
+          "tags": []
+        },
+        "product_pk": {
+          "description": "Surrogate key for the product.",
+          "meta": {},
+          "name": "product_pk",
+          "tags": []
+        }
+      },
+      "config": {
+        "enabled": true,
+        "materialized": "table",
+        "meta": {
+          "owner": "commerce"
+        }
+      },
+      "database": "pj-tiny-shop-warehouse-dev",
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.int_shop__orders"
+        ]
+      },
+      "description": "Warehouse product dimension. Grain is one row per product. Carries the current list price.",
+      "meta": {
+        "owner": "commerce"
+      },
+      "name": "wh_master__product_dim",
+      "original_file_path": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "package_name": "tiny_shop",
+      "patch_path": "tiny_shop://models/warehouse/wh_master/_source.yml",
+      "path": "models/warehouse/wh_master/wh_master__product_dim.sql",
+      "raw_code": "{{\n    config(\n        description = \"\"\"\n        Warehouse product dimension. Grain is one row per product.\n\n        Deliberately carries `product_list_price_amount`, a figure on a\n        dimension, so Hunter reports entity.dimension_with_measures. Summing it\n        across a join multiplies it by however many rows the join returns.\n        \"\"\"\n    )\n}}\n\nwith s_orders as (\n\n    select * from {{ ref('int_shop__orders') }}\n\n),\n\nfinal as (\n\n    select\n\n        -- Primary Key\n        {{ dbt_utils.generate_surrogate_key(['product_natural_key']) }} as product_pk,\n\n        -- Natural Keys\n        product_natural_key,\n\n        -- Attributes\n        product_name,\n        product_category_name,\n\n        -- Metrics\n        product_list_price_amount\n\n    from s_orders\n\n)\n\nselect * from final\n",
+      "relation_name": "`pj-tiny-shop-warehouse-dev`.`analytics_warehouse`.`wh_master__product_dim`",
+      "resource_type": "model",
+      "schema": "analytics_warehouse",
+      "tags": [],
+      "unique_id": "model.tiny_shop.wh_master__product_dim"
+    },
+    "test.tiny_shop.at_least_one_wh_master__product_dim_product_list_price_amount": {
+      "attached_node": "model.tiny_shop.wh_master__product_dim",
+      "column_name": "product_list_price_amount",
+      "config": {
+        "severity": "error"
+      },
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.wh_master__product_dim"
+        ]
+      },
+      "name": "at_least_one_wh_master__product_dim_product_list_price_amount",
+      "original_file_path": "models/droughty_schema.yml",
+      "package_name": "tiny_shop",
+      "resource_type": "test",
+      "test_metadata": {
+        "kwargs": {},
+        "name": "at_least_one"
+      },
+      "unique_id": "test.tiny_shop.at_least_one_wh_master__product_dim_product_list_price_amount"
+    },
+    "test.tiny_shop.not_null_wh_commerce__order_fact_order_pk": {
+      "attached_node": "model.tiny_shop.wh_commerce__order_fact",
+      "column_name": "order_pk",
+      "config": {
+        "severity": "error"
+      },
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.wh_commerce__order_fact"
+        ]
+      },
+      "name": "not_null_wh_commerce__order_fact_order_pk",
+      "original_file_path": "models/droughty_schema.yml",
+      "package_name": "tiny_shop",
+      "resource_type": "test",
+      "test_metadata": {
+        "kwargs": {},
+        "name": "not_null"
+      },
+      "unique_id": "test.tiny_shop.not_null_wh_commerce__order_fact_order_pk"
+    },
+    "test.tiny_shop.relationships_wh_commerce__order_fact_customer_fk": {
+      "attached_node": "model.tiny_shop.wh_commerce__order_fact",
+      "column_name": "customer_fk",
+      "config": {
+        "severity": "error"
+      },
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.wh_commerce__order_fact"
+        ]
+      },
+      "name": "relationships_wh_commerce__order_fact_customer_fk",
+      "original_file_path": "models/droughty_schema.yml",
+      "package_name": "tiny_shop",
+      "resource_type": "test",
+      "test_metadata": {
+        "kwargs": {
+          "field": "customer_pk",
+          "to": "ref('wh_master__customer_dim')"
+        },
+        "name": "relationships"
+      },
+      "unique_id": "test.tiny_shop.relationships_wh_commerce__order_fact_customer_fk"
+    },
+    "test.tiny_shop.unique_wh_commerce__order_fact_order_pk": {
+      "attached_node": "model.tiny_shop.wh_commerce__order_fact",
+      "column_name": "order_pk",
+      "config": {
+        "severity": "error"
+      },
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.wh_commerce__order_fact"
+        ]
+      },
+      "name": "unique_wh_commerce__order_fact_order_pk",
+      "original_file_path": "models/droughty_schema.yml",
+      "package_name": "tiny_shop",
+      "resource_type": "test",
+      "test_metadata": {
+        "kwargs": {},
+        "name": "unique"
+      },
+      "unique_id": "test.tiny_shop.unique_wh_commerce__order_fact_order_pk"
+    },
+    "test.tiny_shop.unique_wh_master__customer_dim_customer_pk": {
+      "attached_node": "model.tiny_shop.wh_master__customer_dim",
+      "column_name": "customer_pk",
+      "config": {
+        "severity": "error"
+      },
+      "depends_on": {
+        "nodes": [
+          "model.tiny_shop.wh_master__customer_dim"
+        ]
+      },
+      "name": "unique_wh_master__customer_dim_customer_pk",
+      "original_file_path": "models/droughty_schema.yml",
+      "package_name": "tiny_shop",
+      "resource_type": "test",
+      "test_metadata": {
+        "kwargs": {},
+        "name": "unique"
+      },
+      "unique_id": "test.tiny_shop.unique_wh_master__customer_dim_customer_pk"
+    }
+  },
+  "parent_map": {},
+  "sources": {
+    "source.tiny_shop.shop_source.customers": {
+      "columns": {},
+      "database": "pj-tiny-shop-ingestion-dev",
+      "description": "Customers as the shop platform records them. One row per customer.",
+      "name": "customers",
+      "relation_name": "`pj-tiny-shop-ingestion-dev`.`shop`.`customers`",
+      "resource_type": "source",
+      "schema": "shop",
+      "source_name": "shop_source",
+      "unique_id": "source.tiny_shop.shop_source.customers"
+    },
+    "source.tiny_shop.shop_source.orders": {
+      "columns": {},
+      "database": "pj-tiny-shop-ingestion-dev",
+      "description": "Orders as the shop platform records them. One row per order.",
+      "name": "orders",
+      "relation_name": "`pj-tiny-shop-ingestion-dev`.`shop`.`orders`",
+      "resource_type": "source",
+      "schema": "shop",
+      "source_name": "shop_source",
+      "unique_id": "source.tiny_shop.shop_source.orders"
+    }
+  }
+}
