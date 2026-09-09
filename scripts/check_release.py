@@ -89,17 +89,31 @@ def tag_exists(tag: str) -> bool:
     return bool(completed.stdout.strip())
 
 
-def version_on_main() -> str | None:
+def _git_show(ref: str) -> str | None:
     completed = subprocess.run(
-        ["git", "show", "origin/main:src/hunter/__init__.py"],
+        ["git", "show", f"{ref}:src/hunter/__init__.py"],
         cwd=REPO,
         capture_output=True,
         text=True,
         check=False,
     )
-    if completed.returncode != 0:
-        return None
-    return package_version(completed.stdout)
+    return completed.stdout if completed.returncode == 0 else None
+
+
+def version_on_main() -> str | None:
+    """The released version main carries. A shallow CI checkout has no
+    origin/main, so fetch it when the local ref is missing."""
+    text = _git_show("origin/main")
+    if text is None:
+        subprocess.run(
+            ["git", "fetch", "--quiet", "--depth=1", "origin", "main"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        text = _git_show("FETCH_HEAD")
+    return package_version(text) if text else None
 
 
 def main() -> int:
