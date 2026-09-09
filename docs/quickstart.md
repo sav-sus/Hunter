@@ -320,6 +320,6 @@ pull request.
 | Most areas say "not measured" | Read the "what was not checked" page on the dashboard. Usually the design files or the LookML are somewhere Hunter did not look |
 | The Publish job fails | Step 8. The Pages source is still set to a branch |
 | `Missing secret DBT_PROFILES_YML` | Step 9. The workflow cannot build the manifest without a dbt profile |
-| `unable to resolve action` | The Hunter version in the workflow has no release tag. Run `python scripts/check_release.py --tag` in the Hunter repository |
+| `unable to resolve action` | The Hunter version in the workflow has no release tag. In the Hunter repository, run `python scripts/check_release.py --release` on `main` |
 
 Full command reference: [Commands](cli.md).
