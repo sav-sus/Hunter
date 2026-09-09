@@ -44,9 +44,10 @@ hunter dashboard          # one self-contained HTML file, ~75 KB
 ```
 
 Every chart is SVG generated in Python, so the file carries its own stylesheet,
-charts and logo, and two runs of one commit produce identical bytes. The one
-thing fetched is the diagram library, pinned by version; where it does not
-arrive the diagram source is shown as text and a note says why.
+charts and logo, and two runs of one commit produce identical bytes. The diagram
+library is bundled in as well, at a pinned version, so the file fetches nothing
+and opens with no network. With scripting off, the diagram source is shown as
+text and a note says why.
 
 | | |
 |---|---|

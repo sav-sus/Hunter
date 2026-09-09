@@ -66,8 +66,8 @@ hunter dashboard . --out /tmp/report.html
 The whole report in one screen and one file. The stylesheet, every chart and
 the logo are inlined, so it needs nothing installed and nothing beside it.
 
-The one exception is the diagram library, which is fetched from a CDN at a
-pinned version. Where it does not arrive, the diagram source is shown as text
+Nothing is fetched, not even the diagram library: Mermaid is bundled into the
+file at a pinned version. With scripting switched off the diagram source is shown as text
 with a note saying why, and nothing else on the page depends on it.
 
 [See one](example/dashboard.md), or read what is on it.
