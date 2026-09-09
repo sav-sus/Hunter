@@ -164,20 +164,21 @@ def run(context: CheckContext) -> Findings:
         if spec.flag_duplicate_measures:
             findings.extend_from(_duplicate_measures(context, view, model))
 
-    if spec.require_datagroup_on_explores:
-        for explore in sorted(project.explores.values(), key=lambda item: item.name):
-            context.examine(EXPLORE_NO_CACHING.id, explore.name)
-            if not explore.has_caching_policy:
-                findings.add(
-                    context.finding(
-                        EXPLORE_NO_CACHING.id,
-                        subject=explore.name,
-                        subject_kind="explore",
-                        file=explore.file,
-                    )
+    # Switched off under `rules`, with a reason, like every other rule. The
+    # silent cross_layer switch that used to guard this is gone.
+    for explore in sorted(project.explores.values(), key=lambda item: item.name):
+        context.examine(EXPLORE_NO_CACHING.id, explore.name)
+        if not explore.has_caching_policy:
+            findings.add(
+                context.finding(
+                    EXPLORE_NO_CACHING.id,
+                    subject=explore.name,
+                    subject_kind="explore",
+                    file=explore.file,
                 )
+            )
 
-    if spec.generate_missing_exposures:
+    if spec.report_missing_exposures:
         findings.extend_from(_missing_exposures(context))
 
     return findings

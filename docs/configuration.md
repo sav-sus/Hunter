@@ -92,6 +92,13 @@ Unknown keys are errors. A typo must not silently switch off a rule.
 
 ## Turning a rule off, or changing what it costs
 
+There is one way to do this, and it asks for a reason. There is no silent
+switch for any rule: an earlier `cross_layer.require_datagroup_on_explores`
+did the same job as disabling `crosslayer.explore_no_caching_policy` without
+recording why, and it has been removed. The `hunter.yml` that `hunter init`
+writes lists the rules repositories most often change, commented out, so the
+mechanism is visible without reading source.
+
 Needs a reason, and the reason is published.
 
 ```yaml
