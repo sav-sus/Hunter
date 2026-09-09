@@ -791,7 +791,7 @@
         "id": "droughty.schema_stale",
         "plain_heading": "What was not checked",
         "points": 1.0,
-        "ran": true,
+        "ran": false,
         "requires": [
           "droughty"
         ],
@@ -2683,10 +2683,10 @@
         "dimension": "cross_layer_sync",
         "effective_weight": 13.978,
         "finding_count": 10,
-        "grade": "B",
-        "points_available": 51.1,
+        "grade": "C",
+        "points_available": 50.1,
         "points_lost": 18.7,
-        "score": 72.2,
+        "score": 69.1,
         "scored": true,
         "skipped_reason": null,
         "weight": 13.0
@@ -2731,7 +2731,7 @@
     "grade": "A",
     "interpretation": "Well maintained. Safe to build on",
     "real_delta": null,
-    "total": 88.2,
+    "total": 87.8,
     "version_attributed_delta": null,
     "weights_renormalised": true
   },

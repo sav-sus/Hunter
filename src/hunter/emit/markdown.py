@@ -984,10 +984,10 @@ def sync_page(result: RunResult) -> str:
                     ["Descriptions defined", len(droughty.doc_blocks_defined)],
                     ["Descriptions referenced", len(droughty.doc_refs)],
                     [
-                        "Last generated",
+                        "Last regenerated, from git history",
                         droughty.schema_modified_at.isoformat()
                         if droughty.schema_modified_at
-                        else "not known",
+                        else "not known: no git history was read",
                     ],
                 ],
             ),

@@ -342,3 +342,41 @@ class TestDiscoveredLayers:
         issue = next(issue for issue in project.parse_issues if issue.source == "hunter.yml")
         assert issue.subject == "marts"
         assert "not declared" in issue.message
+
+
+class TestDroughtySchemaDate:
+    """The schema's last-changed date comes from git, never from the file clock."""
+
+    def test_the_date_comes_from_the_commit_that_last_touched_it(self, config) -> None:
+        from hunter.ingest.droughty import DroughtyData
+        from hunter.model.entities import DroughtyArtifacts
+
+        droughty = DroughtyData()
+        droughty.found_any = True
+        droughty.artifacts = DroughtyArtifacts(schema_file="models/droughty_schema.yml")
+        git = GitData(
+            available=True,
+            histories={
+                "models/droughty_schema.yml": FileHistory(
+                    path="models/droughty_schema.yml", last_modified_at=dt.date(2026, 6, 1)
+                )
+            },
+        )
+        project, _ = build_project(
+            config=config, register=Register(), manifest=manifest_with(), droughty=droughty, git=git
+        )
+        assert project.droughty is not None
+        assert project.droughty.schema_modified_at == dt.date(2026, 6, 1)
+
+    def test_without_history_the_date_is_unknown(self, config) -> None:
+        from hunter.ingest.droughty import DroughtyData
+        from hunter.model.entities import DroughtyArtifacts
+
+        droughty = DroughtyData()
+        droughty.found_any = True
+        droughty.artifacts = DroughtyArtifacts(schema_file="models/droughty_schema.yml")
+        project, _ = build_project(
+            config=config, register=Register(), manifest=manifest_with(), droughty=droughty
+        )
+        assert project.droughty is not None
+        assert project.droughty.schema_modified_at is None

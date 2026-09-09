@@ -31,7 +31,7 @@ GOLDEN = Path(__file__).parent / "golden" / "tiny-shop.json"
 AS_OF = dt.date(2026, 9, 8)
 
 #: The example's score. Changing this line is how a score change gets reviewed.
-EXPECTED_SCORE = 88.2
+EXPECTED_SCORE = 87.8
 
 #: Every rule the fixture is built to trigger, and how many times. Each entry
 #: is a deliberate flaw described in fixtures/tiny-project/build.py.

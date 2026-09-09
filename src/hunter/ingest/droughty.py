@@ -29,7 +29,6 @@ so Hunter does it instead.
 
 from __future__ import annotations
 
-import datetime as dt
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -126,13 +125,6 @@ def _bases(root: Path, repo_root: Path | None) -> list[Path]:
             seen.add(resolved)
             out.append(candidate)
     return out
-
-
-def _modified(path: Path) -> dt.date | None:
-    try:
-        return dt.date.fromtimestamp(path.stat().st_mtime)
-    except OSError:
-        return None
 
 
 def _test_entries(raw: Any) -> list[str]:
@@ -326,7 +318,10 @@ def load_droughty(
     if schema_path is not None and schema_path.exists():
         data.found_any = True
         artifacts.schema_file = str(schema_path)
-        artifacts.schema_modified_at = _modified(schema_path)
+        # When the schema was last changed comes from git history, attached in
+        # model.build. The file's modification time is not used: on a CI
+        # checkout every file was modified today, which would make the
+        # staleness check pass for ever and the report change with the date.
         specs, descriptions, refs, issues = parse_generated_schema(schema_path)
         data.issues.extend(issues)
         artifacts.generated_tests = specs

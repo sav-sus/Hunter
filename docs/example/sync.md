@@ -23,7 +23,7 @@ Three comparisons: the reporting layer against the tables underneath it, the gen
 | Tables deliberately excluded | 1 |
 | Descriptions defined | 8 |
 | Descriptions referenced | 7 |
-| Last generated | 2026-09-08 |
+| Last regenerated, from git history | not known: no git history was read |
 
 
 ## Findings

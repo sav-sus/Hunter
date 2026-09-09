@@ -124,6 +124,15 @@ def _attach_git(project: Project, git: GitData | None) -> None:
                 if docs is not None:
                     model.docs_modified_at = docs.last_modified_at
 
+    # When the Droughty schema was last regenerated, from the commit that last
+    # touched it. Without history the date is unknown, and the staleness check
+    # reports that it did not run rather than guessing from a file timestamp.
+    if project.droughty is not None and project.droughty.schema_file:
+        key = _find_history(project.droughty.schema_file, git, index)
+        history = git.histories[key] if git and key is not None else None
+        if history is not None:
+            project.droughty.schema_modified_at = history.last_modified_at
+
 
 def _apply_register(project: Project, register: Register) -> None:
     """Fold in what a person has declared. Metadata only; no rule silencing.

@@ -19,7 +19,7 @@ uv run hunter explain wh_master__customer_dim examples/tiny-shop
 uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 ```
 
-It scores **88.2** and triggers 28 of Hunter's 77 rules across all seven scored
+It scores **87.8** and triggers 28 of Hunter's 77 rules across all seven scored
 areas.
 
 `hunter dashboard` writes one HTML file with the stylesheet, every chart and

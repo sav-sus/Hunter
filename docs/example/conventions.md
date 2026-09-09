@@ -95,7 +95,7 @@ FR7d makes this a first-class output: on a client engagement it shows how far th
 | `droughty.introspected_column_undesigned` | Does what was built match the design | Tidy up | 0.4 | yes | droughty, dbml |
 | `droughty.model_not_covered` | Do the reports still match the data | Worth fixing | 0.8 | yes | manifest, droughty |
 | `droughty.override_dropped` | Do the reports still match the data | Needs attention | 1.5 | yes | droughty |
-| `droughty.schema_stale` | Do the reports still match the data | Worth fixing | 1 | yes | droughty |
+| `droughty.schema_stale` | Do the reports still match the data | Worth fixing | 1 | no | droughty |
 | `entity.declared_type_mismatch` | Are the tables the shape they claim | Needs attention | 2 | yes | manifest |
 | `entity.dimension_with_measures` | Are the tables the shape they claim | Worth fixing | 1 | yes | manifest |
 | `entity.fact_without_measures` | Are the tables the shape they claim | Worth fixing | 1 | yes | manifest |

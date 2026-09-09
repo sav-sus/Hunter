@@ -150,7 +150,7 @@ open /tmp/example-site/_built/index.html
 [`examples/tiny-shop`](examples/tiny-shop) is a working project laid out the way
 a Rittman Analytics engagement lays one out: nine tables with one deliberate
 flaw each, a design, a business model, a layered LookML project and generated
-schema output. It scores 88.2 and exercises 28 of Hunter's 77 rules.
+schema output. It scores 87.8 and exercises 28 of Hunter's 77 rules.
 
 ## On your own repository
 

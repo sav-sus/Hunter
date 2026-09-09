@@ -1,6 +1,6 @@
 # The score, broken down
 
-# 88.2 / 100
+# 87.8 / 100
 
 !!! abstract "Well maintained. Safe to build on"
     Grade A.
@@ -16,7 +16,7 @@
 | Does what was built match the design | 95.6 | A | 16.129% | 9 |
 | How the tables fit together | 88.1 | A | 13.978% | 4 |
 | What is written down | 96.1 | A | 13.978% | 3 |
-| Do the reports still match the data | 72.2 | B | 13.978% | 10 |
+| Do the reports still match the data | 69.1 | C | 13.978% | 10 |
 | Are the house rules followed | 98.5 | A | 13.978% | 3 |
 | Are the tables the shape they claim | 96.4 | A | 8.602% | 2 |
 | What it costs to run | not measured | - | - | 0 |
@@ -50,7 +50,7 @@ Scored **96.1**, grade A. 2.17 of 59.91 possible points were lost across 3 findi
 
 Whether the reporting layer still matches the data underneath it. This is what catches a renamed column before it breaks a dashboard.
 
-Scored **72.2**, grade B. 18.7 of 51.1 possible points were lost across 10 findings.
+Scored **69.1**, grade C. 18.7 of 50.1 possible points were lost across 10 findings.
 
 ### Are the house rules followed
 

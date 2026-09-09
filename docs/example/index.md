@@ -23,7 +23,7 @@ Plus `wh_commerce__forecast_fact`, which is built and switched off, and `wh_mast
 
 ## What it scores
 
-**88.2 out of 100**, grade A. Well maintained. Safe to build on.
+**87.8 out of 100**, grade A. Well maintained. Safe to build on.
 
 | Area | Score | Grade |
 |---|---|---|
@@ -31,7 +31,7 @@ Plus `wh_commerce__forecast_fact`, which is built and switched off, and `wh_mast
 | Does what was built match the design | 95.6 | A |
 | How the tables fit together | 88.1 | A |
 | What is written down | 96.1 | A |
-| Do the reports still match the data | 72.2 | B |
+| Do the reports still match the data | 69.1 | C |
 | Are the house rules followed | 98.5 | A |
 | Are the tables the shape they claim | 96.4 | A |
 | What it costs to run | not measured | - |

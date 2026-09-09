@@ -181,7 +181,7 @@ of separating them. Otherwise upgrading Hunter would fail a client's build.
 ## Worked example
 
 The example project in `examples/tiny-shop` is eight tables with one deliberate
-flaw per finding class. It scores 88.2 and triggers 28 rules across all seven
+flaw per finding class. It scores 87.8 and triggers 28 rules across all seven
 scored areas.
 
 Its report is pinned in `tests/golden/tiny-shop.json`. Changing the arithmetic
