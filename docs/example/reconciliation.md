@@ -18,17 +18,23 @@ One row per entity. Read across to see whether the business asked for it, whethe
 
 ## Every entity
 
-### Shop
+### Commerce
 
 | Business name | Business model | Designed | Built | In production | State | One row means | Owner |
 |---|---|---|---|---|---|---|---|
-| customers | yes | yes | yes | not checked | Designed and delivered | One row per customer | nobody named |
 | daily sales | yes | yes | yes | not checked | Designed and delivered | One row per day | commerce |
 | forecasts | yes | yes | switched off | not checked | Built, switched off | One row per product per week | commerce |
 | legacy | no | no | yes | not checked | Built off-plan | not stated | commerce |
 | orders | yes | yes | yes | not checked | Designed and delivered | One row per order | commerce |
-| products | yes | yes | yes | not checked | Designed and delivered | One row per product | commerce |
 | returns | yes | no | no | not checked | On the business model only | not stated | nobody named |
+
+
+### Master
+
+| Business name | Business model | Designed | Built | In production | State | One row means | Owner |
+|---|---|---|---|---|---|---|---|
+| customers | yes | yes | yes | not checked | Designed and delivered | One row per customer | nobody named |
+| products | yes | yes | yes | not checked | Designed and delivered | One row per product | commerce |
 | suppliers | yes | yes | no | not checked | Designed, not started | One row per supplier | nobody named |
 
 

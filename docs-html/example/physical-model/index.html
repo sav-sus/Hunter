@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../../concepts/" class="md-nav__link">
+    <a href="../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -549,6 +553,8 @@
       
         
       
+        
+      
     
     
     
@@ -615,6 +621,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The roadmap
   
 
     
@@ -1088,26 +1122,36 @@
 <h1 id="what-is-built">What is built<a class="headerlink" href="#what-is-built" title="Permanent link">&para;</a></h1>
 <p>8 tables and views are built by this project. A further 1 come from installed packages and are listed but not assessed: they are not this team's code to change.</p>
 <h2 id="temporary-against-permanent">Temporary against permanent<a class="headerlink" href="#temporary-against-permanent" title="Permanent link">&para;</a></h2>
-<p>A temporary model is a working step, not something to report from.</p>
+<p>A temporary model is a working step, not something to report from. A verified
+model is a permanent one that a named person has confirmed should stay.</p>
 <table>
 <thead>
 <tr>
 <th>Kind</th>
 <th>Count</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Verified</td>
+<td>1</td>
+<td>meant to stay, and somebody has checked that it should</td>
+</tr>
+<tr>
 <td>Permanent</td>
-<td>5</td>
+<td>4</td>
+<td>meant to stay</td>
 </tr>
 <tr>
 <td>Temporary</td>
 <td>3</td>
+<td>a working step, or only ever meant to run once</td>
 </tr>
 <tr>
 <td>Not determined</td>
 <td>0</td>
+<td>Hunter had no signal to go on</td>
 </tr>
 </tbody>
 </table>
@@ -1161,55 +1205,55 @@
 <td>nobody named</td>
 </tr>
 <tr>
-<td><a href="../models/wh_shop__customer_dim/">wh_shop__customer_dim</a></td>
+<td><a href="../models/wh_commerce__daily_sales_xa/">wh_commerce__daily_sales_xa</a></td>
 <td>warehouse</td>
-<td>shop</td>
+<td>commerce</td>
 <td>table</td>
-<td>persistent</td>
-<td>layer persistence</td>
-<td>4</td>
-<td>0</td>
-<td>nobody named</td>
-</tr>
-<tr>
-<td><a href="../models/wh_shop__daily_sales_xa/">wh_shop__daily_sales_xa</a></td>
-<td>warehouse</td>
-<td>shop</td>
-<td>table</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>layer persistence</td>
 <td>4</td>
 <td>0</td>
 <td>commerce</td>
 </tr>
 <tr>
-<td><a href="../models/wh_shop__legacy_fact/">wh_shop__legacy_fact</a></td>
+<td><a href="../models/wh_commerce__legacy_fact/">wh_commerce__legacy_fact</a></td>
 <td>warehouse</td>
-<td>shop</td>
+<td>commerce</td>
 <td>table</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>layer persistence</td>
 <td>2</td>
 <td>0</td>
 <td>commerce</td>
 </tr>
 <tr>
-<td><a href="../models/wh_shop__order_fact/">wh_shop__order_fact</a></td>
+<td><a href="../models/wh_commerce__order_fact/">wh_commerce__order_fact</a></td>
 <td>warehouse</td>
-<td>shop</td>
+<td>commerce</td>
 <td>table</td>
-<td>persistent</td>
-<td>layer persistence</td>
+<td>verified</td>
+<td>register declaration</td>
 <td>5</td>
 <td>0</td>
 <td>commerce</td>
 </tr>
 <tr>
-<td><a href="../models/wh_shop__product_dim/">wh_shop__product_dim</a></td>
+<td><a href="../models/wh_master__customer_dim/">wh_master__customer_dim</a></td>
 <td>warehouse</td>
-<td>shop</td>
+<td>master</td>
 <td>table</td>
-<td>persistent</td>
+<td>permanent</td>
+<td>layer persistence</td>
+<td>4</td>
+<td>0</td>
+<td>nobody named</td>
+</tr>
+<tr>
+<td><a href="../models/wh_master__product_dim/">wh_master__product_dim</a></td>
+<td>warehouse</td>
+<td>master</td>
+<td>table</td>
+<td>permanent</td>
 <td>layer persistence</td>
 <td>5</td>
 <td>0</td>

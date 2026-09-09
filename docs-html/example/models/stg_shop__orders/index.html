@@ -267,7 +267,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -317,7 +317,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -344,6 +344,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -364,14 +370,14 @@
   
   
   
-    <a href="../../../concepts/" class="md-nav__link">
+    <a href="../../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -398,8 +404,6 @@
   
     
     
-      
-        
       
         
       
@@ -429,7 +433,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -517,6 +521,8 @@
       
         
           
+        
+      
         
       
         
@@ -696,7 +702,7 @@
 <td>yes</td>
 </tr>
 <tr>
-<td>Temporary or permanent</td>
+<td>Temporary, verified or permanent</td>
 <td>temporary</td>
 </tr>
 <tr>
@@ -791,7 +797,7 @@
 <tr>
 <td>Other tables</td>
 <td>5</td>
-<td>int_shop__orders, wh_shop__daily_sales_xa, wh_shop__legacy_fact, wh_shop__order_fact, wh_shop__product_dim</td>
+<td>int_shop__orders, wh_commerce__daily_sales_xa, wh_commerce__legacy_fact, wh_commerce__order_fact, wh_master__product_dim</td>
 </tr>
 <tr>
 <td>Report views</td>
@@ -804,15 +810,15 @@
   stg_shop__orders["stg_shop__orders"]
   style stg_shop__orders fill:#fdf2cc,stroke:#9a8330
   int_shop__orders["int_shop__orders"]
-  wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
-  wh_shop__legacy_fact["wh_shop__legacy_fact"]
-  wh_shop__order_fact["wh_shop__order_fact"]
-  wh_shop__product_dim["wh_shop__product_dim"]
+  wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  wh_master__product_dim["wh_master__product_dim"]
   stg_shop__orders --&gt; int_shop__orders
-  stg_shop__orders --&gt; wh_shop__daily_sales_xa
-  int_shop__orders --&gt; wh_shop__legacy_fact
-  int_shop__orders --&gt; wh_shop__order_fact
-  int_shop__orders --&gt; wh_shop__product_dim</code></pre>
+  stg_shop__orders --&gt; wh_commerce__daily_sales_xa
+  int_shop__orders --&gt; wh_commerce__legacy_fact
+  int_shop__orders --&gt; wh_commerce__order_fact
+  int_shop__orders --&gt; wh_master__product_dim</code></pre>
 <h2 id="findings">Findings<a class="headerlink" href="#findings" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

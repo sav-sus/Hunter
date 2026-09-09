@@ -1,17 +1,23 @@
-# In CI
+# Run it on every pull request
 
-<p class="lede">A composite GitHub Action from Rittman Analytics, wrapping the
-command line. It calls the same commands you would run locally, so CI and local
-results agree by construction rather than by discipline.</p>
-
-<div class="key" markdown>
-**Looking for a check that can fail a build?** This action scores the whole
-repository and is best left on advisory. The
-[three sync checks](sync-checks.md) are small, specific and separately
-installable, and they are what a team will accept as required.
-</div>
+<p class="lede">One workflow file, written by <code>hunter init</code>. Every
+pull request gets the score and the three sync checks. Every push to main
+rebuilds the dashboard and publishes it. Nobody runs anything by hand.</p>
 
 ## The workflow
+
+Five jobs. Each shows as its own line on the pull request.
+
+| Job | When | What it does |
+|---|---|---|
+| Score | Every pull request and push | Scores the repository and posts one comment, edited in place |
+| LookML sync | Every pull request and push | Does the reporting layer still match the tables? |
+| Droughty sync | Every pull request and push | Was the generated schema applied, and is it current? |
+| Modelling sync | Every pull request and push | Does what exists match what was designed and asked for? |
+| Publish | Push to main only | Puts the rebuilt dashboard on GitHub Pages |
+
+There is no path filter. A new layer or a new model is detected by Hunter
+itself, so the file never needs editing as the warehouse grows.
 
 ```yaml
 name: Hunter
@@ -29,6 +35,7 @@ permissions:
 
 jobs:
   hunter:
+    name: Score
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,10 +44,53 @@ jobs:
       - uses: sav-sus/Hunter@v0.1.0
         with:
           mode: advisory
-          publish: ${{ github.event_name == 'push' }}
+          publish: ${{ github.event_name != 'pull_request' }}
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out/site/_built
+
+  lookml-sync:
+    name: LookML sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sav-sus/Hunter/actions/lookml-sync@v0.1.0
+
+  droughty-sync:
+    name: Droughty sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sav-sus/Hunter/actions/droughty-sync@v0.1.0
+
+  modelling-sync:
+    name: Modelling sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sav-sus/Hunter/actions/modelling-sync@v0.1.0
+
+  publish:
+    name: Publish the dashboard
+    if: github.event_name != 'pull_request'
+    needs: hunter
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
 ```
 
-`hunter init` writes this file for you.
+`hunter init` writes this file to `.github/workflows/hunter.yml`. The sync
+checks start on `fail-on: never`, which reports and never fails a build. Turn
+one up to `high` once the team reads the comments. See
+[Check the layers agree](sync-checks.md).
 
 <div class="key" markdown>
 **`fetch-depth: 0` matters.** The default checkout is shallow and has no
@@ -50,6 +100,12 @@ shallow clone rather than staying quiet about it, but the fix is here.
 **Never reference the Action at `@main`.** Pin a tag, or a repository's score
 moves because somebody pushed a commit to Hunter.
 </div>
+
+## The score action
+
+The rest of this page is about the first job, the composite action at the
+repository root. It wraps the command line and nothing else, so CI and local
+results agree by construction.
 
 ## Inputs
 
@@ -91,7 +147,7 @@ upgrading Hunter never fails a build.
 | Event | What happens |
 |---|---|
 | A pull request | Scores, writes a run summary, posts or updates one comment, uploads the report |
-| A push to main | Scores, builds the site if `publish` is set, uploads both |
+| A push to main | Scores, builds the site, and hands it to the publish job, which puts it on GitHub Pages |
 | The weekly schedule | The same as a push. Catches drift that arrives from outside the repository |
 
 The weekly run is worth keeping: a design file edited outside a pull request,
@@ -134,15 +190,9 @@ the comment step is skipped.
 
 ## Publishing the site
 
-Set `publish: true` on pushes to main and the site is built and uploaded as an
-artifact. Serving it somewhere is a separate decision.
-
-| Your situation | Option |
-|---|---|
-| On GitHub Enterprise Cloud | Private Pages restricts the site to people with read access. The straightforward choice |
-| Not on Enterprise Cloud | Pages from a private repository is still **public**, and its HTML and JSON are downloadable by anyone. Use Cloud Run behind IAP |
-
-A browser-side password check is not access control.
+Covered on its own page: [Publish the dashboard](publish.md). In short, set the
+repository's Pages source to GitHub Actions once, and the publish job does the
+rest on every push to main.
 
 ??? note "Running it without GitHub Actions"
 
@@ -151,6 +201,7 @@ A browser-side password check is not access control.
     ```bash
     pip install "rittman-hunter[site] @ git+https://github.com/sav-sus/Hunter@v0.1.0"
     hunter score . --out report.json
+    hunter sync --root . --out sync.json
     hunter docs build . --out site
     ```
 

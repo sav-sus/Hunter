@@ -348,3 +348,44 @@ class TestImplementsMap:
             }
         )
         assert register.implements_map() == {"wh_sales__orders": "wh_sales__order_fact"}
+
+
+class TestVerified:
+    """The third status. Permanent, plus a named person saying so."""
+
+    def test_verified_needs_a_reason(self) -> None:
+        with pytest.raises(ValueError, match="needs a reason"):
+            RegisterModel(persistence=Persistence.VERIFIED, verified_by="sav")
+
+    def test_verified_needs_a_named_person(self) -> None:
+        with pytest.raises(ValueError, match="verified_by"):
+            RegisterModel(
+                persistence=Persistence.VERIFIED,
+                reason="signed off at the design review as the order fact of record",
+            )
+
+    def test_verified_with_both_is_accepted(self) -> None:
+        entry = RegisterModel(
+            persistence=Persistence.VERIFIED,
+            verified_by="sav",
+            reason="signed off at the design review as the order fact of record",
+        )
+        assert entry.persistence is Persistence.VERIFIED
+        assert entry.persistence.is_lasting
+
+    def test_verified_by_on_its_own_is_refused(self) -> None:
+        with pytest.raises(ValueError, match="verified_by only means something"):
+            RegisterModel(owner="commerce", verified_by="sav")
+
+    def test_permanent_is_the_word_people_write(self) -> None:
+        """The stored value is ``persistent``; the file accepts the everyday word."""
+        entry = RegisterModel(
+            persistence="permanent",  # type: ignore[arg-type]
+            reason="a finished table, kept although its layer is a working layer",
+        )
+        assert entry.persistence is Persistence.PERSISTENT
+        assert entry.persistence.label == "permanent"
+
+    def test_unknown_cannot_be_declared(self) -> None:
+        with pytest.raises(ValueError, match="temporary, verified or permanent"):
+            RegisterModel(persistence=Persistence.UNKNOWN, reason="a long enough reason here")

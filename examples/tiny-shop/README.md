@@ -15,7 +15,7 @@ Every name here is invented and resembles no client's.
 uv run hunter score examples/tiny-shop
 uv run hunter dashboard examples/tiny-shop --out /tmp/shop.html && open /tmp/shop.html
 uv run hunter align examples/tiny-shop
-uv run hunter explain wh_shop__customer_dim examples/tiny-shop
+uv run hunter explain wh_master__customer_dim examples/tiny-shop
 uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 ```
 
@@ -85,13 +85,14 @@ analytics_warehouse/
       stg_shop__customers.sql
     integration/int_shop/
       int_shop__orders.sql
-    warehouse/wh_shop/
-      wh_shop__order_fact.sql
-      wh_shop__customer_dim.sql
-      wh_shop__daily_sales_xa.sql
-      wh_shop__product_dim.sql
-      wh_shop__legacy_fact.sql
-      wh_shop__forecast_fact.sql
+    warehouse/wh_commerce/
+      wh_commerce__order_fact.sql
+      wh_commerce__daily_sales_xa.sql
+      wh_commerce__legacy_fact.sql
+      wh_commerce__forecast_fact.sql
+    warehouse/wh_master/
+      wh_master__customer_dim.sql
+      wh_master__product_dim.sql
   lookml/
     base/_base.layer.lkml              generated views
     base/_aggregate.layer.lkml         generated measures
@@ -120,14 +121,14 @@ the base does not lose the labelling.
 | `stg_shop__orders` | Reading a source with a star and never naming a column, so the source's shape passes straight through |
 | `stg_shop__customers` | Nothing. The control, and the house pattern: read with a star, then name and cast every column |
 | `int_shop__orders` | A working step, declared temporary in the register |
-| `wh_shop__order_fact` | Nothing. Described, owned, keyed and tested |
-| `wh_shop__customer_dim` | No description, no owner, and a key checked for uniqueness but not for being populated |
-| `wh_shop__daily_sales_xa` | No tests at all, and reading staging directly so skipping integration |
-| `wh_shop__product_dim` | A dimension carrying a figure, which is how a join multiplies a total |
-| `wh_shop__legacy_fact` | Built with no design, read by nothing, and naming a table directly instead of going through dbt |
-| `wh_shop__forecast_fact` | Built and switched off by a project variable. Not the same as unbuilt |
+| `wh_commerce__order_fact` | Nothing. Described, owned, keyed and tested, and marked verified in the register |
+| `wh_master__customer_dim` | No description, no owner, and a key checked for uniqueness but not for being populated |
+| `wh_commerce__daily_sales_xa` | No tests at all, and reading staging directly so skipping integration |
+| `wh_master__product_dim` | A dimension carrying a figure, which is how a join multiplies a total |
+| `wh_commerce__legacy_fact` | Built with no design, read by nothing, and naming a table directly instead of going through dbt. Marked deprecated, so it sits in the roadmap's phasing-out lane |
+| `wh_commerce__forecast_fact` | Built and switched off by a project variable. Not the same as unbuilt |
 
-Plus `wh_shop__supplier_dim`, which is designed and not built, and
+Plus `wh_master__supplier_dim`, which is designed and not built, and
 `package_helper`, which comes from an installed package and is reported but
 never scored.
 
@@ -144,7 +145,7 @@ never scored.
 | `lookml/aggregate/agg_shop.layer.lkml` | A measure duplicating a figure the warehouse already computes |
 | `lookml/int/int_explore_shop.explore.lkml` | One explore with no caching policy |
 | `.hunter/hunter.yml` | One rule switched off, so the divergence report has something in it |
-| `.hunter/register.yml` | One temporary declaration and one silenced finding |
+| `.hunter/register.yml` | One temporary declaration, one verified table, one deprecated table and one silenced finding |
 
 ## Changing it
 

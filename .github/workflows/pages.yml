@@ -1,0 +1,38 @@
+# Publish the documentation site, with the example dashboard inside it, to
+# GitHub Pages on every push to main.
+#
+# docs-html/ is committed and CI checks it is current, so this deploys what is
+# already in the repository rather than building anything. Read the Docs builds
+# the same site from mkdocs.yml; Pages exists so the example dashboard has a
+# link that opens without a GitHub account.
+#
+# One-time setup: repository settings, Pages, source "GitHub Actions".
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-html
+      - id: deploy
+        uses: actions/deploy-pages@v4

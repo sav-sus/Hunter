@@ -41,6 +41,7 @@ from hunter.model.build import build_project
 from hunter.model.entities import Project
 from hunter.model.findings import Finding, ScoreResult
 from hunter.model.graph import Graph
+from hunter.model.layers import discover_layers, with_layers
 from hunter.score.baseline import Baseline, load_baseline
 from hunter.score.engine import compute_score, report_meta
 
@@ -63,6 +64,11 @@ class RunResult:
     baseline: Baseline | None = None
     sources_read: list[str] = field(default_factory=list)
     as_of: dt.date = field(default_factory=dt.date.today)
+
+    #: The authored logical model (data flow diagram), verbatim. Hunter parses it
+    #: for names; the dashboard also draws it, and the authored picture is the
+    #: one the team recognises, so it is carried as written rather than redrawn.
+    logical_source: str | None = None
 
     @property
     def open_findings(self) -> list[Finding]:
@@ -137,10 +143,12 @@ def run(
             sources.append(str(candidate))
 
     logical = None
+    logical_source = None
     if paths.logical_diagram:
         candidate = project_dir / paths.logical_diagram
         if candidate.exists():
             logical = diagram_ingest.parse_logical(candidate)
+            logical_source = candidate.read_text(encoding="utf-8")
             sources.append(str(candidate))
 
     lookml = None
@@ -180,6 +188,11 @@ def run(
         as_of=today,
     )
     relativise_paths(project, root)
+    if project.discovered_layers:
+        # The same discovery build_project ran, so checks and pages see the
+        # layers the models were placed in.
+        every_model = [*project.models.values(), *project.disabled_models.values()]
+        config = with_layers(config, discover_layers(config, every_model))
     alignment = build_alignment(project, config, register, logical=logical)
 
     available = availability(project)
@@ -224,6 +237,7 @@ def run(
         baseline=baseline,
         sources_read=sorted({_relative(item, root) or item for item in sources}),
         as_of=today,
+        logical_source=logical_source,
     )
 
 

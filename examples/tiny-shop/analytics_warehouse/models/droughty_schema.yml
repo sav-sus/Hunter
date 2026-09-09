@@ -5,7 +5,7 @@
 # dropped before now.
 version: 2
 models:
-  - name: wh_shop__order_fact
+  - name: wh_commerce__order_fact
     columns:
       - name: order_pk
         description: '{{doc("order_pk")}}'
@@ -24,7 +24,7 @@ models:
         description: '{{doc("order_total_amount")}}'
         tests:
           - dbt_utils.at_least_one
-  - name: wh_shop__customer_dim
+  - name: wh_master__customer_dim
     columns:
       - name: customer_pk
         description: '{{doc("customer_pk")}}'
@@ -34,7 +34,7 @@ models:
         description: '{{doc("customer_name")}}'
         tests:
           - dbt_utils.at_least_one
-  - name: wh_shop__product_dim
+  - name: wh_master__product_dim
     columns:
       - name: product_pk
         description: '{{doc("product_pk")}}'

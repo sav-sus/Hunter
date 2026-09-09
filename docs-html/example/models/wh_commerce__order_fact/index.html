@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_shop__legacy_fact/">
+        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_commerce__order_fact/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>legacy - Rittman Hunter</title>
+        <title>orders - Rittman Hunter</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#legacy" class="md-skip">
+        <a href="#orders" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              legacy
+              orders
             
           </span>
         </div>
@@ -267,7 +267,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -317,7 +317,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -344,6 +344,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -364,14 +370,14 @@
   
   
   
-    <a href="../../../concepts/" class="md-nav__link">
+    <a href="../../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -398,8 +404,6 @@
   
     
     
-      
-        
       
         
       
@@ -429,7 +433,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -517,6 +521,8 @@
       
         
           
+        
+      
         
       
         
@@ -660,7 +666,7 @@
 
 
   
-    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_shop__legacy_fact.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_commerce__order_fact.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -668,9 +674,9 @@
   
 
 
-<h1 id="legacy">legacy<a class="headerlink" href="#legacy" title="Permanent link">&para;</a></h1>
-<p><code>wh_shop__legacy_fact</code></p>
-<p>Kept from the previous warehouse while reports move across.</p>
+<h1 id="orders">orders<a class="headerlink" href="#orders" title="Permanent link">&para;</a></h1>
+<p><code>wh_commerce__order_fact</code></p>
+<p>Warehouse order fact. Built from int_shop__orders, which joins the shop platform's orders to the customer who placed them. Carries the order value before returns; returns are held separately.</p>
 <table>
 <thead>
 <tr>
@@ -685,7 +691,7 @@
 </tr>
 <tr>
 <td>Area</td>
-<td>shop</td>
+<td>commerce</td>
 </tr>
 <tr>
 <td>Built as</td>
@@ -696,16 +702,16 @@
 <td>yes</td>
 </tr>
 <tr>
-<td>Temporary or permanent</td>
-<td>persistent</td>
+<td>Temporary, verified or permanent</td>
+<td>verified</td>
 </tr>
 <tr>
 <td>Decided by</td>
-<td>layer persistence</td>
+<td>register declaration</td>
 </tr>
 <tr>
 <td>One row means</td>
-<td>not stated</td>
+<td>One row per order</td>
 </tr>
 <tr>
 <td>Owner</td>
@@ -717,11 +723,11 @@
 </tr>
 <tr>
 <td>Behaves like</td>
-<td>not clear from its columns (closest guess fact, confidence 0.3, below the 0.7 needed to say)</td>
+<td>not clear from its columns (closest guess fact, confidence 0.65, below the 0.7 needed to say)</td>
 </tr>
 <tr>
 <td>State</td>
-<td>Built off-plan</td>
+<td>Designed and delivered</td>
 </tr>
 <tr>
 <td>First written by</td>
@@ -737,7 +743,7 @@
 </tr>
 <tr>
 <td>File</td>
-<td><code>models/warehouse/wh_shop/wh_shop__legacy_fact.sql</code></td>
+<td><code>models/warehouse/wh_commerce/wh_commerce__order_fact.sql</code></td>
 </tr>
 </tbody>
 </table>
@@ -753,15 +759,33 @@
 </thead>
 <tbody>
 <tr>
-<td>legacy_amount</td>
+<td>customer_fk</td>
 <td>not recorded</td>
-<td>A value carried over from the previous warehouse.</td>
+<td>The customer who placed it.</td>
+<td>relationships</td>
+</tr>
+<tr>
+<td>order_natural_key</td>
+<td>not recorded</td>
+<td>The order reference from the shop platform.</td>
 <td>none</td>
 </tr>
 <tr>
-<td>legacy_pk</td>
+<td>order_pk</td>
 <td>not recorded</td>
-<td>Surrogate key.</td>
+<td>Surrogate key for the order.</td>
+<td>not_null, unique</td>
+</tr>
+<tr>
+<td>order_placed_dt</td>
+<td>not recorded</td>
+<td>Date the order was placed.</td>
+<td>none</td>
+</tr>
+<tr>
+<td>order_total_amount</td>
+<td>not recorded</td>
+<td>Order value before returns.</td>
 <td>none</td>
 </tr>
 </tbody>
@@ -783,14 +807,17 @@
 </tr>
 <tr>
 <td>Report views</td>
-<td>0</td>
-<td>-</td>
+<td>1</td>
+<td>wh_commerce__order_fact</td>
 </tr>
 </tbody>
 </table>
 <pre class="mermaid"><code>flowchart LR
-  wh_shop__legacy_fact["wh_shop__legacy_fact"]
-  style wh_shop__legacy_fact fill:#fdf2cc,stroke:#9a8330</code></pre>
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  style wh_commerce__order_fact fill:#fdf2cc,stroke:#9a8330
+  view_wh_commerce__order_fact("wh_commerce__order_fact")
+  style view_wh_commerce__order_fact fill:#e6eefb,stroke:#3b6fb6
+  wh_commerce__order_fact --&gt; view_wh_commerce__order_fact</code></pre>
 <h2 id="findings">Findings<a class="headerlink" href="#findings" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -804,33 +831,27 @@
 <tbody>
 <tr>
 <td>Needs attention</td>
-<td>wh_shop__legacy_fact has no tests of any kind</td>
-<td>Nothing at all checks legacy. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and nothing downstream depends on it.</td>
-<td>models/warehouse/wh_shop/wh_shop__legacy_fact.sql</td>
-</tr>
-<tr>
-<td>Needs attention</td>
-<td>wh_shop__legacy_fact names the table '<code>warehouse</code>.<code>old_shop</code>.<code>legacy_orders</code>' directly on line 17</td>
-<td>Because legacy does not go through dbt to reach this table, the dependency is invisible: it does not appear in the lineage, it is not built in the right order, and nothing warns you if the table it points at changes.</td>
-<td>models/warehouse/wh_shop/wh_shop__legacy_fact.sql:17</td>
+<td>1 report field in view wh_commerce__order_fact read columns wh_commerce__order_fact no longer produces: order_channel_name -&gt; order_channel_name</td>
+<td>These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_commerce__order_fact.</td>
+<td>analytics_warehouse/lookml/base/_base.layer.lkml</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>wh_shop__legacy_fact is built but was never designed</td>
-<td>legacy exists in production and appears on no design, so nothing records what it is for, what one row means or who owns it. If it should be there, add it to the design or record an approval in the register.</td>
-<td>wh_shop__legacy_fact</td>
-</tr>
-<tr>
-<td>Worth fixing</td>
-<td>wh_shop__legacy_fact is built and stored but nothing reads it</td>
-<td>legacy is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it.</td>
-<td>models/warehouse/wh_shop/wh_shop__legacy_fact.sql</td>
+<td>3 tests in the generated schema for wh_commerce__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one</td>
+<td>The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__order_fact.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__legacy_fact selects every column from '<code>warehouse</code>.<code>old_shop</code>.<code>legacy_orders</code>' on line 17</td>
-<td>A column added at the source appears in legacy without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here.</td>
-<td>models/warehouse/wh_shop/wh_shop__legacy_fact.sql:17</td>
+<td>wh_commerce__order_fact feeds 1 report view but declares no exposure</td>
+<td>Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__order_fact.sql</td>
+</tr>
+<tr>
+<td>Tidy up</td>
+<td>wh_commerce__order_fact holds 1 column in the warehouse that the design does not include: order_channel_name</td>
+<td>The warehouse picture taken by Droughty shows columns on orders that nobody designed, so their business meaning is not recorded.</td>
+<td>analytics_warehouse/docs/data_model_design/physical_model.dbml</td>
 </tr>
 </tbody>
 </table>

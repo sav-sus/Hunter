@@ -150,9 +150,9 @@ comment. A licence term, not a preference.
 **The front page is a purpose-built dashboard, not a themed markdown page.**
 The first version was Markdown through the default MkDocs theme. It read as a
 document, and a document gets filed rather than acted on. The report now leads
-with a dashboard: nine bands, each answering one question, with the number, the
+with a dashboard: seven bands, each answering one question, with the number, the
 undecided items, the areas, the plan-versus-reality funnel, every rule at once,
-the load-bearing tables and the fix queue. The twelve detail pages sit behind it
+the load-bearing tables and the fix queue. The thirteen detail pages sit behind it
 as the evidence.
 
 **Charts are SVG generated in Python, not drawn by a charting library.** Three

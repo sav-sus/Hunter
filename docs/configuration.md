@@ -122,6 +122,18 @@ for two different purposes:
 The standard already sets all of this. These are the blocks to reach for when a
 repository needs to differ.
 
+### Layers Hunter finds on its own
+
+The standard declares staging, integration, warehouse, seeds, reverse ETL and
+AI. A directory under `models/` that none of them claims becomes a layer named
+after the directory, with a prefix where every model in it shares one. The
+report marks it *found, not declared*, and the "what was not checked" page
+names it.
+
+A found layer carries no rules: no required descriptions, owners or tests, and
+no place in the pipeline order. Declare it here to say what it should look like.
+Until then, nothing needs editing for its tables to appear on the dashboard.
+
 ??? note "Layers: what is allowed in each stage"
 
     ```yaml
@@ -130,7 +142,7 @@ repository needs to differ.
         paths: ["models/warehouse/**", "models/wh_*/**"]
         prefix: wh_
         materialisations: [table, incremental]
-        persistence: persistent
+        persistence: permanent
         pipeline_stage: 3
         may_reference: [staging, integration, warehouse, seeds]
         may_reference_sources: false
@@ -149,7 +161,7 @@ repository needs to differ.
     | `paths` | Glob patterns that place a model in this layer |
     | `prefix` | Required name prefix. Omit for no requirement |
     | `materialisations` | Permitted materialisations. Empty means any |
-    | `persistence` | `temporary` or `persistent`. Feeds the classification |
+    | `persistence` | `temporary` or `permanent`. Feeds the classification. `verified` is a register word, not a layer one |
     | `pipeline_stage` | Position in the flow. Reading two stages below is a bypass. 0 means outside the flow |
     | `may_reference` | Layers this one may read. Empty means any |
     | `may_reference_sources` | Whether it may read a raw source directly |
@@ -266,7 +278,7 @@ repository needs to differ.
 
     ```yaml
     models:
-      - name: wh_shop__legacy_fact
+      - name: wh_commerce__legacy_fact
         meta:
           hunter:
             owner: commerce

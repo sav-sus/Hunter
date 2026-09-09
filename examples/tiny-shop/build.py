@@ -121,8 +121,8 @@ SPECS: list[Spec] = [
         depends_models=["stg_shop__orders", "stg_shop__customers"],
     ),
     Spec(
-        name="wh_shop__order_fact",
-        path="models/warehouse/wh_shop/wh_shop__order_fact.sql",
+        name="wh_commerce__order_fact",
+        path="models/warehouse/wh_commerce/wh_commerce__order_fact.sql",
         materialized="table",
         demonstrates="nothing. Described, owned, keyed and tested",
         description=(
@@ -141,8 +141,8 @@ SPECS: list[Spec] = [
         depends_models=["int_shop__orders"],
     ),
     Spec(
-        name="wh_shop__customer_dim",
-        path="models/warehouse/wh_shop/wh_shop__customer_dim.sql",
+        name="wh_master__customer_dim",
+        path="models/warehouse/wh_master/wh_master__customer_dim.sql",
         materialized="table",
         demonstrates=(
             "no description, no owner, and a key checked for uniqueness but not for being populated"
@@ -157,8 +157,8 @@ SPECS: list[Spec] = [
         depends_models=["stg_shop__customers"],
     ),
     Spec(
-        name="wh_shop__daily_sales_xa",
-        path="models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql",
+        name="wh_commerce__daily_sales_xa",
+        path="models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql",
         materialized="table",
         demonstrates="no tests at all, and reading staging directly",
         description=(
@@ -175,8 +175,8 @@ SPECS: list[Spec] = [
         depends_models=["stg_shop__orders"],
     ),
     Spec(
-        name="wh_shop__product_dim",
-        path="models/warehouse/wh_shop/wh_shop__product_dim.sql",
+        name="wh_master__product_dim",
+        path="models/warehouse/wh_master/wh_master__product_dim.sql",
         materialized="table",
         demonstrates="a dimension carrying a figure, which is how a join multiplies a total",
         description=(
@@ -194,8 +194,8 @@ SPECS: list[Spec] = [
         depends_models=["int_shop__orders"],
     ),
     Spec(
-        name="wh_shop__legacy_fact",
-        path="models/warehouse/wh_shop/wh_shop__legacy_fact.sql",
+        name="wh_commerce__legacy_fact",
+        path="models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql",
         materialized="table",
         demonstrates=(
             "built with no design, read by nothing, and naming a table directly "
@@ -210,8 +210,8 @@ SPECS: list[Spec] = [
         depends_models=["int_shop__orders"],
     ),
     Spec(
-        name="wh_shop__forecast_fact",
-        path="models/warehouse/wh_shop/wh_shop__forecast_fact.sql",
+        name="wh_commerce__forecast_fact",
+        path="models/warehouse/wh_commerce/wh_commerce__forecast_fact.sql",
         materialized="table",
         demonstrates="built and switched off, which is not the same as not built",
         description=(
@@ -225,7 +225,7 @@ SPECS: list[Spec] = [
             "forecast_units": "Units expected to sell that week.",
             "forecast_week_dt": "Monday of the week forecast.",
         },
-        depends_models=["wh_shop__product_dim"],
+        depends_models=["wh_master__product_dim"],
         enabled=False,
     ),
 ]
@@ -241,19 +241,19 @@ VENDORED = Spec(
 )
 
 TESTS = [
-    ("wh_shop__order_fact", "unique", "order_pk", "error", {}),
-    ("wh_shop__order_fact", "not_null", "order_pk", "error", {}),
+    ("wh_commerce__order_fact", "unique", "order_pk", "error", {}),
+    ("wh_commerce__order_fact", "not_null", "order_pk", "error", {}),
     (
-        "wh_shop__order_fact",
+        "wh_commerce__order_fact",
         "relationships",
         "customer_fk",
         "error",
-        {"to": "ref('wh_shop__customer_dim')", "field": "customer_pk"},
+        {"to": "ref('wh_master__customer_dim')", "field": "customer_pk"},
     ),
     # Uniqueness only. The missing not-null is deliberate.
-    ("wh_shop__customer_dim", "unique", "customer_pk", "error", {}),
+    ("wh_master__customer_dim", "unique", "customer_pk", "error", {}),
     # Weak-only coverage, to prove at_least_one is never credited as key cover.
-    ("wh_shop__product_dim", "at_least_one", "product_list_price_amount", "error", {}),
+    ("wh_master__product_dim", "at_least_one", "product_list_price_amount", "error", {}),
 ]
 
 SOURCES = [

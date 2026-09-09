@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../concepts/" class="md-nav__link">
+    <a href="../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -549,6 +553,8 @@
       
         
       
+        
+      
     
     
     
@@ -615,6 +621,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The roadmap
   
 
     
@@ -1064,28 +1098,28 @@
 <td>A working step, declared temporary in the register</td>
 </tr>
 <tr>
-<td><code>wh_shop__order_fact</code></td>
-<td>Nothing. Fully described, owned and tested</td>
+<td><code>wh_commerce__order_fact</code></td>
+<td>Nothing. Fully described, owned and tested, and marked verified in the register</td>
 </tr>
 <tr>
-<td><code>wh_shop__customer_dim</code></td>
+<td><code>wh_master__customer_dim</code></td>
 <td>No description, no owner, a key checked for uniqueness but not for being populated</td>
 </tr>
 <tr>
-<td><code>wh_shop__daily_sales_xa</code></td>
+<td><code>wh_commerce__daily_sales_xa</code></td>
 <td>No tests at all, and reading staging directly so skipping integration</td>
 </tr>
 <tr>
-<td><code>wh_shop__legacy_fact</code></td>
-<td>Built with no design, read by nothing, and naming a table directly instead of through dbt</td>
+<td><code>wh_commerce__legacy_fact</code></td>
+<td>Built with no design, read by nothing, and naming a table directly instead of through dbt. Marked deprecated</td>
 </tr>
 <tr>
-<td><code>wh_shop__product_dim</code></td>
+<td><code>wh_master__product_dim</code></td>
 <td>A dimension carrying a figure, which is how a join multiplies a total</td>
 </tr>
 </tbody>
 </table>
-<p>Plus <code>wh_shop__forecast_fact</code>, which is built and switched off, and <code>wh_shop__supplier_dim</code>, which is designed and not built.</p>
+<p>Plus <code>wh_commerce__forecast_fact</code>, which is built and switched off, and <code>wh_master__supplier_dim</code>, which is designed and not built.</p>
 <h2 id="what-it-scores">What it scores<a class="headerlink" href="#what-it-scores" title="Permanent link">&para;</a></h2>
 <p><strong>88.2 out of 100</strong>, grade A. Well maintained. Safe to build on.</p>
 <table>
@@ -1148,7 +1182,7 @@
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>score<span class="w"> </span>examples/tiny-shop
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>align<span class="w"> </span>examples/tiny-shop
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>explain<span class="w"> </span>wh_shop__customer_dim<span class="w"> </span>examples/tiny-shop
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>explain<span class="w"> </span>wh_master__customer_dim<span class="w"> </span>examples/tiny-shop
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>uv<span class="w"> </span>run<span class="w"> </span>hunter<span class="w"> </span>docs<span class="w"> </span>build<span class="w"> </span>examples/tiny-shop<span class="w"> </span>--out<span class="w"> </span>/tmp/example-site
 </code></pre></div>
 <h2 id="the-pages-it-produced">The pages it produced<a class="headerlink" href="#the-pages-it-produced" title="Permanent link">&para;</a></h2>
@@ -1167,6 +1201,10 @@
 <tr>
 <td><a href="reconciliation/">Designed against built</a></td>
 <td>What was asked for, what was designed, what exists</td>
+</tr>
+<tr>
+<td><a href="roadmap/">The roadmap</a></td>
+<td>What is planned, live, temporary, and on its way out</td>
 </tr>
 <tr>
 <td><a href="conceptual-model/">The business model</a></td>

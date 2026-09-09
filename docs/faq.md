@@ -14,7 +14,7 @@ eight areas; without it the area is excluded and its weight shared out.
 
 ### Will it change anything in my repository?
 
-`hunter init` writes two configuration files. Nothing else, ever: no commits,
+`hunter init` writes three files: two configuration files and one workflow. Nothing else, ever: no commits,
 no branches, no pull requests, no writes to your warehouse. Licence terms, not
 just current behaviour.
 
@@ -26,13 +26,35 @@ published.
 
 ### Who can see the report?
 
-Wherever you publish it. Hunter builds static HTML and JSON and hosts nothing.
+Anyone with the GitHub Pages link, once Pages is switched on. The workflow
+publishes the dashboard on every push to main, so a stakeholder needs the link
+and nothing else. See [Publish the dashboard](publish.md).
 
 <div class="key" markdown>
 **GitHub Pages from a private repository is public**, unless you are on GitHub
 Enterprise Cloud. The files are downloadable by anyone. A browser-side password
-check is not access control. See [In CI](ci.md).
+check is not access control.
 </div>
+
+### Do I have to run anything when a model changes?
+
+No. Opening a pull request runs the score and the three sync checks. Merging it
+rebuilds and publishes the dashboard. There is no path filter and no manual
+step.
+
+### We added a new directory of models. Does Hunter need telling?
+
+No. A directory under `models/` that the ruleset does not name becomes a layer
+on its own, named after the directory. The report marks it as found rather than
+declared. Declare it in `hunter.yml` when you want rules applied to it. See
+[Configuration](configuration.md#layers-hunter-finds-on-its-own).
+
+### What do temporary, verified and permanent mean?
+
+Temporary is a working step, or a table only ever meant to run once. Permanent
+is meant to stay. Verified is permanent plus a named person confirming it, and
+it can only come from the register. See
+[Mark a table temporary, verified or permanent](register.md).
 
 ## The score
 

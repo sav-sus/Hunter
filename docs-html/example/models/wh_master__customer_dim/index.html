@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_shop__order_fact/">
+        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_master__customer_dim/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>orders - Rittman Hunter</title>
+        <title>customers - Rittman Hunter</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#orders" class="md-skip">
+        <a href="#customers" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              orders
+              customers
             
           </span>
         </div>
@@ -267,7 +267,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -317,7 +317,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -344,6 +344,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -364,14 +370,14 @@
   
   
   
-    <a href="../../../concepts/" class="md-nav__link">
+    <a href="../../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -398,8 +404,6 @@
   
     
     
-      
-        
       
         
       
@@ -429,7 +433,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -517,6 +521,8 @@
       
         
           
+        
+      
         
       
         
@@ -660,7 +666,7 @@
 
 
   
-    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_shop__order_fact.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_master__customer_dim.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -668,9 +674,9 @@
   
 
 
-<h1 id="orders">orders<a class="headerlink" href="#orders" title="Permanent link">&para;</a></h1>
-<p><code>wh_shop__order_fact</code></p>
-<p>Warehouse order fact. Built from int_shop__orders, which joins the shop platform's orders to the customer who placed them. Carries the order value before returns; returns are held separately.</p>
+<h1 id="customers">customers<a class="headerlink" href="#customers" title="Permanent link">&para;</a></h1>
+<p><code>wh_master__customer_dim</code></p>
+<p><em>No description has been written for this table.</em></p>
 <table>
 <thead>
 <tr>
@@ -685,7 +691,7 @@
 </tr>
 <tr>
 <td>Area</td>
-<td>shop</td>
+<td>master</td>
 </tr>
 <tr>
 <td>Built as</td>
@@ -696,8 +702,8 @@
 <td>yes</td>
 </tr>
 <tr>
-<td>Temporary or permanent</td>
-<td>persistent</td>
+<td>Temporary, verified or permanent</td>
+<td>permanent</td>
 </tr>
 <tr>
 <td>Decided by</td>
@@ -705,19 +711,19 @@
 </tr>
 <tr>
 <td>One row means</td>
-<td>One row per order</td>
+<td>One row per customer</td>
 </tr>
 <tr>
 <td>Owner</td>
-<td>commerce</td>
+<td>nobody named</td>
 </tr>
 <tr>
 <td>Named as</td>
-<td>fact</td>
+<td>dimension</td>
 </tr>
 <tr>
 <td>Behaves like</td>
-<td>not clear from its columns (closest guess fact, confidence 0.65, below the 0.7 needed to say)</td>
+<td>not clear from its columns (closest guess fact, confidence 0.3, below the 0.7 needed to say)</td>
 </tr>
 <tr>
 <td>State</td>
@@ -737,7 +743,7 @@
 </tr>
 <tr>
 <td>File</td>
-<td><code>models/warehouse/wh_shop/wh_shop__order_fact.sql</code></td>
+<td><code>models/warehouse/wh_master/wh_master__customer_dim.sql</code></td>
 </tr>
 </tbody>
 </table>
@@ -753,34 +759,28 @@
 </thead>
 <tbody>
 <tr>
-<td>customer_fk</td>
+<td>customer_joined_dt</td>
 <td>not recorded</td>
-<td>The customer who placed it.</td>
-<td>relationships</td>
-</tr>
-<tr>
-<td>order_natural_key</td>
-<td>not recorded</td>
-<td>The order reference from the shop platform.</td>
+<td>Date of the customer's first order.</td>
 <td>none</td>
 </tr>
 <tr>
-<td>order_pk</td>
+<td>customer_name</td>
 <td>not recorded</td>
-<td>Surrogate key for the order.</td>
-<td>not_null, unique</td>
-</tr>
-<tr>
-<td>order_placed_dt</td>
-<td>not recorded</td>
-<td>Date the order was placed.</td>
+<td>Customer name.</td>
 <td>none</td>
 </tr>
 <tr>
-<td>order_total_amount</td>
+<td>customer_natural_key</td>
 <td>not recorded</td>
-<td>Order value before returns.</td>
+<td>The customer reference.</td>
 <td>none</td>
+</tr>
+<tr>
+<td>customer_pk</td>
+<td>not recorded</td>
+<td>Surrogate key for the customer.</td>
+<td>unique</td>
 </tr>
 </tbody>
 </table>
@@ -802,16 +802,16 @@
 <tr>
 <td>Report views</td>
 <td>1</td>
-<td>wh_shop__order_fact</td>
+<td>wh_master__customer_dim</td>
 </tr>
 </tbody>
 </table>
 <pre class="mermaid"><code>flowchart LR
-  wh_shop__order_fact["wh_shop__order_fact"]
-  style wh_shop__order_fact fill:#fdf2cc,stroke:#9a8330
-  view_wh_shop__order_fact("wh_shop__order_fact")
-  style view_wh_shop__order_fact fill:#e6eefb,stroke:#3b6fb6
-  wh_shop__order_fact --&gt; view_wh_shop__order_fact</code></pre>
+  wh_master__customer_dim["wh_master__customer_dim"]
+  style wh_master__customer_dim fill:#fdf2cc,stroke:#9a8330
+  view_wh_master__customer_dim("wh_master__customer_dim")
+  style view_wh_master__customer_dim fill:#e6eefb,stroke:#3b6fb6
+  wh_master__customer_dim --&gt; view_wh_master__customer_dim</code></pre>
 <h2 id="findings">Findings<a class="headerlink" href="#findings" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -825,27 +825,51 @@
 <tbody>
 <tr>
 <td>Needs attention</td>
-<td>1 report field in view wh_shop__order_fact read columns wh_shop__order_fact no longer produces: order_channel_name -&gt; order_channel_name</td>
-<td>These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact.</td>
-<td>analytics_warehouse/lookml/base/_base.layer.lkml</td>
+<td>1 test declared for wh_master__customer_dim never reached the generated schema: customer_pk: not_null</td>
+<td>Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
+</tr>
+<tr>
+<td>Needs attention</td>
+<td>Nothing tests that customer_pk is always populated on wh_master__customer_dim</td>
+<td>Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
+</tr>
+<tr>
+<td>Worth fixing (silenced)</td>
+<td>wh_master__customer_dim has no description</td>
+<td>Nobody reading the catalogue can tell what customers is for or whether it is the right table to use. 6 report fields depend on it.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>3 tests in the generated schema for wh_shop__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one</td>
-<td>The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
-<td>models/warehouse/wh_shop/wh_shop__order_fact.sql</td>
+<td>wh_master__customer_dim skips the integration layer to read stg_shop__customers</td>
+<td>customers reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
+</tr>
+<tr>
+<td>Worth fixing</td>
+<td>wh_master__customer_dim names no owner</td>
+<td>There is nobody to ask about customers and nobody to route a problem with it to. It is a persistent table, and 6 report fields depend on it.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
+</tr>
+<tr>
+<td>Worth fixing</td>
+<td>1 test in the generated schema for wh_master__customer_dim are not in the project: customer_name: at_least_one</td>
+<td>The generated schema says these tests should exist on customers, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
+</tr>
+<tr>
+<td>Tidy up (suggestion)</td>
+<td>wh_master__customer_dim is named as a dimension, and its shape neither clearly agrees nor disagrees</td>
+<td>Hunter could not tell from its columns whether customers really is a dimension. Worth a human look rather than a change. Evidence: 0 foreign keys, 0 columns to add up, 1 descriptive column, a date grain (judged from names, since column types were not available).</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__order_fact feeds 1 report view but declares no exposure</td>
-<td>Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.</td>
-<td>models/warehouse/wh_shop/wh_shop__order_fact.sql</td>
-</tr>
-<tr>
-<td>Tidy up</td>
-<td>wh_shop__order_fact holds 1 column in the warehouse that the design does not include: order_channel_name</td>
-<td>The warehouse picture taken by Droughty shows columns on orders that nobody designed, so their business meaning is not recorded.</td>
-<td>analytics_warehouse/docs/data_model_design/physical_model.dbml</td>
+<td>wh_master__customer_dim feeds 1 report view but declares no exposure</td>
+<td>Nothing in the project records that reports depend on customers, so anyone changing it has no way to see what they would break.</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 </tbody>
 </table>

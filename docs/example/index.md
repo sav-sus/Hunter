@@ -13,13 +13,13 @@ Eight tables, with one deliberate flaw per finding class. Small enough to read i
 | `stg_shop__orders` | Taking every column from a raw source |
 | `stg_shop__customers` | Nothing. The control |
 | `int_shop__orders` | A working step, declared temporary in the register |
-| `wh_shop__order_fact` | Nothing. Fully described, owned and tested |
-| `wh_shop__customer_dim` | No description, no owner, a key checked for uniqueness but not for being populated |
-| `wh_shop__daily_sales_xa` | No tests at all, and reading staging directly so skipping integration |
-| `wh_shop__legacy_fact` | Built with no design, read by nothing, and naming a table directly instead of through dbt |
-| `wh_shop__product_dim` | A dimension carrying a figure, which is how a join multiplies a total |
+| `wh_commerce__order_fact` | Nothing. Fully described, owned and tested, and marked verified in the register |
+| `wh_master__customer_dim` | No description, no owner, a key checked for uniqueness but not for being populated |
+| `wh_commerce__daily_sales_xa` | No tests at all, and reading staging directly so skipping integration |
+| `wh_commerce__legacy_fact` | Built with no design, read by nothing, and naming a table directly instead of through dbt. Marked deprecated |
+| `wh_master__product_dim` | A dimension carrying a figure, which is how a join multiplies a total |
 
-Plus `wh_shop__forecast_fact`, which is built and switched off, and `wh_shop__supplier_dim`, which is designed and not built.
+Plus `wh_commerce__forecast_fact`, which is built and switched off, and `wh_master__supplier_dim`, which is designed and not built.
 
 ## What it scores
 
@@ -49,7 +49,7 @@ uv sync --all-extras
 
 uv run hunter score examples/tiny-shop
 uv run hunter align examples/tiny-shop
-uv run hunter explain wh_shop__customer_dim examples/tiny-shop
+uv run hunter explain wh_master__customer_dim examples/tiny-shop
 uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 ```
 
@@ -59,6 +59,7 @@ uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 |---|---|
 | [Overview](index-page.md) | Is this repository in good shape, and what needs a decision |
 | [Designed against built](reconciliation.md) | What was asked for, what was designed, what exists |
+| [The roadmap](roadmap.md) | What is planned, live, temporary, and on its way out |
 | [The business model](conceptual-model.md) | What the business needs held, and whether it is there |
 | [The data model](data-model.md) | The same model at three levels |
 | [The score](scorecard.md) | Every number and the rule behind it |

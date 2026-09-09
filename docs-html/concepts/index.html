@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://rittman-hunter.readthedocs.io/concepts/">
       
       
-        <link rel="prev" href="../example/dashboard/">
+        <link rel="prev" href="../scoring/">
       
       
-        <link rel="next" href="../scoring/">
+        <link rel="next" href="../cli/">
       
       
         
@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,67 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../how-it-works/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to
   
 
     
@@ -355,6 +415,8 @@
       
         
       
+        
+      
     
     
     
@@ -365,17 +427,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    Configuration
   
 
     
@@ -386,16 +448,72 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
-    How it works
+    Configuration
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    hunter.yml
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The score
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -486,10 +604,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-temporary-against-permanent" class="md-nav__link">
+  <a href="#3-temporary-verified-or-permanent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Temporary against permanent
+        3. Temporary, verified or permanent
       
     </span>
   </a>
@@ -560,94 +678,8 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scoring/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    The score
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    <a href="../configuration/" class="md-nav__link">
-      
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Set it up
-  
-
-    
-  </span>
-  
-  
-
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
       
     </li>
   
@@ -722,6 +754,8 @@
       
         
           
+        
+      
         
       
         
@@ -838,10 +872,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-temporary-against-permanent" class="md-nav__link">
+  <a href="#3-temporary-verified-or-permanent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Temporary against permanent
+        3. Temporary, verified or permanent
       
     </span>
   </a>
@@ -1082,6 +1116,13 @@ that stage do not apply.</p>
 </table>
 <p>All of it is configurable. Hunter has no built-in opinion about your layer
 names.</p>
+<p><strong>Layers Hunter finds on its own.</strong> A directory under <code>models/</code> that no layer
+claims becomes a layer named after the directory. Its models are grouped,
+scored and shown on the report, and the report says the layer was found rather
+than declared. It carries no rules until it is declared in <code>hunter.yml</code>,
+because Hunter knows the models are grouped, not what the group should look
+like. A new part of the warehouse therefore appears on the next run with no
+configuration change.</p>
 <details class="note">
 <summary>Two fields worth understanding</summary>
 <p><strong><code>pipeline_stage</code></strong> is where the layer sits in the flow. Reading two stages
@@ -1092,10 +1133,14 @@ those layers appear in the reconciliation. Without it, 129 staging models
 would each be reported as built off-plan, which is not a finding anyone can
 act on.</p>
 </details>
-<h2 id="3-temporary-against-permanent">3. Temporary against permanent<a class="headerlink" href="#3-temporary-against-permanent" title="Permanent link">&para;</a></h2>
-<p>A temporary table is a working step. A permanent one is something to report
-from. Working steps get depended on, and then cannot be changed, which is one
-of the problems Hunter exists for.</p>
+<h2 id="3-temporary-verified-or-permanent">3. Temporary, verified or permanent<a class="headerlink" href="#3-temporary-verified-or-permanent" title="Permanent link">&para;</a></h2>
+<p>A temporary table is a working step, or a table only ever meant to run once. A
+permanent one is something to report from. A verified one is permanent, and a
+named person has confirmed it should stay. Working steps get depended on, and
+then cannot be changed, which is one of the problems Hunter exists for.</p>
+<p>Hunter can infer the first and the last. It can never infer verified, because
+verified means somebody looked. The dashboard shows the three words side by
+side, so a reader can tell a table that was checked from one that was assumed.</p>
 <p>Hunter decides in this order, and records which signal decided:</p>
 <table>
 <thead>

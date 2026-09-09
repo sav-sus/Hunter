@@ -180,6 +180,15 @@ class Model(Node):
         return self.persistence is Persistence.TEMPORARY
 
     @property
+    def is_lasting(self) -> bool:
+        """Permanent or verified. Judged as a finished table either way."""
+        return self.persistence.is_lasting
+
+    @property
+    def is_verified(self) -> bool:
+        return self.persistence is Persistence.VERIFIED
+
+    @property
     def downstream_count(self) -> int:
         return len(self.downstream_models)
 
@@ -457,6 +466,10 @@ class ParseIssue(Node):
 
 class Project(Node):
     """Everything Hunter ingested, normalised and cross-referenced."""
+
+    #: Layers found in the models directory that the ruleset did not declare.
+    #: Names only; the specs themselves are appended to the resolved config.
+    discovered_layers: list[str] = Field(default_factory=list)
 
     models: dict[str, Model] = Field(default_factory=dict)
     sources: dict[str, Source] = Field(default_factory=dict)

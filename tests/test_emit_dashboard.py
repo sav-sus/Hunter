@@ -19,7 +19,16 @@ import pytest
 from hunter import brand
 from hunter.emit import charts
 from hunter.emit.charts import Slice
-from hunter.emit.dashboard import MERMAID_URL, catalogue_rows, checklist, dashboard_html
+from hunter.emit.dashboard import (
+    MERMAID_URL,
+    ROADMAP_LANES,
+    checklist,
+    dashboard_html,
+    journey,
+    readiness_rows,
+    roadmap_lanes,
+)
+from hunter.enums import AlignmentState
 from hunter.run import RunResult, run
 
 EXAMPLE = Path(__file__).parent.parent / "examples" / "tiny-shop"
@@ -71,7 +80,7 @@ class TestWellFormed:
     def test_every_chart_parses_as_xml(self, page: str) -> None:
         """A malformed path or an unescaped label would show as a blank panel."""
         found = re.findall(r"<svg\b.*?</svg>", page, re.S)
-        assert len(found) >= 6, f"expected the charts to be drawn, found {len(found)}"
+        assert len(found) >= 1, f"expected at least the score ring, found {len(found)}"
         for svg in found:
             ElementTree.fromstring(svg)  # raises if the SVG is not well formed
 
@@ -79,11 +88,12 @@ class TestWellFormed:
         """A rule title is a template. One reaching the page renders as raw
         "{subject} is built but switched off", which this catches.
 
-        The stylesheet, the scripts and the diagram source are all full of
-        braces by nature, so they are removed before looking.
+        The stylesheet, the scripts (including the JSON the selector reads) and
+        the diagram source are all full of braces by nature, so they are
+        removed before looking.
         """
         body = re.sub(r"<style>.*?</style>", "", page, flags=re.S)
-        body = re.sub(r"<script>.*?</script>", "", body, flags=re.S)
+        body = re.sub(r"<script[^>]*>.*?</script>", "", body, flags=re.S)
         # Entity-relationship diagram source is "table { column }" by design.
         body = re.sub(r"<pre class='mermaid'>.*?</pre>", "", body, flags=re.S)
         assert "{" not in body and "}" not in body
@@ -96,19 +106,60 @@ class TestContent:
 
     def test_the_checklist_comes_before_everything_else(self, page: str) -> None:
         """The statements are the value. They sit directly under the score."""
-        assert page.index('id="checklist"') < page.index('id="alignment"')
-        assert page.index('id="alignment"') < page.index('id="catalogue"')
+        assert page.index('id="top"') < page.index("id='checklist'")
+        assert page.index("id='checklist'") < page.index('id="alignment"')
+        assert page.index('id="alignment"') < page.index('id="readiness"')
 
-    def test_an_unmeasured_area_is_named_rather_than_scored_zero(self, page: str) -> None:
-        assert "Not measured" in page
-        assert "What it costs to run" in page
+    def test_the_repository_is_named_in_the_headline(self, page: str, result: RunResult) -> None:
+        """A product owner opens this and should know whose repository it is."""
+        assert f"<h1>{result.meta['repo']}</h1>" in page
+
+    def test_the_hero_counts_how_many_checks_hold(self, page: str, result: RunResult) -> None:
+        checks = [check for section in checklist(result) for check in section.checks]
+        holding = sum(1 for check in checks if check.holds)
+        assert f"{holding} of {len(checks)}</b><span>checks hold" in page
+
+    def test_the_removed_panels_stay_removed(self, page: str) -> None:
+        for title in (
+            "What everything else is built on",
+            "Do these first",
+            "What this score is not based on",
+            "Every file this was computed from",
+        ):
+            assert title not in page
 
     def test_the_off_plan_table_is_named_by_its_technical_name(self, page: str) -> None:
         """A business label of "legacy" is no use to whoever has to act."""
-        assert "wh_shop__legacy_fact" in page
+        assert "wh_commerce__legacy_fact" in page
 
     def test_the_attribution_is_present(self, page: str, result: RunResult) -> None:
         assert result.config.branding.attribution in page
+
+
+class TestJourney:
+    """The strip from what was asked for to what people can use."""
+
+    def test_every_level_hunter_read_is_a_stage(self, result: RunResult) -> None:
+        labels = [stage.label for stage in journey(result)]
+        assert labels == [
+            "Asked for by the business",
+            "Designed",
+            "Built",
+            "Live in the warehouse",
+            "Reachable in Looker",
+        ]
+
+    def test_each_drop_is_counted_on_its_own_terms(self, result: RunResult) -> None:
+        """Built includes an off-plan table, so built is not designed minus a drop."""
+        by_label = {stage.label: stage for stage in journey(result)}
+        assert by_label["Asked for by the business"].dropped == 1
+        assert by_label["Designed"].dropped == 1
+        assert by_label["Built"].count == 6
+        assert by_label["Built"].dropped == 2
+
+    def test_a_drop_is_written_in_words_on_the_page(self, page: str) -> None:
+        assert "&minus;1 not designed" in page
+        assert "&minus;3 not in Looker" in page
 
 
 class TestChecklist:
@@ -136,14 +187,17 @@ class TestChecklist:
         }
         design = by_statement["Every built table has a design"]
         assert design.done < design.total
-        assert "wh_shop__legacy_fact" in design.missing
+        assert "wh_commerce__legacy_fact" in design.missing
 
     def test_a_switched_off_model_still_counts_as_built(self, result: RunResult) -> None:
         """The code was written, reviewed and merged. It is not unbuilt."""
         by_statement = {
             check.statement: check for section in checklist(result) for check in section.checks
         }
-        assert "wh_shop__forecast_fact" not in by_statement["Every designed table is built"].missing
+        assert (
+            "wh_commerce__forecast_fact"
+            not in by_statement["Every designed table is built"].missing
+        )
 
     def test_rule_backed_statements_trace_to_the_rule(self, result: RunResult) -> None:
         """Every figure on the page has a finding behind it."""
@@ -153,7 +207,7 @@ class TestChecklist:
         owner = by_statement["Every table has a named owner"]
         assert owner.rule == "documentation.owner_missing"
         assert owner.total == result.examined[owner.rule].checked
-        assert owner.missing == ("wh_shop__customer_dim",)
+        assert owner.missing == ("wh_master__customer_dim",)
 
     def test_a_rule_that_examined_nothing_makes_no_statement(self, result: RunResult) -> None:
         """Passing a check with nothing to check is not passing."""
@@ -171,12 +225,85 @@ class TestChecklist:
         assert Check("s", 0, 0).holds is False
 
 
+class TestDataFlow:
+    """The DAG card: every area together, then one tab per area."""
+
+    def test_the_card_has_a_tab_for_every_area_and_one_for_all(self, page: str) -> None:
+        card = page[page.index('id="dag"') :]
+        card = card[: card.index("</section>")]
+        assert "data-pane='all'" in card
+        assert "data-pane='dag-commerce'" in card
+        assert "data-pane='dag-master'" in card
+        assert "data-pane='overview'" not in card
+        assert "subgraph sources[&quot;raw sources&quot;]" in card
+
+    def test_each_area_carries_its_graph_as_data_for_the_selector(self, page: str) -> None:
+        """The browser redraws a dbt-style selection from this, not from the picture."""
+        card = page[page.index('id="dag"') :]
+        card = card[: card.index("</section>")]
+        assert card.count("class='dag-spec'") == 3
+        assert "list='dag-names'" in card
+        assert "<option value='wh_commerce__order_fact'>" in card
+
+    def test_each_tab_group_is_self_contained(self, page: str) -> None:
+        """Two tabbed cards on one page must not share pane ids."""
+        assert page.count("class='tabbed'") == 2
+        assert "id='pane-" not in page
+
+
 class TestDiagrams:
     """The three models a stakeholder can switch between."""
 
-    def test_all_three_models_are_carried_as_source(self, page: str) -> None:
+    def test_the_three_levels_are_carried_as_source(self, page: str) -> None:
         for key in ("conceptual", "logical", "physical"):
-            assert f"id='pane-{key}'" in page
+            assert f"data-key='{key}'" in page
+        assert "data-key='built'" not in page, "built is the physical model as it exists"
+
+    def test_the_logical_tab_is_the_authored_data_flow_diagram(
+        self, page: str, result: RunResult
+    ) -> None:
+        """The team's own picture, coloured by state, without the front matter."""
+        assert result.logical_source is not None
+        card = page[page.index("data-key='logical'") :]
+        card = card[: card.index("</pre>")]
+        assert "Shop Platform" in card, "an authored label survives"
+        assert "layout: elk" not in card and "title:" not in card
+        assert "style wh_commerce__orders fill:#d6ead6" in card, "designed and delivered"
+        assert "style data_source__database__shop fill:#e1f6fe" in card
+
+    def test_the_colour_key_is_html_under_the_canvas_not_a_box_in_the_diagram(
+        self, page: str
+    ) -> None:
+        assert 'subgraph legend["What the colours mean"]' not in page
+        card = page[page.index("data-key='conceptual'") :]
+        card = card[: card.index("data-key='logical'")]
+        assert "class='heat-key'" in card
+        assert "Designed and delivered" in card
+
+    def test_the_conceptual_model_is_cards_by_area_coloured_by_state(self, page: str) -> None:
+        """The business model needs no library: entity cards, one section per area."""
+        card = page[page.index("data-key='conceptual'") :]
+        card = card[: card.index("data-key='logical'")]
+        assert "class='concept'" in card
+        assert card.count("<section class='erd-group'>") == 2, "commerce and master"
+        assert "<b>returns</b><span>On the business model only</span>" in card
+        assert "<code>wh_commerce__order_fact</code>" in card, "technical name under the label"
+
+    def test_the_physical_tab_is_the_dbml_design_as_cards(self, page: str) -> None:
+        """Cards, not a library drawing: they render offline and carry the notes."""
+        card = page[page.index("data-key='physical'") :]
+        card = card[: card.index('id="dag"')]  # up to the next card; groups are sections too
+        assert "pre class='mermaid'" not in card
+        assert "data-table='wh_master__supplier_dim'" in card, "designed but unbuilt"
+        assert "<span class='grain'>One row per order</span>" in card
+        assert "data-ref='wh_master__customer_dim.customer_pk'" in card, "a drawn relationship"
+        assert "<em class='pk'>PK</em>" in card and "<em class='fk'>FK</em>" in card
+        assert "title='Surrogate key for the order.'" in card, "the column note, on hover"
+
+    def test_the_diagrams_card_has_a_find_box(self, page: str) -> None:
+        card = page[page.index('id="diagrams"') :]
+        card = card[: card.index("</section>")]
+        assert "placeholder='Find a table or entity in this diagram'" in card
 
     def test_the_diagram_source_is_escaped(self, page: str, result: RunResult) -> None:
         """A quote in a business label must not end the pre element early."""
@@ -186,49 +313,74 @@ class TestDiagrams:
         assert raw not in page or "&quot;" in page or '"' not in raw
 
 
-class TestCatalogue:
-    """The searchable list of every table, and what stands behind it."""
+class TestReadiness:
+    """Every built table, and what it still needs to be finished."""
 
-    def test_every_level_gets_a_column(self, page: str) -> None:
-        for head in ("In the design", "In the repository", "In the warehouse", "Looker view"):
+    def test_only_built_tables_are_listed(self, result: RunResult) -> None:
+        names = {row.name for row in readiness_rows(result)}
+        assert "wh_master__supplier_dim" not in names, "designed, not built"
+        assert "wh_commerce__forecast_fact" in names, "built, even though switched off"
+        assert "stg_shop__orders" not in names, "a staging step, not a warehouse table"
+
+    def test_each_table_names_its_gaps_and_is_ready_only_with_none(self, result: RunResult) -> None:
+        by_name = {row.name: row for row in readiness_rows(result)}
+        # The best table in the example is one step short: Droughty generated a
+        # test for it that dbt does not carry. Everything else about it is in place.
+        assert by_name["wh_commerce__order_fact"].gaps == ("Droughty tests not applied",)
+        assert by_name["wh_commerce__order_fact"].ready is False
+        assert "no owner" in by_name["wh_master__customer_dim"].gaps
+        assert "no LookML view" in by_name["wh_master__product_dim"].gaps
+        assert "no tests" in by_name["wh_commerce__daily_sales_xa"].gaps
+        assert "switched off" in by_name["wh_commerce__forecast_fact"].gaps
+
+    def test_key_tests_distinguish_one_from_both(self, result: RunResult) -> None:
+        by_name = {row.name: row for row in readiness_rows(result)}
+        assert by_name["wh_commerce__order_fact"].key_tests == "yes"
+        assert by_name["wh_master__customer_dim"].key_tests == "partial"
+        assert by_name["wh_commerce__daily_sales_xa"].key_tests == "no"
+
+    def test_every_dimension_gets_a_column(self, page: str) -> None:
+        for head in (
+            "Described",
+            "Columns described",
+            "Owner",
+            "Key tests",
+            "LookML view",
+            "Droughty",
+            "In the warehouse",
+            "What it still needs",
+        ):
             assert f"<th>{head}</th>" in page
-
-    def test_a_table_only_the_warehouse_knows_about_is_still_listed(
-        self, result: RunResult
-    ) -> None:
-        """A list built from the design alone would hide it."""
-        rows = catalogue_rows(result)
-        assert {row.name for row in rows} >= set(result.project.droughty.introspected)
-
-    def test_a_switched_off_model_is_marked_apart_from_a_missing_one(
-        self, result: RunResult
-    ) -> None:
-        by_name = {row.name: row for row in catalogue_rows(result)}
-        assert by_name["wh_shop__forecast_fact"].built == "off"
-        assert by_name["wh_shop__supplier_dim"].built == "no"
-
-    def test_an_entity_with_no_table_yet_is_not_dressed_up_as_one(self, result: RunResult) -> None:
-        """It is a business entity nobody has built. Showing a table name would lie."""
-        by_name = {row.name: row for row in catalogue_rows(result)}
-        assert by_name["returns"].is_table is False
 
     def test_the_rows_carry_what_the_filter_searches(self, page: str) -> None:
         assert 'data-find="' in page
         assert "id='table-search'" in page
+        assert "id='table-gaps'" in page, "the gaps-only toggle"
+
+    def test_area_tabs_match_the_data_flow_card(self, page: str) -> None:
+        """Same tabs, same look: all areas first, then one per area."""
+        card = page[page.index('id="readiness"') :]
+        card = card[: card.index("</section>")]
+        assert "id='table-areas'" in card
+        assert "data-area=''>All areas</button>" in card
+        assert "data-area='commerce'" in card and "data-area='master'" in card
+        assert "<em class='chip gap'>no owner</em>" in card
+        assert "data-gaps='1'" in page
+        assert "<b>0 of 6</b><span>built tables ready" in page
 
     def test_the_order_does_not_move_between_runs(self, result: RunResult) -> None:
-        assert [row.name for row in catalogue_rows(result)] == [
-            row.name for row in catalogue_rows(result)
+        assert [row.name for row in readiness_rows(result)] == [
+            row.name for row in readiness_rows(result)
         ]
 
 
-class TestModelLanes:
-    """The three models drawn against each other."""
+class TestAlignment:
+    """The conceptual, logical and physical models against what is built."""
 
     def test_the_card_is_called_modelling_alignment(self, page: str) -> None:
         assert "<h2>Modelling alignment</h2>" in page
 
-    def test_every_level_hunter_read_gets_a_lane(self, page: str) -> None:
+    def test_every_level_hunter_read_gets_a_column(self, page: str) -> None:
         for heading in (
             "Conceptual \u00b7 the business model",
             "Logical \u00b7 the data flow",
@@ -238,9 +390,38 @@ class TestModelLanes:
             assert heading in page
 
     def test_a_break_in_the_chain_is_drawn_differently_from_agreement(self, page: str) -> None:
-        assert 'class="lane-link ok"' in page
-        assert 'class="lane-link broken"' in page
-        assert 'class="lane-link unplanned"' in page
+        assert "class='lane-link ok'" in page
+        assert "class='lane-link broken'" in page
+        assert "class='lane-link unplanned'" in page
+
+    def test_every_row_opens_to_what_to_do_next(self, page: str, result: RunResult) -> None:
+        from hunter.emit.dashboard import NEXT_STEP
+
+        card = page[page.index('id="alignment"') :]
+        card = card[: card.index("</section>")]
+        assert card.count("<details class='arow'") == len(result.alignment.rows)
+        assert "Do next." in card
+        assert NEXT_STEP[AlignmentState.BUILT_OFF_PLAN][:40] in card
+
+    def test_rows_are_grouped_by_area_with_a_count(self, page: str) -> None:
+        card = page[page.index('id="alignment"') :]
+        card = card[: card.index("</section>")]
+        assert "data-group='commerce'" in card and "data-group='master'" in card
+        assert "designed and delivered</em>" in card
+
+    def test_the_headline_chips_read_the_situation(self, page: str) -> None:
+        card = page[page.index('id="alignment"') :]
+        card = card[: card.index("</section>")]
+        assert "asked for and now in the repository" in card
+        assert "built with no design" in card
+        assert "asked for, never designed" in card
+
+    def test_rows_carry_what_the_search_matches(self, page: str) -> None:
+        card = page[page.index('id="alignment"') :]
+        card = card[: card.index("</section>")]
+        assert "class='find'" in card
+        assert 'data-find="' in card
+        assert "wh_commerce__legacy_fact" in card
 
 
 class TestDeterminism:
@@ -318,3 +499,84 @@ class TestBrand:
     def test_the_packaged_assets_exist(self) -> None:
         assert brand.logo_uri().startswith("data:image/png;base64,")
         assert brand.favicon_uri().startswith("data:image/x-icon;base64,")
+
+
+class TestRoadmap:
+    """Every tracked entity sits in exactly one lane, and the register decides first."""
+
+    def test_every_lane_is_on_the_page_in_order(self, page: str) -> None:
+        card = page[page.index('id="roadmap"') :]
+        card = card[: card.index("</section>")]
+        positions = [card.index(f"data-lane='{key}'") for key, *_ in ROADMAP_LANES]
+        assert positions == sorted(positions)
+
+    def test_the_roadmap_comes_after_the_checklist_and_before_alignment(self, page: str) -> None:
+        assert (
+            page.index("id='checklist'") < page.index('id="roadmap"') < page.index('id="alignment"')
+        )
+
+    def test_a_verified_table_is_live_with_the_word_on_it(self, result: RunResult) -> None:
+        lanes = {lane.key: lane for lane in roadmap_lanes(result)}
+        order = next(
+            item for item in lanes["live"].items if item.technical_name == "wh_commerce__order_fact"
+        )
+        assert order.status == "verified"
+        assert "verified by sav" in order.next_step
+
+    def test_a_register_declared_temporary_step_has_its_own_lane(self, result: RunResult) -> None:
+        lanes = {lane.key: lane for lane in roadmap_lanes(result)}
+        names = {item.technical_name for item in lanes["temporary"].items}
+        assert "int_shop__orders" in names
+        step = next(
+            item for item in lanes["temporary"].items if item.technical_name == "int_shop__orders"
+        )
+        assert step.next_step == "review by 31 January 2027"
+
+    def test_a_deprecated_status_outranks_the_chain(self, result: RunResult) -> None:
+        """The legacy fact is built and live by the code. The register says it is going."""
+        lanes = {lane.key: lane for lane in roadmap_lanes(result)}
+        names = {item.technical_name for item in lanes["phasing_out"].items}
+        assert names == {"wh_commerce__legacy_fact"}
+        assert "wh_commerce__legacy_fact" not in {
+            item.technical_name for item in lanes["live"].items
+        }
+
+    def test_designed_not_built_is_planned(self, result: RunResult) -> None:
+        lanes = {lane.key: lane for lane in roadmap_lanes(result)}
+        planned = {
+            item.technical_name or item.label: item.next_step for item in lanes["planned"].items
+        }
+        assert planned["wh_master__supplier_dim"] == "designed, waiting to be built"
+        assert planned["returns"] == "agreed, not designed yet"
+
+    def test_a_switched_off_table_is_being_built(self, result: RunResult) -> None:
+        lanes = {lane.key: lane for lane in roadmap_lanes(result)}
+        names = {item.technical_name for item in lanes["building"].items}
+        assert "wh_commerce__forecast_fact" in names
+
+    def test_no_entity_sits_in_two_lanes(self, result: RunResult) -> None:
+        seen: list[str] = []
+        for lane in roadmap_lanes(result):
+            seen += [item.technical_name or item.label for item in lane.items]
+        assert len(seen) == len(set(seen))
+
+
+class TestStatusColumn:
+    def test_every_built_table_carries_one_of_the_three_words(self, result: RunResult) -> None:
+        rows = readiness_rows(result)
+        assert rows
+        assert {row.status for row in rows} <= {
+            "temporary",
+            "verified",
+            "permanent",
+            "not determined",
+        }
+
+    def test_the_verified_table_says_who_verified_it(self, result: RunResult) -> None:
+        row = next(row for row in readiness_rows(result) if row.name == "wh_commerce__order_fact")
+        assert row.status == "verified"
+        assert row.status_note == "verified by sav on 8 September 2026"
+
+    def test_the_status_is_searchable(self, result: RunResult) -> None:
+        row = next(row for row in readiness_rows(result) if row.name == "wh_commerce__order_fact")
+        assert "verified" in row.searchable

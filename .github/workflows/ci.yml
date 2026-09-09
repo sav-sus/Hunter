@@ -89,7 +89,7 @@ jobs:
         run: |
           uv run hunter score examples/tiny-shop --out /tmp/report.json
           uv run hunter align examples/tiny-shop
-          uv run hunter explain wh_shop__customer_dim examples/tiny-shop
+          uv run hunter explain wh_master__customer_dim examples/tiny-shop
           uv run hunter showcase examples/tiny-shop --days 14
           uv run hunter docs build examples/tiny-shop --out /tmp/site
           uv run hunter rules

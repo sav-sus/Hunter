@@ -4,8 +4,8 @@
 # labelling and grouping goes in the staging layer as a refinement, so this
 # file can be regenerated without losing it.
 
-view: wh_shop__order_fact {
-  sql_table_name: wh_shop__order_fact ;;
+view: wh_commerce__order_fact {
+  sql_table_name: wh_commerce__order_fact ;;
 
   dimension: order_pk {
     primary_key: yes
@@ -54,8 +54,8 @@ view: wh_shop__order_fact {
   }
 }
 
-view: wh_shop__customer_dim {
-  sql_table_name: wh_shop__customer_dim ;;
+view: wh_master__customer_dim {
+  sql_table_name: wh_master__customer_dim ;;
 
   dimension: customer_pk {
     primary_key: yes
@@ -88,8 +88,8 @@ view: wh_shop__customer_dim {
   }
 }
 
-view: wh_shop__daily_sales_xa {
-  sql_table_name: wh_shop__daily_sales_xa ;;
+view: wh_commerce__daily_sales_xa {
+  sql_table_name: wh_commerce__daily_sales_xa ;;
 
   dimension: daily_sales_pk {
     primary_key: yes

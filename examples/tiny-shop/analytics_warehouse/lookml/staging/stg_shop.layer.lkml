@@ -2,9 +2,9 @@ include: "/analytics_warehouse/lookml/base/_base.layer.lkml"
 
 # ----------------------------------------------------------- staging dimensions for order fact
 
-view: +wh_shop__order_fact {
+view: +wh_commerce__order_fact {
   view_label: "Order"
-  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_shop__order_fact` ;;
+  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_commerce__order_fact` ;;
 
   # Identifiers & Keys
   dimension: order_natural_key {
@@ -35,9 +35,9 @@ view: +wh_shop__order_fact {
 
 # ----------------------------------------------------------- staging dimensions for customer dim
 
-view: +wh_shop__customer_dim {
+view: +wh_master__customer_dim {
   view_label: "Customer"
-  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_shop__customer_dim` ;;
+  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_master__customer_dim` ;;
 
   # Identifiers & Keys
   dimension: customer_natural_key {
@@ -61,9 +61,9 @@ view: +wh_shop__customer_dim {
 
 # ----------------------------------------------------------- staging dimensions for daily sales
 
-view: +wh_shop__daily_sales_xa {
+view: +wh_commerce__daily_sales_xa {
   view_label: "Daily Sales"
-  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_shop__daily_sales_xa` ;;
+  sql_table_name: {{ _user_attributes['gcp_project_id'] }}.{{ _user_attributes['gcp_dataset_name'] }}.`wh_commerce__daily_sales_xa` ;;
 
   # Metrics
   dimension: daily_sales_order_count {

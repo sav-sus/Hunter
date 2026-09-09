@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../../concepts/" class="md-nav__link">
+    <a href="../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -549,6 +553,8 @@
       
         
       
+        
+      
     
     
     
@@ -615,6 +621,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The roadmap
   
 
     
@@ -1237,10 +1271,14 @@
 </tbody>
 </table>
 <h2 id="the-layers">The layers<a class="headerlink" href="#the-layers" title="Permanent link">&para;</a></h2>
+<p>A layer marked <em>found</em> was discovered in the models directory and is not in the
+ruleset. Its models are grouped and reported, and held to no layer rules until
+the layer is declared.</p>
 <table>
 <thead>
 <tr>
 <th>Layer</th>
+<th>Declared</th>
 <th>Prefix</th>
 <th>Stage</th>
 <th>Temporary or permanent</th>
@@ -1251,6 +1289,7 @@
 <tbody>
 <tr>
 <td>staging</td>
+<td>yes</td>
 <td>stg_</td>
 <td>1</td>
 <td>temporary</td>
@@ -1259,6 +1298,7 @@
 </tr>
 <tr>
 <td>integration</td>
+<td>yes</td>
 <td>int_</td>
 <td>2</td>
 <td>temporary</td>
@@ -1267,33 +1307,37 @@
 </tr>
 <tr>
 <td>warehouse</td>
+<td>yes</td>
 <td>wh_</td>
 <td>3</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>staging, integration, warehouse, seeds</td>
 <td>yes</td>
 </tr>
 <tr>
 <td>seeds</td>
+<td>yes</td>
 <td>-</td>
 <td>outside the flow</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>anything</td>
 <td>no</td>
 </tr>
 <tr>
 <td>reverse_etl</td>
+<td>yes</td>
 <td>-</td>
 <td>4</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>warehouse, integration</td>
 <td>yes</td>
 </tr>
 <tr>
 <td>ai</td>
+<td>yes</td>
 <td>-</td>
 <td>4</td>
-<td>persistent</td>
+<td>permanent</td>
 <td>warehouse, integration</td>
 <td>yes</td>
 </tr>

@@ -4,7 +4,7 @@
 // Hunter compares it against the authored design in
 // docs/data_model_design/physical_model.dbml.
 
-table wh_shop__order_fact {
+table wh_commerce__order_fact {
   order_pk varchar
   customer_fk varchar
   order_natural_key varchar
@@ -13,14 +13,14 @@ table wh_shop__order_fact {
   order_channel_name varchar
 }
 
-table wh_shop__customer_dim {
+table wh_master__customer_dim {
   customer_pk varchar
   customer_natural_key varchar
   customer_name varchar
   customer_joined_dt date
 }
 
-table wh_shop__product_dim {
+table wh_master__product_dim {
   product_pk varchar
   product_natural_key varchar
   product_name varchar
@@ -28,7 +28,7 @@ table wh_shop__product_dim {
   product_list_price_amount numeric
 }
 
-table wh_shop__daily_sales_xa {
+table wh_commerce__daily_sales_xa {
   daily_sales_pk varchar
   daily_sales_order_count numeric
   daily_sales_total_amount numeric

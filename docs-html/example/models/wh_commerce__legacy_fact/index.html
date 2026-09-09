@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_shop__daily_sales_xa/">
+        <link rel="canonical" href="https://rittman-hunter.readthedocs.io/example/models/wh_commerce__legacy_fact/">
       
       
       
@@ -23,7 +23,7 @@
     
     
       
-        <title>daily sales - Rittman Hunter</title>
+        <title>legacy - Rittman Hunter</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#daily-sales" class="md-skip">
+        <a href="#legacy" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              daily sales
+              legacy
             
           </span>
         </div>
@@ -267,7 +267,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -317,7 +317,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -344,6 +344,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -364,14 +370,14 @@
   
   
   
-    <a href="../../../concepts/" class="md-nav__link">
+    <a href="../../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -398,8 +404,6 @@
   
     
     
-      
-        
       
         
       
@@ -429,7 +433,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -517,6 +521,8 @@
       
         
           
+        
+      
         
       
         
@@ -660,7 +666,7 @@
 
 
   
-    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_shop__daily_sales_xa.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/sav-sus/Hunter/edit/main/docs/example/models/wh_commerce__legacy_fact.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -668,9 +674,9 @@
   
 
 
-<h1 id="daily-sales">daily sales<a class="headerlink" href="#daily-sales" title="Permanent link">&para;</a></h1>
-<p><code>wh_shop__daily_sales_xa</code></p>
-<p>Daily order totals for the shop. Grain is one row per day. Reads staging directly rather than going through the integration layer.</p>
+<h1 id="legacy">legacy<a class="headerlink" href="#legacy" title="Permanent link">&para;</a></h1>
+<p><code>wh_commerce__legacy_fact</code></p>
+<p>Kept from the previous warehouse while reports move across.</p>
 <table>
 <thead>
 <tr>
@@ -685,7 +691,7 @@
 </tr>
 <tr>
 <td>Area</td>
-<td>shop</td>
+<td>commerce</td>
 </tr>
 <tr>
 <td>Built as</td>
@@ -696,8 +702,8 @@
 <td>yes</td>
 </tr>
 <tr>
-<td>Temporary or permanent</td>
-<td>persistent</td>
+<td>Temporary, verified or permanent</td>
+<td>permanent</td>
 </tr>
 <tr>
 <td>Decided by</td>
@@ -705,7 +711,7 @@
 </tr>
 <tr>
 <td>One row means</td>
-<td>One row per day</td>
+<td>not stated</td>
 </tr>
 <tr>
 <td>Owner</td>
@@ -713,15 +719,15 @@
 </tr>
 <tr>
 <td>Named as</td>
-<td>aggregate</td>
+<td>fact</td>
 </tr>
 <tr>
 <td>Behaves like</td>
-<td>not clear from its columns (closest guess fact, confidence 0.6, below the 0.7 needed to say)</td>
+<td>not clear from its columns (closest guess fact, confidence 0.3, below the 0.7 needed to say)</td>
 </tr>
 <tr>
 <td>State</td>
-<td>Designed and delivered</td>
+<td>Built off-plan</td>
 </tr>
 <tr>
 <td>First written by</td>
@@ -737,7 +743,7 @@
 </tr>
 <tr>
 <td>File</td>
-<td><code>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</code></td>
+<td><code>models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql</code></td>
 </tr>
 </tbody>
 </table>
@@ -753,27 +759,15 @@
 </thead>
 <tbody>
 <tr>
-<td>daily_sales_dt</td>
+<td>legacy_amount</td>
 <td>not recorded</td>
-<td>The day summarised.</td>
+<td>A value carried over from the previous warehouse.</td>
 <td>none</td>
 </tr>
 <tr>
-<td>daily_sales_order_count</td>
+<td>legacy_pk</td>
 <td>not recorded</td>
-<td>Orders placed that day.</td>
-<td>none</td>
-</tr>
-<tr>
-<td>daily_sales_pk</td>
-<td>not recorded</td>
-<td>Surrogate key for the day.</td>
-<td>none</td>
-</tr>
-<tr>
-<td>daily_sales_total_amount</td>
-<td>not recorded</td>
-<td>Order value that day.</td>
+<td>Surrogate key.</td>
 <td>none</td>
 </tr>
 </tbody>
@@ -795,17 +789,14 @@
 </tr>
 <tr>
 <td>Report views</td>
-<td>1</td>
-<td>wh_shop__daily_sales_xa</td>
+<td>0</td>
+<td>-</td>
 </tr>
 </tbody>
 </table>
 <pre class="mermaid"><code>flowchart LR
-  wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
-  style wh_shop__daily_sales_xa fill:#fdf2cc,stroke:#9a8330
-  view_wh_shop__daily_sales_xa("wh_shop__daily_sales_xa")
-  style view_wh_shop__daily_sales_xa fill:#e6eefb,stroke:#3b6fb6
-  wh_shop__daily_sales_xa --&gt; view_wh_shop__daily_sales_xa</code></pre>
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  style wh_commerce__legacy_fact fill:#fdf2cc,stroke:#9a8330</code></pre>
 <h2 id="findings">Findings<a class="headerlink" href="#findings" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -819,33 +810,33 @@
 <tbody>
 <tr>
 <td>Needs attention</td>
-<td>wh_shop__daily_sales_xa has no tests of any kind</td>
-<td>Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>wh_commerce__legacy_fact has no tests of any kind</td>
+<td>Nothing at all checks legacy. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and nothing downstream depends on it.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql</td>
 </tr>
 <tr>
 <td>Needs attention</td>
-<td>wh_shop__daily_sales_xa is missing 1 column that the design specifies: daily_sales_returned_amount</td>
-<td>daily sales was designed to hold these columns and does not. Anything that expected them, including a report built from the design, has nothing to read.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>wh_commerce__legacy_fact names the table '<code>warehouse</code>.<code>old_shop</code>.<code>legacy_orders</code>' directly on line 17</td>
+<td>Because legacy does not go through dbt to reach this table, the dependency is invisible: it does not appear in the lineage, it is not built in the right order, and nothing warns you if the table it points at changes.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql:17</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>wh_shop__daily_sales_xa skips the integration layer to read stg_shop__orders</td>
-<td>daily sales reaches back past the layer that normally cleans and checks this data, so those checks do not apply to what it reads.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>wh_commerce__legacy_fact is built but was never designed</td>
+<td>legacy exists in production and appears on no design, so nothing records what it is for, what one row means or who owns it. If it should be there, add it to the design or record an approval in the register.</td>
+<td>wh_commerce__legacy_fact</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>wh_shop__daily_sales_xa is not described in the generated schema</td>
-<td>daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>wh_commerce__legacy_fact is built and stored but nothing reads it</td>
+<td>legacy is rebuilt on every run and no model, report or dashboard uses the result. It costs money and delivers nothing until something consumes it.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__daily_sales_xa feeds 1 report view but declares no exposure</td>
-<td>Nothing in the project records that reports depend on daily sales, so anyone changing it has no way to see what they would break.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>wh_commerce__legacy_fact selects every column from '<code>warehouse</code>.<code>old_shop</code>.<code>legacy_orders</code>' on line 17</td>
+<td>A column added at the source appears in legacy without anyone deciding to take it, and a renamed one disappears. Reports built on it change shape with no change made here.</td>
+<td>models/warehouse/wh_commerce/wh_commerce__legacy_fact.sql:17</td>
 </tr>
 </tbody>
 </table>

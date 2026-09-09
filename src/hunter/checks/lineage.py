@@ -167,7 +167,7 @@ def run(context: CheckContext) -> Findings:
 
 def _dead_model(context: CheckContext, model: Model) -> Findings:
     """Persistent, built, and read by nothing at all."""
-    if model.persistence is not Persistence.PERSISTENT or model.is_ephemeral:
+    if not model.is_lasting or model.is_ephemeral:
         return Findings()
     if model.materialisation not in {"table", "incremental"}:
         return Findings()

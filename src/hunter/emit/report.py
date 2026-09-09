@@ -242,6 +242,7 @@ def _conventions(result: RunResult) -> dict[str, Any]:
                 "persistence": str(layer.persistence),
                 "may_reference": layer.may_reference,
                 "in_alignment": layer.in_alignment,
+                "discovered": layer.discovered,
             }
             for layer in result.config.layers
         ],

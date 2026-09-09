@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../concepts/" class="md-nav__link">
+    <a href="../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -685,6 +689,39 @@
     <span class="md-ellipsis">
       
         Who can see the report?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-have-to-run-anything-when-a-model-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I have to run anything when a model changes?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#we-added-a-new-directory-of-models-does-hunter-need-telling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        We added a new directory of models. Does Hunter need telling?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-do-temporary-verified-and-permanent-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What do temporary, verified and permanent mean?
       
     </span>
   </a>
@@ -1065,6 +1102,8 @@
       
         
       
+        
+      
     
     
     
@@ -1182,6 +1221,39 @@
     <span class="md-ellipsis">
       
         Who can see the report?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#do-i-have-to-run-anything-when-a-model-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do I have to run anything when a model changes?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#we-added-a-new-directory-of-models-does-hunter-need-telling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        We added a new directory of models. Does Hunter need telling?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-do-temporary-verified-and-permanent-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What do temporary, verified and permanent mean?
       
     </span>
   </a>
@@ -1517,7 +1589,7 @@ answer is usually in <a href="../concepts/">the ideas behind it</a> or
 what is deployed, what it costs, row counts and partitioning. That is one of
 eight areas; without it the area is excluded and its weight shared out.</p>
 <h3 id="will-it-change-anything-in-my-repository">Will it change anything in my repository?<a class="headerlink" href="#will-it-change-anything-in-my-repository" title="Permanent link">&para;</a></h3>
-<p><code>hunter init</code> writes two configuration files. Nothing else, ever: no commits,
+<p><code>hunter init</code> writes three files: two configuration files and one workflow. Nothing else, ever: no commits,
 no branches, no pull requests, no writes to your warehouse. Licence terms, not
 just current behaviour.</p>
 <h3 id="does-it-read-my-data">Does it read my data?<a class="headerlink" href="#does-it-read-my-data" title="Permanent link">&para;</a></h3>
@@ -1525,12 +1597,28 @@ just current behaviour.</p>
 scoped to metadata and job history. No row-level data is read, stored or
 published.</p>
 <h3 id="who-can-see-the-report">Who can see the report?<a class="headerlink" href="#who-can-see-the-report" title="Permanent link">&para;</a></h3>
-<p>Wherever you publish it. Hunter builds static HTML and JSON and hosts nothing.</p>
+<p>Anyone with the GitHub Pages link, once Pages is switched on. The workflow
+publishes the dashboard on every push to main, so a stakeholder needs the link
+and nothing else. See <a href="../publish/">Publish the dashboard</a>.</p>
 <div class="key">
 <p><strong>GitHub Pages from a private repository is public</strong>, unless you are on GitHub
 Enterprise Cloud. The files are downloadable by anyone. A browser-side password
-check is not access control. See <a href="../ci/">In CI</a>.</p>
+check is not access control.</p>
 </div>
+<h3 id="do-i-have-to-run-anything-when-a-model-changes">Do I have to run anything when a model changes?<a class="headerlink" href="#do-i-have-to-run-anything-when-a-model-changes" title="Permanent link">&para;</a></h3>
+<p>No. Opening a pull request runs the score and the three sync checks. Merging it
+rebuilds and publishes the dashboard. There is no path filter and no manual
+step.</p>
+<h3 id="we-added-a-new-directory-of-models-does-hunter-need-telling">We added a new directory of models. Does Hunter need telling?<a class="headerlink" href="#we-added-a-new-directory-of-models-does-hunter-need-telling" title="Permanent link">&para;</a></h3>
+<p>No. A directory under <code>models/</code> that the ruleset does not name becomes a layer
+on its own, named after the directory. The report marks it as found rather than
+declared. Declare it in <code>hunter.yml</code> when you want rules applied to it. See
+<a href="../configuration/#layers-hunter-finds-on-its-own">Configuration</a>.</p>
+<h3 id="what-do-temporary-verified-and-permanent-mean">What do temporary, verified and permanent mean?<a class="headerlink" href="#what-do-temporary-verified-and-permanent-mean" title="Permanent link">&para;</a></h3>
+<p>Temporary is a working step, or a table only ever meant to run once. Permanent
+is meant to stay. Verified is permanent plus a named person confirming it, and
+it can only come from the register. See
+<a href="../register/">Mark a table temporary, verified or permanent</a>.</p>
 <h2 id="the-score">The score<a class="headerlink" href="#the-score" title="Permanent link">&para;</a></h2>
 <h3 id="the-score-seems-high-given-how-many-findings-there-are">The score seems high given how many findings there are<a class="headerlink" href="#the-score-seems-high-given-how-many-findings-there-are" title="Permanent link">&para;</a></h3>
 <p>An area's score is the share of its checks that passed, and 644 findings across

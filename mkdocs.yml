@@ -100,19 +100,21 @@ extra:
 # The generated per-table pages under docs/example/models/ are reachable by
 # link and deliberately left out, which would otherwise add one entry per table.
 nav:
-  - Home: index.md
-  - Start here:
-      - Install: install.md
-      - First run: quickstart.md
+  - Overview: index.md
+  - Getting started:
+      - Installation: install.md
+      - Quick start: quickstart.md
       - See it working: example/dashboard.md
-  - How it works:
-      - The ideas behind it: concepts.md
+  - How to:
+      - From a pull request to the dashboard: how-it-works.md
+      - Mark a table temporary, verified or permanent: register.md
+      - Run it on every pull request: ci.md
+      - Publish the dashboard: publish.md
+      - Check the layers agree: sync-checks.md
+  - Configuration:
+      - hunter.yml: configuration.md
       - The score: scoring.md
-  - Set it up:
-      - Configuration: configuration.md
-      - The register: register.md
-      - The three sync checks: sync-checks.md
-      - In CI: ci.md
+      - The ideas behind it: concepts.md
   - Reference:
       - Commands: cli.md
       - Every rule: reference/rules.md
@@ -121,6 +123,7 @@ nav:
   - Example output:
       - Every page: example/index.md
       - Overview: example/index-page.md
+      - The roadmap: example/roadmap.md
       - The score: example/scorecard.md
       - Designed against built: example/reconciliation.md
       - The business model: example/conceptual-model.md

@@ -8,14 +8,13 @@ This is the front page of a Hunter report: the whole of [`examples/tiny-shop`](h
 
 | Band | What it shows |
 |---|---|
-| The number | How healthy is this repository |
+| The headline | The repository by name, its score and grade, the path from what the business asked for to what is reachable in Looker, and four figures a product owner can act on |
 | Checklist | Statements that should hold, grouped: design to build, warehouse to Looker, Droughty, documentation, tests. Each says how many hold and names what does not |
-| Modelling alignment | The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked |
-| Model diagrams | The conceptual, logical and physical models drawn with Mermaid, with tabs and zoom |
-| Every table | One row per table, searchable: what is in the design, the repository, the warehouse and Looker |
-| What everything else is built on | Which tables are load-bearing and unchecked |
-| Do these first | What to fix, ranked by what closing it recovers |
-| What this is not based on | What Hunter could not read |
+| Roadmap | Every table in one lane: planned, being built, live, temporary by design, being phased out, retired. Each built table says whether it is verified, permanent or temporary, who owns it, and what happens next |
+| Modelling alignment | The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked; searchable, and each row opens to what the state means and what to do next |
+| Model diagrams | Three tabs with a find box: the conceptual model, the logical data flow diagram as the team drew it (coloured by state), and the physical DBML design as table cards with keys, types, relationships and notes on hover |
+| Data flow | The DAG from raw sources through each layer to the Looker views and explores, one tab per area, coloured by health, with dbt-style selection (+name, name+, 2+name) to follow one table |
+| Table readiness | One row per built table, searchable: status (temporary, verified or permanent), described, columns described, owner, key tests, LookML view, Droughty, warehouse, and what it still needs |
 
 ## How it is built
 

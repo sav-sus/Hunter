@@ -27,7 +27,7 @@
     
     
       
-        <title>Install - Rittman Hunter</title>
+        <title>Installation - Rittman Hunter</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#install" class="md-skip">
+        <a href="#installation" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Install
+              Installation
             
           </span>
         </div>
@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -337,7 +337,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Start here
+    Getting started
   
 
           </label>
@@ -366,7 +366,7 @@
   <span class="md-ellipsis">
     
   
-    Install
+    Installation
   
 
     
@@ -384,7 +384,7 @@
   <span class="md-ellipsis">
     
   
-    Install
+    Installation
   
 
     
@@ -417,6 +417,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Getting the manifest">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-parse-with-no-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Parse with no credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-parse-with-a-read-only-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Parse with a read-only credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-use-the-manifest-your-dbt-job-already-produces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Use the manifest your dbt job already produces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -465,7 +504,7 @@
   <span class="md-ellipsis">
     
   
-    First run
+    Quick start
   
 
     
@@ -527,6 +566,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -542,14 +587,14 @@
   
   
   
-    <a href="../concepts/" class="md-nav__link">
+    <a href="../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -583,8 +628,6 @@
       
         
       
-        
-      
     
     
     
@@ -607,7 +650,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -721,6 +764,8 @@
       
         
       
+        
+      
     
     
     
@@ -797,6 +842,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Getting the manifest">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-parse-with-no-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Parse with no credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-parse-with-a-read-only-credential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Parse with a read-only credential
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-use-the-manifest-your-dbt-job-already-produces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Use the manifest your dbt job already produces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -846,7 +930,7 @@
   
 
 
-<h1 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h1>
+<h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <p class="lede">One command, then find your dbt manifest. No warehouse
 credential.</p>
 
@@ -898,36 +982,22 @@ a later run tell real change from movement caused by upgrading Hunter.</p>
 <p>dbt writes <code>manifest.json</code> into <code>target/</code>, which is almost always in
 <code>.gitignore</code>. So it is a build output, not a file sitting in the repository.</p>
 <p>Three ways to get one, in the order worth trying.</p>
-<ol class="steps">
-<li>
-<b>Parse with no credential</b>
-
+<h3 id="1-parse-with-no-credential">1. Parse with no credential<a class="headerlink" href="#1-parse-with-no-credential" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>your-dbt-project
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>dbt<span class="w"> </span>parse
 </code></pre></div>
-
-Usually enough. dbt reads the project files and works out what each model
+<p>Usually enough. dbt reads the project files and works out what each model
 refers to. It needs a valid-looking <code>profiles.yml</code> entry even when it never
-connects, so a stub profile does.
-</li>
-<li>
-<b>Parse with a read-only credential</b>
-
-If step 1 fails, use a read-only service account. Workload Identity Federation
-rather than a stored key file.
-</li>
-<li>
-<b>Use the manifest your dbt job already produces</b>
-
-If dbt runs anywhere already, the manifest already exists.
-
+connects, so a stub profile does.</p>
+<h3 id="2-parse-with-a-read-only-credential">2. Parse with a read-only credential<a class="headerlink" href="#2-parse-with-a-read-only-credential" title="Permanent link">&para;</a></h3>
+<p>If step 1 fails, use a read-only service account. Workload Identity Federation
+rather than a stored key file.</p>
+<h3 id="3-use-the-manifest-your-dbt-job-already-produces">3. Use the manifest your dbt job already produces<a class="headerlink" href="#3-use-the-manifest-your-dbt-job-already-produces" title="Permanent link">&para;</a></h3>
+<p>If dbt runs anywhere already, the manifest already exists.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hunter<span class="w"> </span>score<span class="w"> </span>.<span class="w"> </span>--manifest<span class="w"> </span>path/to/manifest.json
 </code></pre></div>
-
-This is the option that turns installing Hunter from a security review into a
-configuration change, so it is worth five minutes to check.
-</li>
-</ol>
+<p>This is the option that turns installing Hunter from a security review into a
+configuration change, so it is worth five minutes to check.</p>
 <details class="note">
 <summary>Why <code>dbt parse</code> sometimes needs a connection</summary>
 <p>It fails when a model cannot be understood without asking the warehouse a

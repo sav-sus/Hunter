@@ -10,7 +10,7 @@ Orders as the shop platform exports them. Grain is one row per order. order_id i
 | Area | shop |
 | Built as | view |
 | Enabled | yes |
-| Temporary or permanent | temporary |
+| Temporary, verified or permanent | temporary |
 | Decided by | layer persistence |
 | One row means | not stated |
 | Owner | nobody named |
@@ -37,7 +37,7 @@ Orders as the shop platform exports them. Grain is one row per order. order_id i
 
 | What | Count | Names |
 |---|---|---|
-| Other tables | 5 | int_shop__orders, wh_shop__daily_sales_xa, wh_shop__legacy_fact, wh_shop__order_fact, wh_shop__product_dim |
+| Other tables | 5 | int_shop__orders, wh_commerce__daily_sales_xa, wh_commerce__legacy_fact, wh_commerce__order_fact, wh_master__product_dim |
 | Report views | 0 | - |
 
 
@@ -46,15 +46,15 @@ flowchart LR
   stg_shop__orders["stg_shop__orders"]
   style stg_shop__orders fill:#fdf2cc,stroke:#9a8330
   int_shop__orders["int_shop__orders"]
-  wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
-  wh_shop__legacy_fact["wh_shop__legacy_fact"]
-  wh_shop__order_fact["wh_shop__order_fact"]
-  wh_shop__product_dim["wh_shop__product_dim"]
+  wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  wh_master__product_dim["wh_master__product_dim"]
   stg_shop__orders --> int_shop__orders
-  stg_shop__orders --> wh_shop__daily_sales_xa
-  int_shop__orders --> wh_shop__legacy_fact
-  int_shop__orders --> wh_shop__order_fact
-  int_shop__orders --> wh_shop__product_dim
+  stg_shop__orders --> wh_commerce__daily_sales_xa
+  int_shop__orders --> wh_commerce__legacy_fact
+  int_shop__orders --> wh_commerce__order_fact
+  int_shop__orders --> wh_master__product_dim
 ```
 
 

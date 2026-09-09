@@ -4,13 +4,15 @@
 
 ## Temporary against permanent
 
-A temporary model is a working step, not something to report from.
+A temporary model is a working step, not something to report from. A verified
+model is a permanent one that a named person has confirmed should stay.
 
-| Kind | Count |
-|---|---|
-| Permanent | 5 |
-| Temporary | 3 |
-| Not determined | 0 |
+| Kind | Count | Meaning |
+|---|---|---|
+| Verified | 1 | meant to stay, and somebody has checked that it should |
+| Permanent | 4 | meant to stay |
+| Temporary | 3 | a working step, or only ever meant to run once |
+| Not determined | 0 | Hunter had no signal to go on |
 
 
 ## Every table
@@ -20,11 +22,11 @@ A temporary model is a working step, not something to report from.
 | [int_shop__orders](models/int_shop__orders.md) | integration | shop | view | temporary | register declaration | 4 | 3 | nobody named |
 | [stg_shop__customers](models/stg_shop__customers.md) | staging | shop | view | temporary | layer persistence | 3 | 5 | nobody named |
 | [stg_shop__orders](models/stg_shop__orders.md) | staging | shop | view | temporary | layer persistence | 4 | 5 | nobody named |
-| [wh_shop__customer_dim](models/wh_shop__customer_dim.md) | warehouse | shop | table | persistent | layer persistence | 4 | 0 | nobody named |
-| [wh_shop__daily_sales_xa](models/wh_shop__daily_sales_xa.md) | warehouse | shop | table | persistent | layer persistence | 4 | 0 | commerce |
-| [wh_shop__legacy_fact](models/wh_shop__legacy_fact.md) | warehouse | shop | table | persistent | layer persistence | 2 | 0 | commerce |
-| [wh_shop__order_fact](models/wh_shop__order_fact.md) | warehouse | shop | table | persistent | layer persistence | 5 | 0 | commerce |
-| [wh_shop__product_dim](models/wh_shop__product_dim.md) | warehouse | shop | table | persistent | layer persistence | 5 | 0 | commerce |
+| [wh_commerce__daily_sales_xa](models/wh_commerce__daily_sales_xa.md) | warehouse | commerce | table | permanent | layer persistence | 4 | 0 | commerce |
+| [wh_commerce__legacy_fact](models/wh_commerce__legacy_fact.md) | warehouse | commerce | table | permanent | layer persistence | 2 | 0 | commerce |
+| [wh_commerce__order_fact](models/wh_commerce__order_fact.md) | warehouse | commerce | table | verified | register declaration | 5 | 0 | commerce |
+| [wh_master__customer_dim](models/wh_master__customer_dim.md) | warehouse | master | table | permanent | layer persistence | 4 | 0 | nobody named |
+| [wh_master__product_dim](models/wh_master__product_dim.md) | warehouse | master | table | permanent | layer persistence | 5 | 0 | commerce |
 
 
 _Catalogue built as at 2026-09-08._

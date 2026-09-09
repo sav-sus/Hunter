@@ -6,22 +6,24 @@ The colours show what is actually true today, worked out from the repository rat
 
 ```mermaid
 flowchart TB
-  subgraph shop["shop"]
-    shop_customer["customers"]
-    shop_daily_sale["daily sales"]
-    shop_forecast["forecasts"]
-    shop_order["orders"]
-    shop_product["products"]
-    shop_return["returns"]
-    shop_supplier["suppliers"]
+  subgraph commerce["commerce"]
+    commerce_daily_sale["daily sales"]
+    commerce_forecast["forecasts"]
+    commerce_order["orders"]
+    commerce_return["returns"]
   end
-  style shop_customer fill:#d6ead6,stroke:#4a7a4a
-  style shop_daily_sale fill:#d6ead6,stroke:#4a7a4a
-  style shop_forecast fill:#e8e8e8,stroke:#777,stroke-dasharray:4 3
-  style shop_order fill:#d6ead6,stroke:#4a7a4a
-  style shop_product fill:#d6ead6,stroke:#4a7a4a
-  style shop_return fill:#fafafa,stroke:#bbb,stroke-dasharray:2 3
-  style shop_supplier fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3
+  subgraph master["master"]
+    master_customer["customers"]
+    master_product["products"]
+    master_supplier["suppliers"]
+  end
+  style commerce_daily_sale fill:#d6ead6,stroke:#4a7a4a
+  style commerce_forecast fill:#e8e8e8,stroke:#777,stroke-dasharray:4 3
+  style commerce_order fill:#d6ead6,stroke:#4a7a4a
+  style commerce_return fill:#fafafa,stroke:#bbb,stroke-dasharray:2 3
+  style master_customer fill:#d6ead6,stroke:#4a7a4a
+  style master_product fill:#d6ead6,stroke:#4a7a4a
+  style master_supplier fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3
   subgraph legend["What the colours mean"]
     direction LR
     legend_built_disabled["Built, switched off"]
@@ -40,13 +42,13 @@ flowchart TB
 
 | Business name | Area | State | What that means | Table behind it |
 |---|---|---|---|---|
-| customers | shop | Designed and delivered | Working as intended. | wh_shop__customer_dim |
-| daily sales | shop | Designed and delivered | Working as intended. | wh_shop__daily_sales_xa |
-| forecasts | shop | Built, switched off | The code exists but is switched off, so nothing is being produced from it. | wh_shop__forecast_fact |
-| orders | shop | Designed and delivered | Working as intended. | wh_shop__order_fact |
-| products | shop | Designed and delivered | Working as intended. | wh_shop__product_dim |
-| returns | shop | On the business model only | Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog. | not built |
-| suppliers | shop | Designed, not started | On the plan, no work done yet. | wh_shop__supplier_dim |
+| daily sales | commerce | Designed and delivered | Working as intended. | wh_commerce__daily_sales_xa |
+| forecasts | commerce | Built, switched off | The code exists but is switched off, so nothing is being produced from it. | wh_commerce__forecast_fact |
+| orders | commerce | Designed and delivered | Working as intended. | wh_commerce__order_fact |
+| returns | commerce | On the business model only | Agreed with the business as something the warehouse should hold, but not designed yet. This is the design backlog. | not built |
+| customers | master | Designed and delivered | Working as intended. | wh_master__customer_dim |
+| products | master | Designed and delivered | Working as intended. | wh_master__product_dim |
+| suppliers | master | Designed, not started | On the plan, no work done yet. | wh_master__supplier_dim |
 
 
 

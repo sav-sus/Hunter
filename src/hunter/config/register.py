@@ -51,8 +51,13 @@ class RegisterModel(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    # Declared intent that overrides inference
+    # Declared intent that overrides inference. Three values a person can give:
+    # temporary (a working step), verified (meant to stay, and somebody has
+    # checked that it should) and persistent (meant to stay). ``verified`` is
+    # a confirmation, so it carries the name of whoever confirmed it.
     persistence: Persistence | None = None
+    verified_by: str | None = None
+    verified_on: dt.date | None = None
     status: BuildStatus | None = None
 
     # Metadata DBML cannot express. Section 7.2.
@@ -96,6 +101,17 @@ class RegisterModel(BaseModel):
             raise ValueError(
                 "declaring persistence overrides what Hunter infers, so it needs a reason"
             )
+        if self.persistence is Persistence.UNKNOWN:
+            raise ValueError(
+                "persistence must be temporary, verified or permanent; "
+                "leave it out to let Hunter infer it"
+            )
+        if self.persistence is Persistence.VERIFIED and not (
+            self.verified_by and self.verified_by.strip()
+        ):
+            raise ValueError("marking a table verified is a confirmation, so it needs verified_by")
+        if self.verified_by and self.persistence is not Persistence.VERIFIED:
+            raise ValueError("verified_by only means something with persistence: verified")
         return self
 
     @property

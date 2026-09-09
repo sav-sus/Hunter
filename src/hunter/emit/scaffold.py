@@ -1,7 +1,8 @@
-"""``hunter init``: work out this repository's layout and write the two files.
+"""``hunter init``: work out this repository's layout and write the three files.
 
 Section 11.6. A client repository gets three things and no Hunter code: a
-ruleset, a register, and a workflow that calls the published Action.
+ruleset, a register, and a workflow that calls the published Actions and
+publishes the dashboard to GitHub Pages.
 
 The register is pre-filled with the entries the team would otherwise have to
 discover, each with a blank reason. Handing someone an empty file and asking
@@ -235,12 +236,21 @@ def register_text(
             )
     else:
         lines += [
-            "  # Example:",
+            "  # Status is one of three words: temporary, verified or permanent.",
+            "  # Temporary is a working step, or a table only ever meant to run once.",
+            "  # Verified is permanent, and a named person has confirmed it should stay.",
+            "  # Leave it out and Hunter works it out from the layer and materialisation.",
             "  #",
             "  # int_commerce__demand_transactions:",
             "  #   persistence: temporary",
             "  #   reason: intermediate step feeding the order fact, not for consumption",
             "  #   review_by: " + review.isoformat(),
+            "  #",
+            "  # wh_commerce__order_fact:",
+            "  #   persistence: verified",
+            "  #   verified_by: sav",
+            "  #   verified_on: " + when.isoformat(),
+            "  #   reason: signed off at the design review as the order fact of record",
         ]
 
     lines += ["", "off_plan_approved:"]
@@ -283,11 +293,33 @@ def register_text(
 
 
 def workflow_text(*, action_ref: str = "sav-sus/Hunter@v0.1.0") -> str:
-    """The workflow a client repository needs. Section 11.6."""
+    """The workflow a client repository needs. Section 11.6.
+
+    One file, five jobs. Every pull request gets the score and the three sync
+    checks, each as its own line on the pull request so one drifted layer does
+    not hide another. A push to main rebuilds the dashboard and publishes it to
+    GitHub Pages, so a stakeholder opens a link and never needs GitHub access.
+    Nothing is filtered by path: a new layer is picked up on its own.
+    """
+    repo, _, tag = action_ref.partition("@")
     return f"""# Rittman Hunter.
+#
+# What runs when:
+#   a pull request    the score, a comment on the pull request, and the three
+#                     sync checks (LookML, Droughty, modelling) as separate lines
+#   a push to main    the same, then the dashboard is rebuilt and published to
+#                     GitHub Pages
+#   Monday 06:00      the same as a push, to catch drift that arrived from
+#                     outside a pull request
+#
+# No path filter on purpose. A new layer or a new model is detected by Hunter
+# itself, so nothing here needs editing as the warehouse grows.
 #
 # fetch-depth: 0 matters. Attribution and showcase windows need full history,
 # and the default shallow checkout has none.
+#
+# GitHub Pages: in the repository settings, under Pages, set the source to
+# "GitHub Actions" once. The publish job does the rest.
 name: Hunter
 
 on:
@@ -301,8 +333,13 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: hunter-${{{{ github.ref }}}}
+  cancel-in-progress: true
+
 jobs:
   hunter:
+    name: Score
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -311,7 +348,54 @@ jobs:
       - uses: {action_ref}
         with:
           mode: advisory
-          publish: ${{{{ github.event_name == 'push' }}}}
+          publish: ${{{{ github.event_name != 'pull_request' }}}}
+      - name: Hand the dashboard to GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out/site/_built
+
+  lookml-sync:
+    name: LookML sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: {repo}/actions/lookml-sync@{tag}
+        with:
+          fail-on: never
+
+  droughty-sync:
+    name: Droughty sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: {repo}/actions/droughty-sync@{tag}
+        with:
+          fail-on: never
+
+  modelling-sync:
+    name: Modelling sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: {repo}/actions/modelling-sync@{tag}
+        with:
+          fail-on: never
+
+  publish:
+    name: Publish the dashboard
+    if: github.event_name != 'pull_request'
+    needs: hunter
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{{{ steps.deploy.outputs.page_url }}}}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
 """
 
 

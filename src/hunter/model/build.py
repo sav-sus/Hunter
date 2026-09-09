@@ -22,8 +22,9 @@ from hunter.ingest.droughty import DroughtyData
 from hunter.ingest.git import GitData
 from hunter.ingest.lookml import LookmlData
 from hunter.ingest.manifest import ManifestData
-from hunter.model.entities import Model, Project, classify_persistence, domain_of
+from hunter.model.entities import Model, ParseIssue, Project, classify_persistence, domain_of
 from hunter.model.graph import Consumers, Graph, exposure_weight
+from hunter.model.layers import discover_layers, with_layers
 
 
 def _assign_layer_and_domain(model: Model, config: HunterConfig) -> None:
@@ -193,6 +194,27 @@ def build_project(
     if git is not None:
         project.has_git = git.available
         project.parse_issues.extend(git.issues)
+
+    # A directory of models the ruleset does not name becomes a layer of its
+    # own, so a new part of the warehouse appears on the report without anyone
+    # editing hunter.yml. The caller picks the extended config up from the
+    # project, so every check and page sees the same layers.
+    every_model = [*project.models.values(), *project.disabled_models.values()]
+    discovered = discover_layers(config, every_model)
+    if discovered:
+        config = with_layers(config, discovered)
+        project.discovered_layers = [layer.name for layer in discovered]
+        project.parse_issues.append(
+            ParseIssue(
+                source="hunter.yml",
+                subject=", ".join(layer.name for layer in discovered),
+                message=(
+                    "Found in the models directory and not declared as a layer. Hunter "
+                    "grouped these models by directory and held them to no layer rules. "
+                    "Declare the layer in hunter.yml to say what it should look like."
+                ),
+            )
+        )
 
     # Layers, domains and declared entity kinds, for enabled and disabled alike:
     # a disabled model is still part of the repository.

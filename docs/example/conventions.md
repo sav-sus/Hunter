@@ -18,14 +18,18 @@ Measured against **ra-house@1**, house ruleset version 1. Every rule and every w
 
 ## The layers
 
-| Layer | Prefix | Stage | Temporary or permanent | May read | Holds entities |
-|---|---|---|---|---|---|
-| staging | stg_ | 1 | temporary | seeds | no |
-| integration | int_ | 2 | temporary | staging, integration, seeds | no |
-| warehouse | wh_ | 3 | persistent | staging, integration, warehouse, seeds | yes |
-| seeds | - | outside the flow | persistent | anything | no |
-| reverse_etl | - | 4 | persistent | warehouse, integration | yes |
-| ai | - | 4 | persistent | warehouse, integration | yes |
+A layer marked *found* was discovered in the models directory and is not in the
+ruleset. Its models are grouped and reported, and held to no layer rules until
+the layer is declared.
+
+| Layer | Declared | Prefix | Stage | Temporary or permanent | May read | Holds entities |
+|---|---|---|---|---|---|---|
+| staging | yes | stg_ | 1 | temporary | seeds | no |
+| integration | yes | int_ | 2 | temporary | staging, integration, seeds | no |
+| warehouse | yes | wh_ | 3 | permanent | staging, integration, warehouse, seeds | yes |
+| seeds | yes | - | outside the flow | permanent | anything | no |
+| reverse_etl | yes | - | 4 | permanent | warehouse, integration | yes |
+| ai | yes | - | 4 | permanent | warehouse, integration | yes |
 
 
 ## Entity naming

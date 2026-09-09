@@ -275,3 +275,70 @@ class TestConsumersOf:
         found = consumers_of("wh_a__order_fact", project)
         assert found.lookml_views == 1
         assert found.lookml_fields == 1
+
+
+class TestDiscoveredLayers:
+    """A directory of models the ruleset does not name becomes a layer on its own."""
+
+    def test_an_undeclared_directory_becomes_a_layer(self, config) -> None:
+        data = manifest_with(
+            model("mart_shop__orders", path="models/marts/mart_shop__orders.sql"),
+            model("mart_shop__customers", path="models/marts/mart_shop__customers.sql"),
+        )
+        project, _ = build_project(config=config, register=Register(), manifest=data)
+        assert project.discovered_layers == ["marts"]
+        assert project.models["mart_shop__orders"].layer == "marts"
+        assert project.models["mart_shop__customers"].layer == "marts"
+
+    def test_the_prefix_is_taken_only_when_every_model_shares_it(self, config) -> None:
+        from hunter.model.layers import discover_layers
+
+        shared = discover_layers(
+            config,
+            [
+                model("mart_shop__orders", path="models/marts/a.sql"),
+                model("mart_shop__customers", path="models/marts/b.sql"),
+            ],
+        )
+        assert shared[0].prefix == "mart_"
+        mixed = discover_layers(
+            config,
+            [
+                model("mart_shop__orders", path="models/marts/a.sql"),
+                model("orders_by_day", path="models/marts/b.sql"),
+            ],
+        )
+        assert mixed[0].prefix is None
+
+    def test_a_discovered_layer_is_marked_as_found_not_declared(self, config) -> None:
+        from hunter.model.layers import discover_layers, with_layers
+
+        found = discover_layers(config, [model("x", path="models/marts/x.sql")])
+        extended = with_layers(config, found)
+        marts = extended.layer("marts")
+        assert marts is not None
+        assert marts.discovered is True
+        assert marts.pipeline_stage == 0
+        assert not marts.requires_owner
+        assert all(not layer.discovered for layer in config.layers)
+
+    def test_a_declared_layer_is_never_rediscovered(self, config) -> None:
+        data = manifest_with(
+            model("wh_a__x_fact", path="models/warehouse/wh_a/wh_a__x_fact.sql"),
+            model("stg_a__x", path="models/staging/stg_a/stg_a__x.sql"),
+        )
+        project, _ = build_project(config=config, register=Register(), manifest=data)
+        assert project.discovered_layers == []
+
+    def test_a_model_straight_under_models_stays_unlayered(self, config) -> None:
+        data = manifest_with(model("loose_end", path="models/loose_end.sql"))
+        project, _ = build_project(config=config, register=Register(), manifest=data)
+        assert project.discovered_layers == []
+        assert project.models["loose_end"].layer is None
+
+    def test_the_discovery_is_recorded_where_a_reader_sees_it(self, config) -> None:
+        data = manifest_with(model("mart_shop__orders", path="models/marts/a.sql"))
+        project, _ = build_project(config=config, register=Register(), manifest=data)
+        issue = next(issue for issue in project.parse_issues if issue.source == "hunter.yml")
+        assert issue.subject == "marts"
+        assert "not declared" in issue.message

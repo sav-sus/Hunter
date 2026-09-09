@@ -14,6 +14,7 @@ underneath. A diagram nobody can read is not a diagram.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
 
 from hunter.enums import AlignmentState, Presence
 from hunter.model.align import Alignment, AlignmentRow
@@ -145,6 +146,33 @@ def _designed_role(column) -> str:
     return "attribute"
 
 
+#: Lines of a DBML table note that state the grain, which is shown on its own.
+GRAIN_PREFIXES = ("table grain:", "grain:")
+
+#: How much of a table's description fits in an ER diagram before it is cut.
+ABOUT_LIMIT = 56
+
+
+def describe(note: str | None, limit: int = ABOUT_LIMIT) -> str:
+    """The table's description from its DBML note, without the grain line.
+
+    Notes follow the house shape: a grain line, a source line, then anything
+    else. The grain is drawn separately, so it is dropped here, and the rest is
+    joined and cut to fit a diagram cell.
+    """
+    if not note:
+        return ""
+    kept = [
+        line.strip()
+        for line in note.splitlines()
+        if line.strip() and not line.strip().lower().startswith(GRAIN_PREFIXES)
+    ]
+    text = " ".join(kept)
+    if len(text) > limit:
+        text = text[: limit - 1].rstrip() + "…"
+    return text
+
+
 def logical_diagram(
     project: Project,
     alignment: Alignment,
@@ -183,6 +211,15 @@ def logical_diagram(
     for entity in entities:
         row = rows[entity.name]
         lines.append(f"  {safe_id(entity.name, 'e')} {{")
+        # What one row means and what the table is for come first, where a
+        # reader looks before the columns. The comment slot of an attribute is
+        # the only place an ER diagram allows free text.
+        grain = row.grain or entity.grain_note
+        if grain:
+            lines.append(f'    note grain "{escape(grain)}"')
+        about = describe(entity.note)
+        if about:
+            lines.append(f'    note about "{escape(about)}"')
         by_role: dict[str, list[str]] = {}
         for column in entity.columns:
             by_role.setdefault(_designed_role(column), []).append(column.name)
@@ -200,8 +237,6 @@ def logical_diagram(
         total = len(entity.columns)
         if total > shown:
             lines.append(f"    more and_{total - shown}_further_attributes")
-        if row.grain:
-            lines.append(f"    grain {safe_id(row.grain[:40])}")
         lines.append("  }")
 
     return "\n".join(lines) + "\n"
@@ -402,3 +437,351 @@ def _layers(project: Project) -> list:
         return resolve().config.layers
     except Exception:
         return []
+
+
+#: How many models a pipeline diagram draws before it stops. Past this the
+#: picture is a hairball, and the per-area tabs carry the detail.
+PIPELINE_LIMIT = 60
+
+#: Mermaid shapes the pipeline uses, by node kind. The browser-side selector
+#: assembles the same diagram from the same spec, so these names are the
+#: contract between the two.
+PIPELINE_SHAPES: dict[str, tuple[str, str]] = {
+    "box": ('["', '"]'),
+    "round": ('("', '")'),
+    "cylinder": ('[("', '")]'),
+    "parallelogram": ('[/"', '"/]'),
+    "hexagon": ('{{"', '"}}'),
+}
+
+
+@dataclass(frozen=True)
+class PipelineNode:
+    id: str
+    label: str
+    group: str
+    shape: str
+    kind: str
+    style: str = ""
+
+
+@dataclass(frozen=True)
+class PipelineGroup:
+    id: str
+    label: str
+
+
+@dataclass
+class PipelineSpec:
+    """The DAG as data: groups in reading order, nodes, edges.
+
+    Kept separate from the Mermaid text so the dashboard can ship the same
+    structure to the browser and redraw a selection of it there, with the
+    health colouring decided once, here.
+    """
+
+    groups: list[PipelineGroup] = field(default_factory=list)
+    nodes: list[PipelineNode] = field(default_factory=list)
+    edges: list[tuple[str, str]] = field(default_factory=list)
+    hidden: int = 0
+
+    def to_json(self) -> str:
+        import json
+
+        return json.dumps(
+            {
+                "groups": [{"id": g.id, "label": g.label} for g in self.groups],
+                "nodes": [
+                    {
+                        "id": n.id,
+                        "label": n.label,
+                        "group": n.group,
+                        "shape": n.shape,
+                        "kind": n.kind,
+                        "style": n.style,
+                    }
+                    for n in self.nodes
+                ],
+                "edges": [list(edge) for edge in self.edges],
+            },
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+
+
+STYLE_OFF_PLAN = "fill:#fbe3de,stroke:#c0392b,stroke-width:2px"
+STYLE_UNTESTED = "fill:#fdf2cc,stroke:#b7791f,stroke-dasharray:4 3"
+STYLE_TEMPORARY = "fill:#f4f4f6,stroke:#9aa1ad"
+STYLE_SOURCE = "fill:#e1f6fe,stroke:#4a90b8"
+STYLE_VIEW = "fill:#e8e0fa,stroke:#7c5cbf"
+STYLE_EXPLORE = "fill:#525aff,stroke:#3a40c4,color:#fff"
+
+
+def pipeline_spec(
+    project: Project,
+    graph: Graph,
+    alignment: Alignment,
+    *,
+    domain: str | None = None,
+    max_models: int = PIPELINE_LIMIT,
+) -> PipelineSpec:
+    """The whole path data takes: raw sources, each layer, then the reports.
+
+    Sources sit on the left, models in one column per layer in pipeline order,
+    then the LookML views that read them, then the explores people open in
+    Looker. Colour is health, not decoration:
+
+    * red border, a table that was built with no design behind it
+    * amber dashed border, a table nothing tests
+    * grey rounded, a temporary working step that should never be reported from
+
+    With ``domain`` set, that area's tables are drawn together with everything
+    that feeds them, so a reader can follow one area from its raw sources to
+    the explores that read it. Staging and integration models carry the source
+    system's name as their area, not the business area, which is why the
+    upstream walk is needed rather than a filter on the area alone.
+    """
+    spec = PipelineSpec()
+    candidates = {model.name: model for model in project.models.values() if not model.vendored}
+    if domain is None:
+        chosen = set(candidates)
+    else:
+        chosen = {name for name, model in candidates.items() if model.domain == domain}
+        frontier = list(chosen)
+        while frontier:
+            parent_names = [
+                parent
+                for name in frontier
+                for parent in graph.direct_parents(name)
+                if parent in candidates and parent not in chosen
+            ]
+            chosen.update(parent_names)
+            frontier = parent_names
+    models = sorted((candidates[name] for name in chosen), key=lambda model: model.name)
+    if not models:
+        return spec
+    spec.hidden = max(0, len(models) - max_models)
+    models = models[:max_models]
+    names = {model.name for model in models}
+
+    layers = _layers(project)
+    stage = {layer.name: layer.pipeline_stage for layer in layers}
+    by_layer: dict[str, list] = {}
+    for model in models:
+        by_layer.setdefault(model.layer or "unplaced", []).append(model)
+
+    off_plan = {
+        row.model_name
+        for row in alignment.rows
+        if row.model_name and row.designed is not Presence.PRESENT and row.repo is Presence.PRESENT
+    }
+    untested = {model.name for model in models if not project.tests_for(model.name)}
+
+    # Views are often named after the model they read, and explores after
+    # views, so each kind carries a marker in its id that a model id cannot.
+    def source_id(unique_id: str) -> str:
+        return safe_id(f"src__{unique_id}", "s")
+
+    def view_id(name: str) -> str:
+        return safe_id(f"view__{name}", "v")
+
+    def explore_id(name: str) -> str:
+        return safe_id(f"explore__{name}", "x")
+
+    sources_used: dict[str, str] = {}
+    for model in models:
+        for unique_id in model.depends_on_sources:
+            source = project.sources.get(unique_id)
+            label = f"{source.source_name}.{source.name}" if source else unique_id.split(".")[-1]
+            sources_used[unique_id] = label
+    if sources_used:
+        spec.groups.append(PipelineGroup("sources", "raw sources"))
+        for unique_id, label in sorted(sources_used.items(), key=lambda item: item[1]):
+            spec.nodes.append(
+                PipelineNode(
+                    source_id(unique_id), label, "sources", "cylinder", "source", STYLE_SOURCE
+                )
+            )
+
+    for layer in sorted(by_layer, key=lambda name: (stage.get(name, 99), name)):
+        group_id = safe_id(layer, "l")
+        spec.groups.append(PipelineGroup(group_id, layer.replace("_", " ")))
+        for model in by_layer[layer]:
+            if model.name in off_plan:
+                style = STYLE_OFF_PLAN
+            elif model.name in untested and not model.is_temporary:
+                style = STYLE_UNTESTED
+            elif model.is_temporary:
+                style = STYLE_TEMPORARY
+            else:
+                style = ""
+            spec.nodes.append(
+                PipelineNode(
+                    safe_id(model.name, "m"),
+                    model.name,
+                    group_id,
+                    "round" if model.is_temporary else "box",
+                    "model",
+                    style,
+                )
+            )
+
+    views = sorted(
+        (view for view in project.lookml_views.values() if view.model_name in names),
+        key=lambda view: view.name,
+    )
+    view_names = {view.name for view in views}
+    if views:
+        spec.groups.append(PipelineGroup("looker_views", "Looker views (base layer)"))
+        for view in views:
+            spec.nodes.append(
+                PipelineNode(
+                    view_id(view.name),
+                    view.name,
+                    "looker_views",
+                    "parallelogram",
+                    "view",
+                    STYLE_VIEW,
+                )
+            )
+
+    explores = sorted(
+        (
+            explore
+            for explore in project.explores.values()
+            if explore.view_name in view_names or view_names.intersection(explore.joined_views())
+        ),
+        key=lambda explore: explore.name,
+    )
+    if explores:
+        spec.groups.append(PipelineGroup("looker_explores", "Looker explores"))
+        for explore in explores:
+            spec.nodes.append(
+                PipelineNode(
+                    explore_id(explore.name),
+                    explore.label or explore.name,
+                    "looker_explores",
+                    "hexagon",
+                    "explore",
+                    STYLE_EXPLORE,
+                )
+            )
+
+    for model in models:
+        for unique_id in model.depends_on_sources:
+            if unique_id in sources_used:
+                spec.edges.append((source_id(unique_id), safe_id(model.name, "m")))
+        for parent in graph.direct_parents(model.name):
+            if parent in names:
+                spec.edges.append((safe_id(parent, "m"), safe_id(model.name, "m")))
+    for view in views:
+        spec.edges.append((safe_id(view.model_name or "", "m"), view_id(view.name)))
+    for explore in explores:
+        for name in [explore.view_name, *explore.joined_views()]:
+            if name in view_names:
+                spec.edges.append((view_id(name), explore_id(explore.name)))
+    return spec
+
+
+def render_pipeline(spec: PipelineSpec, keep: set[str] | None = None) -> str:
+    """Mermaid text for a spec, or for the subset of its nodes in ``keep``.
+
+    The browser does the same assembly from the same JSON, so anything added
+    here has to be added there too. It is deliberately nothing but assembly.
+    """
+    if not spec.nodes:
+        return 'flowchart LR\n  empty["No models were found"]\n'
+    nodes = [node for node in spec.nodes if keep is None or node.id in keep]
+    kept = {node.id for node in nodes}
+    lines = ["flowchart LR"]
+    for group in spec.groups:
+        members = [node for node in nodes if node.group == group.id]
+        if not members:
+            continue
+        lines.append(f'  subgraph {group.id}["{escape(group.label)}"]')
+        for node in members:
+            open_, close = PIPELINE_SHAPES[node.shape]
+            lines.append(f"    {node.id}{open_}{escape(node.label)}{close}")
+        lines.append("  end")
+    for left, right in spec.edges:
+        if left in kept and right in kept:
+            lines.append(f"  {left} --> {right}")
+    for node in nodes:
+        if node.style:
+            lines.append(f"  style {node.id} {node.style}")
+    if spec.hidden and keep is None:
+        lines.append(f'  more["and {spec.hidden} more models not drawn"]')
+        lines.append("  style more fill:#fff,stroke:#ccc,stroke-dasharray:2 3")
+    return "\n".join(lines) + "\n"
+
+
+def pipeline_graph(
+    project: Project,
+    graph: Graph,
+    alignment: Alignment,
+    *,
+    domain: str | None = None,
+    max_models: int = PIPELINE_LIMIT,
+) -> str:
+    """The pipeline DAG as Mermaid text. See :func:`pipeline_spec`."""
+    return render_pipeline(
+        pipeline_spec(project, graph, alignment, domain=domain, max_models=max_models)
+    )
+
+
+#: Node id prefixes in an authored data flow diagram, and how each is coloured.
+LOGICAL_FURNITURE_STYLE: dict[str, str] = {
+    "data_source__": STYLE_SOURCE,
+    "dashboard__": "fill:#e8e0fa,stroke:#7c5cbf",
+}
+
+_FRONTMATTER = re.compile(r"\A\s*---\n.*?\n---\n", re.S)
+
+#: Presentation markup teams put in labels: bold wrappers sized by hand, and
+#: icon elements that need a font the report does not carry. The text inside
+#: a bold wrapper is kept; an icon element has no text and goes.
+_LABEL_MARKUP = re.compile(r"</?b(?:\s[^>]*)?>|<i\s[^>]*>\s*</i>|<i\s[^>]*/>")
+
+#: Room for a container's title, so it does not sit on top of what it holds.
+_TITLE_ROOM = '%%{init: {"flowchart": {"subGraphTitleMargin": {"top": 12, "bottom": 12}}}}%%'
+
+_FURNITURE_ID = re.compile(r"\b((?:data_source|dashboard)__[A-Za-z0-9_]+)")
+
+
+def decorate_logical(source: str | None, alignment: Alignment) -> str:
+    """The team's own data flow diagram, with Hunter's colours laid over it.
+
+    The picture is theirs and is kept as drawn. Three things are changed:
+
+    * The front matter is dropped. Its title collided with the diagram's own
+      container label when both were drawn, and the tab already names it. It
+      also asked for a layout engine the bundled library does not carry.
+    * Every entity Hunter matched to the alignment is coloured by its real
+      state, the same colours as the conceptual model, so the two agree.
+    * Data sources and dashboards get the same colours they have on the data
+      flow card, so a reader moving between the two is not relearning them.
+    * Hand-sized bold wrappers and icon elements are taken out of labels. The
+      library measures a label by its plain text, so a label drawn at another
+      size overlaps its neighbours, and an icon font the page does not load
+      renders as a gap.
+    """
+    if not source or not source.strip():
+        return ""
+    text = _FRONTMATTER.sub("", source, count=1).rstrip("\n")
+    text = _LABEL_MARKUP.sub("", text)
+    lines = [_TITLE_ROOM, text]
+
+    by_node = {row.logical_name: row for row in alignment.rows if row.logical_name}
+    for node, row in sorted(by_node.items()):
+        lines.append(f"  style {node} {STATE_STYLE[row.state]}")
+
+    seen: set[str] = set()
+    for match in _FURNITURE_ID.finditer(text):
+        node = match.group(1)
+        if node in seen:
+            continue
+        seen.add(node)
+        for prefix, style in LOGICAL_FURNITURE_STYLE.items():
+            if node.startswith(prefix):
+                lines.append(f"  style {node} {style}")
+    return "\n".join(lines) + "\n"

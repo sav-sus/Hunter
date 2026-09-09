@@ -22,13 +22,17 @@ Complete. Version 0.1.0.dev0, unreleased.
 | Score, weight renormalisation, systemic gaps, baseline | Built |
 | `report.json` | Built |
 | Three model levels drawn, plus graph and blast radius | Built |
-| Twelve site pages, MkDocs Material | Built |
+| Thirteen site pages, MkDocs Material, including the roadmap | Built |
 | Plain-language layer and glossary | Built |
 | Pull request comment, with a true diff given a previous report | Built |
 | Window report | Built |
-| Command line: 11 commands | Built |
+| Command line: 13 commands | Built |
 | Composite GitHub Action | Built, not published |
-| `hunter init` scaffolding, pre-filled | Built |
+| `hunter init` scaffolding, pre-filled, with a five-job workflow: score, three sync checks, publish to GitHub Pages | Built |
+| Three sync checks as separate composite actions | Built, not published |
+| Table status: temporary, verified or permanent, with verified requiring a named person | Built |
+| Layers discovered from the models directory when the ruleset does not declare them | Built |
+| Roadmap view: every table in one lane, on the dashboard and as a site page | Built |
 
 ## Next: M1, one to two weeks
 
@@ -37,7 +41,7 @@ Ordered by what unblocks the most.
 | Item | Why it is next | Depends on |
 |---|---|---|
 | Publish the Action and the package | Nothing can be installed anywhere until this is done | The visibility and ownership decisions in [09](09-risks-and-open-items.md) |
-| Site hosting | The site exists and has nowhere to live | The same decisions |
+| Site hosting | The workflow publishes to GitHub Pages. Whether a public Pages site is acceptable per client is still a decision | The same decisions |
 | Live Droughty against the warehouse | Completes the comparison the file-based half starts | A read-only credential |
 | Debt register with ageing | Findings have a first-seen date already; this turns it into "open for 40 days" | Score history, below |
 | Score history and trend | Answers "are we getting anywhere" with a line rather than a number | Somewhere to keep past reports |

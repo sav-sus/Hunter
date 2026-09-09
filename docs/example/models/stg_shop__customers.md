@@ -10,7 +10,7 @@ Customers as the shop platform exports them. Grain is one row per customer. join
 | Area | shop |
 | Built as | view |
 | Enabled | yes |
-| Temporary or permanent | temporary |
+| Temporary, verified or permanent | temporary |
 | Decided by | layer persistence |
 | One row means | not stated |
 | Owner | nobody named |
@@ -36,7 +36,7 @@ Customers as the shop platform exports them. Grain is one row per customer. join
 
 | What | Count | Names |
 |---|---|---|
-| Other tables | 5 | int_shop__orders, wh_shop__customer_dim, wh_shop__legacy_fact, wh_shop__order_fact, wh_shop__product_dim |
+| Other tables | 5 | int_shop__orders, wh_commerce__legacy_fact, wh_commerce__order_fact, wh_master__customer_dim, wh_master__product_dim |
 | Report views | 0 | - |
 
 
@@ -45,15 +45,15 @@ flowchart LR
   stg_shop__customers["stg_shop__customers"]
   style stg_shop__customers fill:#fdf2cc,stroke:#9a8330
   int_shop__orders["int_shop__orders"]
-  wh_shop__customer_dim["wh_shop__customer_dim"]
-  wh_shop__legacy_fact["wh_shop__legacy_fact"]
-  wh_shop__order_fact["wh_shop__order_fact"]
-  wh_shop__product_dim["wh_shop__product_dim"]
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  wh_master__customer_dim["wh_master__customer_dim"]
+  wh_master__product_dim["wh_master__product_dim"]
   stg_shop__customers --> int_shop__orders
-  stg_shop__customers --> wh_shop__customer_dim
-  int_shop__orders --> wh_shop__legacy_fact
-  int_shop__orders --> wh_shop__order_fact
-  int_shop__orders --> wh_shop__product_dim
+  int_shop__orders --> wh_commerce__legacy_fact
+  int_shop__orders --> wh_commerce__order_fact
+  stg_shop__customers --> wh_master__customer_dim
+  int_shop__orders --> wh_master__product_dim
 ```
 
 

@@ -6,7 +6,7 @@
 
 include: "/analytics_warehouse/lookml/base/_base.layer.lkml"
 
-view: +wh_shop__order_fact {
+view: +wh_commerce__order_fact {
   measure: count_of_order_pk {
     type: count_distinct
     sql: ${order_pk} ;;
@@ -18,14 +18,14 @@ view: +wh_shop__order_fact {
   }
 }
 
-view: +wh_shop__customer_dim {
+view: +wh_master__customer_dim {
   measure: count_of_customer_pk {
     type: count_distinct
     sql: ${customer_pk} ;;
   }
 }
 
-view: +wh_shop__daily_sales_xa {
+view: +wh_commerce__daily_sales_xa {
   measure: count_of_daily_sales_pk {
     type: count_distinct
     sql: ${daily_sales_pk} ;;

@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../../concepts/" class="md-nav__link">
+    <a href="../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -549,6 +553,8 @@
       
         
       
+        
+      
     
     
     
@@ -615,6 +621,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The roadmap
   
 
     
@@ -1192,57 +1226,57 @@
 <tbody>
 <tr>
 <td>Needs attention</td>
-<td>1 report field in view wh_shop__order_fact read columns wh_shop__order_fact no longer produces: order_channel_name -&gt; order_channel_name</td>
-<td>These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact.</td>
+<td>1 report field in view wh_commerce__order_fact read columns wh_commerce__order_fact no longer produces: order_channel_name -&gt; order_channel_name</td>
+<td>These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_commerce__order_fact.</td>
 <td>analytics_warehouse/lookml/base/_base.layer.lkml</td>
 </tr>
 <tr>
 <td>Needs attention</td>
-<td>1 test declared for wh_shop__customer_dim never reached the generated schema: customer_pk: not_null</td>
+<td>1 test declared for wh_master__customer_dim never reached the generated schema: customer_pk: not_null</td>
 <td>Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes.</td>
-<td>models/warehouse/wh_shop/wh_shop__customer_dim.sql</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>wh_shop__daily_sales_xa is not described in the generated schema</td>
+<td>wh_commerce__daily_sales_xa is not described in the generated schema</td>
 <td>daily sales was skipped when the schema was generated, so it has neither the generated tests nor the generated descriptions the rest of the project has.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>3 tests in the generated schema for wh_shop__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one</td>
+<td>3 tests in the generated schema for wh_commerce__order_fact are not in the project: customer_fk: at_least_one; order_natural_key: at_least_one; order_total_amount: at_least_one</td>
 <td>The generated schema says these tests should exist on orders, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
-<td>models/warehouse/wh_shop/wh_shop__order_fact.sql</td>
+<td>models/warehouse/wh_commerce/wh_commerce__order_fact.sql</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>1 test in the generated schema for wh_shop__customer_dim are not in the project: customer_name: at_least_one</td>
+<td>1 test in the generated schema for wh_master__customer_dim are not in the project: customer_name: at_least_one</td>
 <td>The generated schema says these tests should exist on customers, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
-<td>models/warehouse/wh_shop/wh_shop__customer_dim.sql</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 <tr>
 <td>Worth fixing</td>
-<td>2 tests in the generated schema for wh_shop__product_dim are not in the project: product_pk: not_null; product_pk: unique</td>
+<td>2 tests in the generated schema for wh_master__product_dim are not in the project: product_pk: not_null; product_pk: unique</td>
 <td>The generated schema says these tests should exist on products, and dbt does not have them. Either the generated file has not been applied, or something removed them by hand.</td>
-<td>models/warehouse/wh_shop/wh_shop__product_dim.sql</td>
+<td>models/warehouse/wh_master/wh_master__product_dim.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__order_fact feeds 1 report view but declares no exposure</td>
+<td>wh_commerce__order_fact feeds 1 report view but declares no exposure</td>
 <td>Nothing in the project records that reports depend on orders, so anyone changing it has no way to see what they would break.</td>
-<td>models/warehouse/wh_shop/wh_shop__order_fact.sql</td>
+<td>models/warehouse/wh_commerce/wh_commerce__order_fact.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__daily_sales_xa feeds 1 report view but declares no exposure</td>
+<td>wh_commerce__daily_sales_xa feeds 1 report view but declares no exposure</td>
 <td>Nothing in the project records that reports depend on daily sales, so anyone changing it has no way to see what they would break.</td>
-<td>models/warehouse/wh_shop/wh_shop__daily_sales_xa.sql</td>
+<td>models/warehouse/wh_commerce/wh_commerce__daily_sales_xa.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__customer_dim feeds 1 report view but declares no exposure</td>
+<td>wh_master__customer_dim feeds 1 report view but declares no exposure</td>
 <td>Nothing in the project records that reports depend on customers, so anyone changing it has no way to see what they would break.</td>
-<td>models/warehouse/wh_shop/wh_shop__customer_dim.sql</td>
+<td>models/warehouse/wh_master/wh_master__customer_dim.sql</td>
 </tr>
 <tr>
 <td>Tidy up</td>
@@ -1258,13 +1292,13 @@
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__product_dim holds 1 column in the warehouse that the design does not include: product_list_price_amount</td>
+<td>wh_master__product_dim holds 1 column in the warehouse that the design does not include: product_list_price_amount</td>
 <td>The warehouse picture taken by Droughty shows columns on products that nobody designed, so their business meaning is not recorded.</td>
 <td>analytics_warehouse/docs/data_model_design/physical_model.dbml</td>
 </tr>
 <tr>
 <td>Tidy up</td>
-<td>wh_shop__order_fact holds 1 column in the warehouse that the design does not include: order_channel_name</td>
+<td>wh_commerce__order_fact holds 1 column in the warehouse that the design does not include: order_channel_name</td>
 <td>The warehouse picture taken by Droughty shows columns on orders that nobody designed, so their business meaning is not recorded.</td>
 <td>analytics_warehouse/docs/data_model_design/physical_model.dbml</td>
 </tr>

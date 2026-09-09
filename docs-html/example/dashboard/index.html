@@ -16,7 +16,7 @@
         <link rel="prev" href="../../quickstart/">
       
       
-        <link rel="next" href="../../concepts/">
+        <link rel="next" href="../../how-it-works/">
       
       
         
@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -337,7 +337,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Start here
+    Getting started
   
 
           </label>
@@ -357,7 +357,7 @@
   <span class="md-ellipsis">
     
   
-    Install
+    Installation
   
 
     
@@ -385,7 +385,7 @@
   <span class="md-ellipsis">
     
   
-    First run
+    Quick start
   
 
     
@@ -516,6 +516,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -531,14 +537,14 @@
   
   
   
-    <a href="../../concepts/" class="md-nav__link">
+    <a href="../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -572,8 +578,6 @@
       
         
       
-        
-      
     
     
     
@@ -596,7 +600,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -684,6 +688,8 @@
       
         
           
+        
+      
         
       
         
@@ -837,36 +843,32 @@
 </thead>
 <tbody>
 <tr>
-<td>The number</td>
-<td>How healthy is this repository</td>
+<td>The headline</td>
+<td>The repository by name, its score and grade, the path from what the business asked for to what is reachable in Looker, and four figures a product owner can act on</td>
 </tr>
 <tr>
 <td>Checklist</td>
 <td>Statements that should hold, grouped: design to build, warehouse to Looker, Droughty, documentation, tests. Each says how many hold and names what does not</td>
 </tr>
 <tr>
+<td>Roadmap</td>
+<td>Every table in one lane: planned, being built, live, temporary by design, being phased out, retired. Each built table says whether it is verified, permanent or temporary, who owns it, and what happens next</td>
+</tr>
+<tr>
 <td>Modelling alignment</td>
-<td>The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked</td>
+<td>The same entities at the conceptual, logical and physical levels, side by side, with the breaks marked; searchable, and each row opens to what the state means and what to do next</td>
 </tr>
 <tr>
 <td>Model diagrams</td>
-<td>The conceptual, logical and physical models drawn with Mermaid, with tabs and zoom</td>
+<td>Three tabs with a find box: the conceptual model, the logical data flow diagram as the team drew it (coloured by state), and the physical DBML design as table cards with keys, types, relationships and notes on hover</td>
 </tr>
 <tr>
-<td>Every table</td>
-<td>One row per table, searchable: what is in the design, the repository, the warehouse and Looker</td>
+<td>Data flow</td>
+<td>The DAG from raw sources through each layer to the Looker views and explores, one tab per area, coloured by health, with dbt-style selection (+name, name+, 2+name) to follow one table</td>
 </tr>
 <tr>
-<td>What everything else is built on</td>
-<td>Which tables are load-bearing and unchecked</td>
-</tr>
-<tr>
-<td>Do these first</td>
-<td>What to fix, ranked by what closing it recovers</td>
-</tr>
-<tr>
-<td>What this is not based on</td>
-<td>What Hunter could not read</td>
+<td>Table readiness</td>
+<td>One row per built table, searchable: status (temporary, verified or permanent), described, columns described, owner, key tests, LookML view, Droughty, warehouse, and what it still needs</td>
 </tr>
 </tbody>
 </table>

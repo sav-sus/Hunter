@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://rittman-hunter.readthedocs.io/configuration/">
       
       
-        <link rel="prev" href="../scoring/">
+        <link rel="prev" href="../sync-checks/">
       
       
-        <link rel="next" href="../register/">
+        <link rel="next" href="../scoring/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Configuration - Rittman Hunter</title>
+        <title>hunter.yml - Rittman Hunter</title>
       
     
     
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuration
+              hunter.yml
             
           </span>
         </div>
@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../concepts/" class="md-nav__link">
+    <a href="../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -404,8 +410,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -449,7 +453,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Set it up
+    Configuration
   
 
           </label>
@@ -478,7 +482,7 @@
   <span class="md-ellipsis">
     
   
-    Configuration
+    hunter.yml
   
 
     
@@ -496,7 +500,7 @@
   <span class="md-ellipsis">
     
   
-    Configuration
+    hunter.yml
   
 
     
@@ -574,6 +578,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Everything else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layers-hunter-finds-on-its-own" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layers Hunter finds on its own
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -603,14 +624,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../register/" class="md-nav__link">
+      <a href="../scoring/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    The register
+    The score
   
 
     
@@ -631,42 +652,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../sync-checks/" class="md-nav__link">
+      <a href="../concepts/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    The three sync checks
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ci/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    In CI
+    The ideas behind it
   
 
     
@@ -756,6 +749,8 @@
       
         
           
+        
+      
         
       
         
@@ -901,6 +896,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Everything else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layers-hunter-finds-on-its-own" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layers Hunter finds on its own
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1092,6 +1104,15 @@ for two different purposes:</p>
 <h2 id="everything-else">Everything else<a class="headerlink" href="#everything-else" title="Permanent link">&para;</a></h2>
 <p>The standard already sets all of this. These are the blocks to reach for when a
 repository needs to differ.</p>
+<h3 id="layers-hunter-finds-on-its-own">Layers Hunter finds on its own<a class="headerlink" href="#layers-hunter-finds-on-its-own" title="Permanent link">&para;</a></h3>
+<p>The standard declares staging, integration, warehouse, seeds, reverse ETL and
+AI. A directory under <code>models/</code> that none of them claims becomes a layer named
+after the directory, with a prefix where every model in it shares one. The
+report marks it <em>found, not declared</em>, and the "what was not checked" page
+names it.</p>
+<p>A found layer carries no rules: no required descriptions, owners or tests, and
+no place in the pipeline order. Declare it here to say what it should look like.
+Until then, nothing needs editing for its tables to appear on the dashboard.</p>
 <details class="note">
 <summary>Layers: what is allowed in each stage</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">layers</span><span class="p">:</span>
@@ -1099,7 +1120,7 @@ repository needs to differ.</p>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">paths</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"models/warehouse/**"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"models/wh_*/**"</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wh_</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">materialisations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">table</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">incremental</span><span class="p p-Indicator">]</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">persistence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">persistent</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">persistence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">permanent</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">pipeline_stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">may_reference</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">staging</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">integration</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">warehouse</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">seeds</span><span class="p p-Indicator">]</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">may_reference_sources</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -1133,7 +1154,7 @@ repository needs to differ.</p>
 </tr>
 <tr>
 <td><code>persistence</code></td>
-<td><code>temporary</code> or <code>persistent</code>. Feeds the classification</td>
+<td><code>temporary</code> or <code>permanent</code>. Feeds the classification. <code>verified</code> is a register word, not a layer one</td>
 </tr>
 <tr>
 <td><code>pipeline_stage</code></td>
@@ -1261,7 +1282,7 @@ reweighting. See <a href="../scoring/">the score</a>.</p>
 <details class="note">
 <summary>Per-model overrides, next to the model itself</summary>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">models</span><span class="p">:</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wh_shop__legacy_fact</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wh_commerce__legacy_fact</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">meta</span><span class="p">:</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">hunter</span><span class="p">:</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">commerce</span>

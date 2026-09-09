@@ -9,79 +9,53 @@ The same model described three ways. Each answers a different question, and comp
 | Built | What actually exists: the tables, their real columns and how they are built. | Engineers |
 
 
-## Shop
+## Commerce
 
 ### Business view
 
 ```mermaid
 flowchart TB
-  subgraph shop["shop"]
-    shop_customer["customers"]
-    shop_daily_sale["daily sales"]
-    shop_forecast["forecasts"]
-    shop_order["orders"]
-    shop_product["products"]
-    shop_return["returns"]
-    shop_supplier["suppliers"]
+  subgraph commerce["commerce"]
+    commerce_daily_sale["daily sales"]
+    commerce_forecast["forecasts"]
+    commerce_order["orders"]
+    commerce_return["returns"]
   end
-  style shop_customer fill:#d6ead6,stroke:#4a7a4a
-  style shop_daily_sale fill:#d6ead6,stroke:#4a7a4a
-  style shop_forecast fill:#e8e8e8,stroke:#777,stroke-dasharray:4 3
-  style shop_order fill:#d6ead6,stroke:#4a7a4a
-  style shop_product fill:#d6ead6,stroke:#4a7a4a
-  style shop_return fill:#fafafa,stroke:#bbb,stroke-dasharray:2 3
-  style shop_supplier fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3
+  style commerce_daily_sale fill:#d6ead6,stroke:#4a7a4a
+  style commerce_forecast fill:#e8e8e8,stroke:#777,stroke-dasharray:4 3
+  style commerce_order fill:#d6ead6,stroke:#4a7a4a
+  style commerce_return fill:#fafafa,stroke:#bbb,stroke-dasharray:2 3
 ```
 
 ### Designed view
 
 ```mermaid
 erDiagram
-  wh_shop__forecast_fact }o--|| wh_shop__product_dim : "product_fk"
-  wh_shop__order_fact }o--|| wh_shop__customer_dim : "customer_fk"
-  wh_shop__customer_dim {
-    key customer_pk PK
-    natural_key customer_natural_key
-    date customer_joined_dt
-    attribute customer_name
-    grain One_row_per_customer
-  }
-  wh_shop__daily_sales_xa {
+  wh_commerce__daily_sales_xa {
+    note grain "One row per day"
+    note about "Source System: derived from wh_commerce__order_fact."
     key daily_sales_pk PK
     date daily_sales_dt
     measure daily_sales_order_count
     measure daily_sales_returned_amount
     measure daily_sales_total_amount
-    grain One_row_per_day
   }
-  wh_shop__forecast_fact {
+  wh_commerce__forecast_fact {
+    note grain "One row per product per week"
+    note about "Source System: the forecasting service."
     key forecast_pk PK
     link product_fk FK
     date forecast_week_dt
     measure forecast_units
-    grain One_row_per_product_per_week
   }
-  wh_shop__order_fact {
+  wh_commerce__order_fact {
+    note grain "One row per order"
+    note about "Source System: the shop platform's daily export."
     key order_pk PK
     link customer_fk FK
     natural_key order_natural_key
     date order_placed_dt
     measure order_total_amount
-    grain One_row_per_order
-  }
-  wh_shop__product_dim {
-    key product_pk PK
-    natural_key product_natural_key
-    attribute product_category_name
-    attribute product_name
-    grain One_row_per_product
-  }
-  wh_shop__supplier_dim {
-    key supplier_pk PK
-    natural_key supplier_natural_key
-    attribute supplier_country_code
-    attribute supplier_name
-    grain One_row_per_supplier
   }
 ```
 
@@ -89,26 +63,19 @@ erDiagram
 
 ```mermaid
 erDiagram
-  wh_shop__customer_dim {
-    built_as table
-    unknown customer_joined_dt
-    unknown customer_name
-    unknown customer_natural_key
-    unknown customer_pk
-  }
-  wh_shop__daily_sales_xa {
+  wh_commerce__daily_sales_xa {
     built_as table
     unknown daily_sales_dt
     unknown daily_sales_order_count
     unknown daily_sales_pk
     unknown daily_sales_total_amount
   }
-  wh_shop__legacy_fact {
+  wh_commerce__legacy_fact {
     built_as table
     unknown legacy_amount
     unknown legacy_pk
   }
-  wh_shop__order_fact {
+  wh_commerce__order_fact {
     built_as table
     unknown customer_fk
     unknown order_natural_key
@@ -116,7 +83,77 @@ erDiagram
     unknown order_placed_dt
     unknown order_total_amount
   }
-  wh_shop__product_dim {
+```
+
+### Where the three disagree
+
+| Entity | Business | Designed | Built | State |
+|---|---|---|---|---|
+| daily sales | yes | yes | yes | Designed and delivered |
+| forecasts | yes | yes | switched off | Built, switched off |
+| legacy | no | no | yes | Built off-plan |
+| orders | yes | yes | yes | Designed and delivered |
+| returns | yes | no | no | On the business model only |
+
+
+## Master
+
+### Business view
+
+```mermaid
+flowchart TB
+  subgraph master["master"]
+    master_customer["customers"]
+    master_product["products"]
+    master_supplier["suppliers"]
+  end
+  style master_customer fill:#d6ead6,stroke:#4a7a4a
+  style master_product fill:#d6ead6,stroke:#4a7a4a
+  style master_supplier fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3
+```
+
+### Designed view
+
+```mermaid
+erDiagram
+  wh_master__customer_dim {
+    note grain "One row per customer"
+    note about "Source System: the shop platform's daily export."
+    key customer_pk PK
+    natural_key customer_natural_key
+    date customer_joined_dt
+    attribute customer_name
+  }
+  wh_master__product_dim {
+    note grain "One row per product"
+    note about "Source System: the shop platform's daily export."
+    key product_pk PK
+    natural_key product_natural_key
+    attribute product_category_name
+    attribute product_name
+  }
+  wh_master__supplier_dim {
+    note grain "One row per supplier"
+    note about "Source System: the purchasing system. Designed, not yet…"
+    key supplier_pk PK
+    natural_key supplier_natural_key
+    attribute supplier_country_code
+    attribute supplier_name
+  }
+```
+
+### Built view
+
+```mermaid
+erDiagram
+  wh_master__customer_dim {
+    built_as table
+    unknown customer_joined_dt
+    unknown customer_name
+    unknown customer_natural_key
+    unknown customer_pk
+  }
+  wh_master__product_dim {
     built_as table
     unknown product_category_name
     unknown product_list_price_amount
@@ -131,12 +168,7 @@ erDiagram
 | Entity | Business | Designed | Built | State |
 |---|---|---|---|---|
 | customers | yes | yes | yes | Designed and delivered |
-| daily sales | yes | yes | yes | Designed and delivered |
-| forecasts | yes | yes | switched off | Built, switched off |
-| legacy | no | no | yes | Built off-plan |
-| orders | yes | yes | yes | Designed and delivered |
 | products | yes | yes | yes | Designed and delivered |
-| returns | yes | no | no | On the business model only |
 | suppliers | yes | yes | no | Designed, not started |
 
 

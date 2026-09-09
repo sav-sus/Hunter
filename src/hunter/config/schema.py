@@ -67,6 +67,12 @@ class LayerSpec(Strict):
     #: other; 0 means the layer is not part of the flow.
     pipeline_stage: int = 0
 
+    #: True when Hunter found this layer in the models directory rather than
+    #: reading it from a ruleset. A discovered layer carries no requirements:
+    #: Hunter knows the models are grouped, not what the group should look
+    #: like. The report names every discovered layer so it can be declared.
+    discovered: bool = False
+
     #: Whether models in this layer are modelled entities that belong in the
     #: alignment chain. Staging and integration models are working steps, not
     #: entities: counting them would report 129 staging models as built

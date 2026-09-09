@@ -11,17 +11,56 @@ flowchart LR
     integration__shop["shop (1)"]
   end
   subgraph warehouse["warehouse"]
-    warehouse__shop["shop (5)"]
+    warehouse__commerce["commerce (3)"]
+    warehouse__master["master (2)"]
   end
-  integration__shop -->|3| warehouse__shop
+  integration__shop -->|2| warehouse__commerce
+  integration__shop --> warehouse__master
   staging__shop -->|2| integration__shop
-  staging__shop -->|2| warehouse__shop
+  staging__shop --> warehouse__commerce
+  staging__shop --> warehouse__master
 ```
 
 
 ## By area
 
 Rounded boxes are working steps rather than finished tables. Grey boxes sit outside the area and are shown for context.
+
+### Commerce
+
+```mermaid
+flowchart LR
+  subgraph focus["commerce"]
+    wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+    wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+    wh_commerce__order_fact["wh_commerce__order_fact"]
+  end
+  int_shop__orders["int_shop__orders"]
+  style int_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__orders["stg_shop__orders"]
+  style stg_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__orders --> wh_commerce__daily_sales_xa
+  int_shop__orders --> wh_commerce__legacy_fact
+  int_shop__orders --> wh_commerce__order_fact
+```
+
+
+### Master
+
+```mermaid
+flowchart LR
+  subgraph focus["master"]
+    wh_master__customer_dim["wh_master__customer_dim"]
+    wh_master__product_dim["wh_master__product_dim"]
+  end
+  int_shop__orders["int_shop__orders"]
+  style int_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__customers["stg_shop__customers"]
+  style stg_shop__customers fill:#f7f7f7,stroke:#bbb
+  stg_shop__customers --> wh_master__customer_dim
+  int_shop__orders --> wh_master__product_dim
+```
+
 
 ### Shop
 
@@ -31,19 +70,24 @@ flowchart LR
     int_shop__orders("int_shop__orders")
     stg_shop__customers("stg_shop__customers")
     stg_shop__orders("stg_shop__orders")
-    wh_shop__customer_dim["wh_shop__customer_dim"]
-    wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
-    wh_shop__legacy_fact["wh_shop__legacy_fact"]
-    wh_shop__order_fact["wh_shop__order_fact"]
-    wh_shop__product_dim["wh_shop__product_dim"]
   end
+  wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+  style wh_commerce__daily_sales_xa fill:#f7f7f7,stroke:#bbb
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  style wh_commerce__legacy_fact fill:#f7f7f7,stroke:#bbb
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  style wh_commerce__order_fact fill:#f7f7f7,stroke:#bbb
+  wh_master__customer_dim["wh_master__customer_dim"]
+  style wh_master__customer_dim fill:#f7f7f7,stroke:#bbb
+  wh_master__product_dim["wh_master__product_dim"]
+  style wh_master__product_dim fill:#f7f7f7,stroke:#bbb
   stg_shop__customers --> int_shop__orders
   stg_shop__orders --> int_shop__orders
-  int_shop__orders --> wh_shop__legacy_fact
-  int_shop__orders --> wh_shop__order_fact
-  int_shop__orders --> wh_shop__product_dim
-  stg_shop__customers --> wh_shop__customer_dim
-  stg_shop__orders --> wh_shop__daily_sales_xa
+  int_shop__orders --> wh_commerce__legacy_fact
+  int_shop__orders --> wh_commerce__order_fact
+  int_shop__orders --> wh_master__product_dim
+  stg_shop__customers --> wh_master__customer_dim
+  stg_shop__orders --> wh_commerce__daily_sales_xa
 ```
 
 

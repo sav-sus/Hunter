@@ -1,4 +1,4 @@
-# Install
+# Installation
 
 <p class="lede">One command, then find your dbt manifest. No warehouse
 credential.</p>
@@ -45,10 +45,7 @@ dbt writes `manifest.json` into `target/`, which is almost always in
 
 Three ways to get one, in the order worth trying.
 
-<ol class="steps" markdown>
-
-<li markdown>
-<b>Parse with no credential</b>
+### 1. Parse with no credential
 
 ```bash
 cd your-dbt-project
@@ -58,17 +55,13 @@ dbt parse
 Usually enough. dbt reads the project files and works out what each model
 refers to. It needs a valid-looking `profiles.yml` entry even when it never
 connects, so a stub profile does.
-</li>
 
-<li markdown>
-<b>Parse with a read-only credential</b>
+### 2. Parse with a read-only credential
 
 If step 1 fails, use a read-only service account. Workload Identity Federation
 rather than a stored key file.
-</li>
 
-<li markdown>
-<b>Use the manifest your dbt job already produces</b>
+### 3. Use the manifest your dbt job already produces
 
 If dbt runs anywhere already, the manifest already exists.
 
@@ -78,9 +71,6 @@ hunter score . --manifest path/to/manifest.json
 
 This is the option that turns installing Hunter from a security review into a
 configuration change, so it is worth five minutes to check.
-</li>
-
-</ol>
 
 ??? note "Why `dbt parse` sometimes needs a connection"
 

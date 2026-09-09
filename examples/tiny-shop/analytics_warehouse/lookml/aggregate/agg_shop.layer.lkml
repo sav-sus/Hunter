@@ -1,6 +1,6 @@
 include: "/analytics_warehouse/lookml/base/_aggregate.layer.lkml"
 
-view: +wh_shop__order_fact {
+view: +wh_commerce__order_fact {
 # ----------------------------------- Hidden metrics
   measure: count_of_order_pk { hidden: yes }
 
@@ -30,7 +30,7 @@ view: +wh_shop__order_fact {
   }
 }
 
-view: +wh_shop__customer_dim {
+view: +wh_master__customer_dim {
 # ----------------------------------- Hidden metrics
   measure: count_of_customer_pk { hidden: yes }
 
@@ -43,7 +43,7 @@ view: +wh_shop__customer_dim {
   }
 }
 
-view: +wh_shop__daily_sales_xa {
+view: +wh_commerce__daily_sales_xa {
 # ----------------------------------- Hidden metrics
   measure: count_of_daily_sales_pk { hidden: yes }
   measure: sum_of_daily_sales_order_count { hidden: yes }

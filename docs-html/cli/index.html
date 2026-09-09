@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://rittman-hunter.readthedocs.io/cli/">
       
       
-        <link rel="prev" href="../ci/">
+        <link rel="prev" href="../concepts/">
       
       
         <link rel="next" href="../reference/rules/">
@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../concepts/" class="md-nav__link">
+    <a href="../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -833,6 +837,8 @@
       
         
           
+        
+      
         
       
         
@@ -1343,7 +1349,7 @@ its own GitHub Action: <a href="../sync-checks/">the three sync checks</a>.</p>
 </code></pre></div>
 <p>Then a line per entity with its state and the table behind it.</p>
 <h2 id="hunter-explain"><code>hunter explain</code><a class="headerlink" href="#hunter-explain" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hunter<span class="w"> </span>explain<span class="w"> </span>wh_shop__customer_dim
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hunter<span class="w"> </span>explain<span class="w"> </span>wh_master__customer_dim
 </code></pre></div>
 <p>What it is, what one row means, who owns it, how it behaves against what its
 name claims, its columns and tests, what depends on it, a diagram of its blast
@@ -1389,7 +1395,7 @@ window touched.</p>
 is marketing rather than reporting.</p>
 <h2 id="hunter-diagram"><code>hunter diagram</code><a class="headerlink" href="#hunter-diagram" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>conceptual
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>blast<span class="w"> </span>--model<span class="w"> </span>wh_shop__order_fact
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>hunter<span class="w"> </span>diagram<span class="w"> </span>--level<span class="w"> </span>blast<span class="w"> </span>--model<span class="w"> </span>wh_commerce__order_fact
 </code></pre></div>
 <table>
 <thead>
@@ -1434,6 +1440,10 @@ rather than absolutes.</p>
 <p>Detects the layout and says what it could not find. Where a manifest is
 present, it also scores the repository and fills the register with the tables it
 would flag, each with a blank reason.</p>
+<p>Writes three files: <code>.hunter/hunter.yml</code>, <code>.hunter/register.yml</code> and
+<code>.github/workflows/hunter.yml</code>. The workflow runs the score and the three sync
+checks on every pull request, and publishes the dashboard to GitHub Pages on
+every push to main. See <a href="../ci/">Run it on every pull request</a>.</p>
 <p>Refuses to overwrite existing files without <code>--force</code>. Overwriting a ruleset
 somebody has tuned would be worse than refusing.</p>
 <h2 id="hunter-rules"><code>hunter rules</code><a class="headerlink" href="#hunter-rules" title="Permanent link">&para;</a></h2>

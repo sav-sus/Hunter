@@ -42,7 +42,7 @@ arrive the diagram source is shown as text and a note says why.
 | | |
 |---|---|
 | **See the dashboard** | [`docs/example/dashboard.html`](docs/example/dashboard.html), regenerated on every change |
-| **Documentation, published** | https://rittman-hunter.readthedocs.io |
+| **Documentation, published** | https://rittman-hunter.readthedocs.io, and on GitHub Pages from `main` |
 | **Documentation, in this checkout** | [`docs-html/index.html`](docs-html/index.html), built HTML. Source in [`docs/`](docs) |
 | **See real output** | [`docs/example/`](docs/example/index.md), regenerated on every change |
 | **Try it in a minute** | [Below](#try-it-in-a-minute) |
@@ -88,10 +88,14 @@ non-technical reader can act on this page without opening a file.
 **A list of what needs doing**, ranked by how much the score would recover, each
 item saying what breaks if it is left.
 
-**A dashboard**, one screen, in Rittman Analytics colours. Nine bands, each
+**A dashboard**, one screen, in Rittman Analytics colours. Seven bands, each
 answering one question, every figure traceable to a rule and a finding. Behind
-it sit twelve detail pages, readable by an engineer and by someone who has never
-seen SQL.
+it sit thirteen detail pages, readable by an engineer and by someone who has
+never seen SQL.
+
+**A roadmap**, every table in one lane: planned, being built, live, temporary
+by design, being phased out, retired. Each built table carries one of three
+words, temporary, verified or permanent, with the owner and what happens next.
 
 **Three CI checks that can actually fail a build.** LookML sync, Droughty sync
 and Modelling sync, each its own GitHub Action, each answering one question
@@ -138,7 +142,7 @@ uv sync --all-extras
 
 uv run hunter score examples/tiny-shop
 uv run hunter align examples/tiny-shop
-uv run hunter explain wh_shop__customer_dim examples/tiny-shop
+uv run hunter explain wh_master__customer_dim examples/tiny-shop
 uv run hunter docs build examples/tiny-shop --out /tmp/example-site
 open /tmp/example-site/_built/index.html
 ```
@@ -165,7 +169,7 @@ blank reason. Filling in reasons against a list works; being handed an empty
 file and asked to document your exceptions does not.
 
 Full guide: [Installing](https://rittman-hunter.readthedocs.io/en/latest/install/)
-and [First run](https://rittman-hunter.readthedocs.io/en/latest/quickstart/).
+and [Quick start](https://rittman-hunter.readthedocs.io/en/latest/quickstart/).
 
 ## What it reads
 
@@ -206,52 +210,27 @@ by construction rather than by discipline.
 
 ## In CI
 
-```yaml
-name: Hunter
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  hunter:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: sav-sus/Hunter@v0.1.0
-        with:
-          mode: advisory
-          publish: ${{ github.event_name == 'push' }}
-```
-
-`fetch-depth: 0` matters: attribution and window reports need full history, and
-the default shallow checkout has none.
-
-Advisory mode never fails a build, and it is the default. A tool that fails
-builds in its first week gets switched off in its second.
-
-For a check that can fail, use the three sync actions instead. They are small,
-specific and separately installable:
+`hunter init` writes one workflow with five jobs. Every pull request gets the
+score and the three sync checks, each as its own line. Every push to main
+rebuilds the dashboard and publishes it to GitHub Pages in the same repository.
+No path filter and no manual step: a new layer or model is detected by Hunter.
 
 ```yaml
 jobs:
-  lookml:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: sav-sus/Hunter/actions/lookml-sync@v0.1.0
-        with:
-          fail-on: high
+  hunter:            # the score, and one comment edited in place
+  lookml-sync:       # does the reporting layer still match the tables?
+  droughty-sync:     # was the generated schema applied, and is it current?
+  modelling-sync:    # does what exists match what was designed?
+  publish:           # push to main only: the dashboard, on GitHub Pages
 ```
 
-Also `actions/droughty-sync` and `actions/modelling-sync`. A check whose sources
-are missing reports skipped, never passed.
+The full file is in [`docs/ci.md`](docs/ci.md). One-time setup for Pages: in
+the repository settings, set the Pages source to GitHub Actions.
+
+Advisory mode never fails a build, and it is the default. The sync checks start
+on `fail-on: never`. A tool that fails builds in its first week gets switched
+off in its second. A check whose sources are missing reports skipped, never
+passed.
 
 ## Two files in your repository
 
@@ -260,10 +239,18 @@ It extends a version-pinned house standard, and every difference is published on
 the site with the reason given for it.
 
 **`.hunter/register.yml`** records what the team has decided about particular
-tables: that one is temporary on purpose, that an off-plan build is accepted, who
-owns what, what one row means. Plain information needs no reason. An exception or
-an approval needs one, and a silenced rule needs an end date, so nothing goes
-quiet for good.
+tables: whether one is temporary, verified or permanent, that an off-plan build
+is accepted, who owns what, what one row means, and where it is in its life
+(planned, building, live, deprecated, retired). Plain information needs no
+reason. An exception or an approval needs one, and a silenced rule needs an end
+date, so nothing goes quiet for good.
+
+Temporary is a working step or a one-off. Permanent is inferred from the layer.
+Verified is permanent plus a named person confirming it, and can only come from
+this file. The dashboard shows the three words side by side.
+
+Layers are not declared one by one. A directory under `models/` the ruleset does
+not name becomes a layer on its own, marked as found rather than declared.
 
 Nothing in the register hides a finding. An approved exception still appears on
 the site with its reason and its review date.
@@ -272,12 +259,12 @@ the site with its reason and its review date.
 
 | Path | What it is |
 |---|---|
-| [`src/hunter/`](src/hunter) | The package. 48 modules |
+| [`src/hunter/`](src/hunter) | The package. 44 modules |
 | [`src/hunter/brand.py`](src/hunter/brand.py) | The Rittman Analytics palette, from the published design tokens |
 | [`examples/tiny-shop/`](examples/tiny-shop) | A working example project |
 | [`docs/`](docs) | The published documentation |
 | [`.doc/`](.doc/README.md) | Why it is built this way: problem, decisions, roadmap, what is not built |
-| [`tests/`](tests) | 601 tests, including a golden file pinning the example's score |
+| [`tests/`](tests) | 652 tests, including a golden file pinning the example's score |
 | [`action.yml`](action.yml) | The composite GitHub Action for the full score |
 | [`actions/`](actions) | LookML sync, Droughty sync and Modelling sync, one action each |
 
@@ -295,9 +282,9 @@ Those are licence terms, not only design intent.
 | | |
 |---|---|
 | Version | 0.1.0.dev0, unreleased |
-| Milestone | M0 complete, plus four additions |
+| Milestone | M0 complete, plus the sync checks, roadmap, verified status, layer discovery and Pages publishing |
 | Rules | 77 across 7 scored areas, 32 of them in the three sync checks |
-| Tests | 601 |
+| Tests | 652 |
 | Run time | 2 seconds on 280 models |
 
 Roadmap: [`.doc/07-roadmap.md`](.doc/07-roadmap.md).

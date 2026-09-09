@@ -77,7 +77,7 @@ Ranked by how much the score would recover, most serious first.
 | How serious | Cases | Points to recover | What is wrong |
 |---|---|---|---|
 | Needs attention | 2 | 7.3 | Nothing at all checks daily sales. Any problem in it reaches whoever reads the numbers before anyone who could fix it, and 7 report fields depend on it. |
-| Needs attention | 1 | 5.8 | These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_shop__order_fact. |
+| Needs attention | 1 | 5.8 | These report fields are broken now. Anyone opening a report that uses them gets an error or a blank, and the cause is a column that was renamed or removed in wh_commerce__order_fact. |
 | Needs attention | 2 | 5.4 | Rows with no key can appear in customers. They drop out of joins silently, so figures come out low with no error to explain why. |
 | Needs attention | 1 | 3.9 | Someone wrote these tests into the Droughty config on purpose and the regeneration dropped them without saying so. customers is being tested less than whoever configured it believes. |
 | Needs attention | 1 | 2.0 | Nothing checks that products holds one row per one row per product. If duplicates appear, every total built from it is overstated and nobody is told. nothing downstream depends on it. |

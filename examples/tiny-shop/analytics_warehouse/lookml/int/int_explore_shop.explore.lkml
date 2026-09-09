@@ -20,17 +20,17 @@ explore: shop_analytics {
     "contains:customers",
     "analytics_warehouse",
   ]
-  view_name: wh_shop__order_fact
+  view_name: wh_commerce__order_fact
   view_label: "Order"
 
   # No persist_with, so Hunter reports crosslayer.explore_no_caching_policy.
   # Every query against this explore goes to the warehouse.
 
-  join: wh_shop__customer_dim {
+  join: wh_master__customer_dim {
     view_label: "Customer"
     relationship: many_to_one
     type: left_outer
-    sql_on: ${wh_shop__order_fact.customer_fk} = ${wh_shop__customer_dim.customer_pk} ;;
+    sql_on: ${wh_commerce__order_fact.customer_fk} = ${wh_master__customer_dim.customer_pk} ;;
   }
 }
 
@@ -49,6 +49,6 @@ explore: shop_daily_sales {
     "contains:daily_sales",
     "analytics_warehouse",
   ]
-  view_name: wh_shop__daily_sales_xa
+  view_name: wh_commerce__daily_sales_xa
   view_label: "Daily Sales"
 }

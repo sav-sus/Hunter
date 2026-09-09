@@ -6,7 +6,7 @@ project tiny_shop_physical_model {
 
         ## dbml instructions
         - Warehouse entity names use wh_<entity_group>__<entity_name>_<fact|dim|xa>,
-          for example wh_shop__order_fact.
+          for example wh_commerce__order_fact.
         - fact is a fact table, dim a dimension, xa an extended aggregate.
         - Columns are ordered by role: primary key, foreign keys, natural keys,
           attributes, metrics, booleans, then dates and timestamps.
@@ -29,21 +29,28 @@ project tiny_shop_physical_model {
 }
 
 //=============================================================================
-// Shop
+// Commerce: what the shop sells, day by day
 //=============================================================================
 
-TableGroup wh_shop {
-  wh_shop__order_fact
-  wh_shop__customer_dim
-  wh_shop__product_dim
-  wh_shop__daily_sales_xa
-  wh_shop__forecast_fact
-  wh_shop__supplier_dim
+TableGroup wh_commerce {
+  wh_commerce__order_fact
+  wh_commerce__daily_sales_xa
+  wh_commerce__forecast_fact
 }
 
-table wh_shop__order_fact [headercolor: #BAD7E9] {
+//=============================================================================
+// Master data: the things commerce refers to
+//=============================================================================
+
+TableGroup wh_master {
+  wh_master__customer_dim
+  wh_master__product_dim
+  wh_master__supplier_dim
+}
+
+table wh_commerce__order_fact [headercolor: #BAD7E9] {
   order_pk varchar [pk, note: 'Surrogate key for the order.']
-  customer_fk varchar [note: 'The customer who placed the order.', ref: > wh_shop__customer_dim.customer_pk]
+  customer_fk varchar [note: 'The customer who placed the order.', ref: > wh_master__customer_dim.customer_pk]
   order_natural_key varchar [note: 'The order reference from the shop platform.']
   order_total_amount numeric [note: 'Order value before returns, in the order''s own currency.']
   order_placed_dt date [note: 'Date the order was placed.']
@@ -54,7 +61,7 @@ table wh_shop__order_fact [headercolor: #BAD7E9] {
   '''
 }
 
-table wh_shop__customer_dim [headercolor: #BAD7E9] {
+table wh_master__customer_dim [headercolor: #BAD7E9] {
   customer_pk varchar [pk, note: 'Surrogate key for the customer.']
   customer_natural_key varchar [note: 'The customer reference from the shop platform.']
   customer_name varchar [note: 'Customer name, as the platform holds it.']
@@ -66,7 +73,7 @@ table wh_shop__customer_dim [headercolor: #BAD7E9] {
   '''
 }
 
-table wh_shop__product_dim [headercolor: #BAD7E9] {
+table wh_master__product_dim [headercolor: #BAD7E9] {
   product_pk varchar [pk, note: 'Surrogate key for the product.']
   product_natural_key varchar [note: 'The product reference from the shop platform.']
   product_name varchar [note: 'Product name.']
@@ -78,7 +85,7 @@ table wh_shop__product_dim [headercolor: #BAD7E9] {
   '''
 }
 
-table wh_shop__daily_sales_xa [headercolor: #B4D4E7] {
+table wh_commerce__daily_sales_xa [headercolor: #B4D4E7] {
   daily_sales_pk varchar [pk, note: 'Surrogate key for the day.']
   daily_sales_order_count numeric [note: 'Orders placed that day.']
   daily_sales_total_amount numeric [note: 'Order value that day, before returns.']
@@ -87,13 +94,13 @@ table wh_shop__daily_sales_xa [headercolor: #B4D4E7] {
 
   Note: '''
     Table Grain: One row per day.
-    Source System: derived from wh_shop__order_fact.
+    Source System: derived from wh_commerce__order_fact.
   '''
 }
 
-table wh_shop__forecast_fact [headercolor: #BAD7E9] {
+table wh_commerce__forecast_fact [headercolor: #BAD7E9] {
   forecast_pk varchar [pk, note: 'Surrogate key for the product and week.']
-  product_fk varchar [note: 'The product forecast.', ref: > wh_shop__product_dim.product_pk]
+  product_fk varchar [note: 'The product forecast.', ref: > wh_master__product_dim.product_pk]
   forecast_units numeric [note: 'Units expected to sell that week.']
   forecast_week_dt date [note: 'Monday of the week forecast.']
 
@@ -103,7 +110,7 @@ table wh_shop__forecast_fact [headercolor: #BAD7E9] {
   '''
 }
 
-table wh_shop__supplier_dim [headercolor: #BAD7E9] {
+table wh_master__supplier_dim [headercolor: #BAD7E9] {
   supplier_pk varchar [pk, note: 'Surrogate key for the supplier.']
   supplier_natural_key varchar [note: 'The supplier reference from the purchasing system.']
   supplier_name varchar [note: 'Supplier name.']

@@ -60,6 +60,14 @@ The Rittman Analytics standard, shipped as `ra-house@1`:
 All of it is configurable. Hunter has no built-in opinion about your layer
 names.
 
+**Layers Hunter finds on its own.** A directory under `models/` that no layer
+claims becomes a layer named after the directory. Its models are grouped,
+scored and shown on the report, and the report says the layer was found rather
+than declared. It carries no rules until it is declared in `hunter.yml`,
+because Hunter knows the models are grouped, not what the group should look
+like. A new part of the warehouse therefore appears on the next run with no
+configuration change.
+
 ??? note "Two fields worth understanding"
 
     **`pipeline_stage`** is where the layer sits in the flow. Reading two stages
@@ -71,11 +79,16 @@ names.
     would each be reported as built off-plan, which is not a finding anyone can
     act on.
 
-## 3. Temporary against permanent
+## 3. Temporary, verified or permanent
 
-A temporary table is a working step. A permanent one is something to report
-from. Working steps get depended on, and then cannot be changed, which is one
-of the problems Hunter exists for.
+A temporary table is a working step, or a table only ever meant to run once. A
+permanent one is something to report from. A verified one is permanent, and a
+named person has confirmed it should stay. Working steps get depended on, and
+then cannot be changed, which is one of the problems Hunter exists for.
+
+Hunter can infer the first and the last. It can never infer verified, because
+verified means somebody looked. The dashboard shows the three words side by
+side, so a reader can tell a table that was checked from one that was assumed.
 
 Hunter decides in this order, and records which signal decided:
 

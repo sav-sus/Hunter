@@ -64,11 +64,40 @@ SEVERITY_ORDER: dict[Severity, int] = {
 
 
 class Persistence(StrEnum):
-    """Whether a model is meant to last. FR1.2."""
+    """Whether a model is meant to last. FR1.2.
+
+    Three answers a person can give, and one Hunter gives when it cannot tell.
+    ``VERIFIED`` is ``PERSISTENT`` with a named person having confirmed it: the
+    table is meant to stay and somebody has checked that it should. It can only
+    come from the register, never from inference.
+    """
 
     TEMPORARY = "temporary"
+    VERIFIED = "verified"
     PERSISTENT = "persistent"
     UNKNOWN = "unknown"
+
+    @classmethod
+    def _missing_(cls, value: object) -> Persistence | None:
+        """``permanent`` is the word people write; ``persistent`` is the stored value."""
+        if isinstance(value, str) and value.strip().lower() == "permanent":
+            return cls.PERSISTENT
+        return None
+
+    @property
+    def is_lasting(self) -> bool:
+        """Permanent or verified: a finished table, judged as one."""
+        return self in {Persistence.PERSISTENT, Persistence.VERIFIED}
+
+    @property
+    def label(self) -> str:
+        """The word a reader sees."""
+        return {
+            Persistence.TEMPORARY: "temporary",
+            Persistence.VERIFIED: "verified",
+            Persistence.PERSISTENT: "permanent",
+            Persistence.UNKNOWN: "not determined",
+        }[self]
 
 
 class PersistenceSignal(StrEnum):

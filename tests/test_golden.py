@@ -108,20 +108,20 @@ class TestFixtureFindings:
 
     def test_the_off_plan_build_is_the_legacy_table(self, result: RunResult) -> None:
         finding = next(item for item in result.findings if item.rule == "alignment.built_off_plan")
-        assert finding.subject == "wh_shop__legacy_fact"
+        assert finding.subject == "wh_commerce__legacy_fact"
 
     def test_the_disabled_model_is_not_reported_as_unstarted(self, result: RunResult) -> None:
         """The state that six pilot models forced into existence."""
         finding = next(item for item in result.findings if item.rule == "alignment.built_disabled")
-        assert finding.subject == "wh_shop__forecast_fact"
+        assert finding.subject == "wh_commerce__forecast_fact"
         assert "conformance.design_not_built" not in {
-            item.rule for item in result.findings if item.subject == "wh_shop__forecast_fact"
+            item.rule for item in result.findings if item.subject == "wh_commerce__forecast_fact"
         }
 
     def test_the_dropped_override_is_the_missing_not_null(self, result: RunResult) -> None:
         """The check that replaces the pilot team's manual verification."""
         finding = next(item for item in result.findings if item.rule == "droughty.override_dropped")
-        assert finding.subject == "wh_shop__customer_dim"
+        assert finding.subject == "wh_master__customer_dim"
         assert "not_null" in finding.evidence["tests"]
 
     def test_the_broken_report_field_names_the_missing_column(self, result: RunResult) -> None:
@@ -135,12 +135,12 @@ class TestFixtureFindings:
     def test_the_weak_test_is_not_credited_as_key_cover(self, result: RunResult) -> None:
         """3,492 of the pilot's 3,926 tests are at_least_one."""
         finding = next(item for item in result.findings if item.rule == "testing.only_weak_tests")
-        assert finding.subject == "wh_shop__product_dim"
+        assert finding.subject == "wh_master__product_dim"
 
     def test_the_silenced_finding_is_reported_and_costs_nothing(self, result: RunResult) -> None:
         silenced = result.suppressed_findings
         assert len(silenced) == 1
-        assert silenced[0].subject == "wh_shop__customer_dim"
+        assert silenced[0].subject == "wh_master__customer_dim"
         assert silenced[0].effective_points == 0.0
         assert "customer rework" in silenced[0].suppression_reason
 

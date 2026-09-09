@@ -31,23 +31,25 @@ The README and the published documentation both link to it.
 
 | Path | What it is |
 |---|---|
-| `src/hunter/` | The package. 45 modules |
+| `src/hunter/` | The package. 44 modules |
 | `src/hunter/config/house/ra-house-1.yml` | The Rittman Analytics standard, version-pinned |
 | `examples/tiny-shop/` | A working example project, eight tables with one deliberate flaw each |
 | `docs/` | The published documentation |
-| `tests/` | 601 tests, including a golden file that pins the example's score |
+| `tests/` | 652 tests, including a golden file that pins the example's score |
 | `action.yml` | The composite GitHub Action |
 | `scripts/check_no_client_content.py` | Fails if client-identifying text reaches a tracked file |
 
 ## Where it stands
 
-Milestone M0 is complete, plus four additions requested during the build.
+Milestone M0 is complete, plus additions requested during the build: the three
+sync checks, the roadmap view, the verified status, layer discovery and
+publishing to GitHub Pages.
 Version 0.1.0.dev0, unreleased.
 
 | Measure | Value |
 |---|---|
 | Rules | 77 across 7 scored areas |
-| Tests | 601 |
-| Source | 14,300 lines across 45 modules |
+| Tests | 652 |
+| Source | 19,000 lines across 44 modules |
 | Run time | 2 seconds on a 280-model repository |
 | Requires a warehouse credential | No |

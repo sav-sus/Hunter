@@ -139,7 +139,7 @@ Then a line per entity with its state and the table behind it.
 ## `hunter explain`
 
 ```bash
-hunter explain wh_shop__customer_dim
+hunter explain wh_master__customer_dim
 ```
 
 What it is, what one row means, who owns it, how it behaves against what its
@@ -183,7 +183,7 @@ is marketing rather than reporting.
 
 ```bash
 hunter diagram --level conceptual
-hunter diagram --level blast --model wh_shop__order_fact
+hunter diagram --level blast --model wh_commerce__order_fact
 ```
 
 | Level | What it draws |
@@ -214,6 +214,11 @@ hunter init . --force
 Detects the layout and says what it could not find. Where a manifest is
 present, it also scores the repository and fills the register with the tables it
 would flag, each with a blank reason.
+
+Writes three files: `.hunter/hunter.yml`, `.hunter/register.yml` and
+`.github/workflows/hunter.yml`. The workflow runs the score and the three sync
+checks on every pull request, and publishes the dashboard to GitHub Pages on
+every push to main. See [Run it on every pull request](ci.md).
 
 Refuses to overwrite existing files without `--force`. Overwriting a ruleset
 somebody has tuned would be worse than refusing.

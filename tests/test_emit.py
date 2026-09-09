@@ -90,7 +90,9 @@ class TestMermaid:
     def test_quotes_in_labels_are_escaped(self) -> None:
         assert '"' not in mermaid.escape('a "quoted" label')
 
-    @pytest.mark.parametrize("level", ["conceptual", "logical", "physical", "collapsed", "domain"])
+    @pytest.mark.parametrize(
+        "level", ["conceptual", "logical", "physical", "collapsed", "domain", "pipeline"]
+    )
     def test_every_diagram_is_balanced(self, result: RunResult, level: str) -> None:
         """An unbalanced subgraph is a diagram that will not render."""
         text = {
@@ -98,7 +100,10 @@ class TestMermaid:
             "logical": lambda: mermaid.logical_diagram(result.project, result.alignment),
             "physical": lambda: mermaid.physical_diagram(result.project, result.alignment),
             "collapsed": lambda: mermaid.collapsed_graph(result.project, result.graph),
-            "domain": lambda: mermaid.domain_graph(result.project, result.graph, "shop"),
+            "domain": lambda: mermaid.domain_graph(result.project, result.graph, "commerce"),
+            "pipeline": lambda: mermaid.pipeline_graph(
+                result.project, result.graph, result.alignment, domain="commerce"
+            ),
         }[level]()
         opens = sum(1 for line in text.splitlines() if line.strip().startswith("subgraph"))
         closes = sum(1 for line in text.splitlines() if line.strip() == "end")
@@ -107,7 +112,7 @@ class TestMermaid:
     def test_the_conceptual_diagram_uses_business_names(self, result: RunResult) -> None:
         text = mermaid.conceptual_diagram(result.alignment)
         assert '"orders"' in text
-        assert "wh_shop__order_fact" not in text.split("style")[0]
+        assert "wh_commerce__order_fact" not in text.split("style")[0]
 
     def test_the_conceptual_diagram_carries_a_legend(self, result: RunResult) -> None:
         assert "What the colours mean" in mermaid.conceptual_diagram(result.alignment)
@@ -121,11 +126,85 @@ class TestMermaid:
         text = mermaid.physical_diagram(result.project, result.alignment)
         assert "built_as table" in text
 
+    def test_the_designed_view_leads_with_grain_and_purpose(self, result: RunResult) -> None:
+        """What one row means and what the table is for, before any column."""
+        text = mermaid.logical_diagram(result.project, result.alignment)
+        block = text[text.index("wh_commerce__order_fact {") :]
+        block = block[: block.index("}")]
+        lines = [line.strip() for line in block.splitlines()[1:] if line.strip()]
+        assert lines[0] == 'note grain "One row per order"'
+        assert lines[1].startswith('note about "Source System:')
+        assert not any(line.startswith("grain ") for line in lines), "no trailing grain row"
+
+    def test_describe_drops_the_grain_line_and_cuts_to_fit(self) -> None:
+        note = "Table Grain: One row per order.\nSource System: the shop.\nAnything else."
+        assert mermaid.describe(note) == "Source System: the shop. Anything else."
+        assert mermaid.describe(None) == ""
+        long = mermaid.describe("x" * 200, limit=20)
+        assert len(long) == 20 and long.endswith("…")
+
+    def test_the_authored_logical_diagram_is_coloured_not_redrawn(self, result: RunResult) -> None:
+        text = mermaid.decorate_logical(result.logical_source, result.alignment)
+        assert text.splitlines()[0].startswith("%%{init:"), "room for container titles"
+        assert text.splitlines()[1] == "flowchart LR", "front matter dropped"
+        assert "layout: elk" not in text
+        assert 'subgraph subgraph__shop_platform["Shop Platform"]' in text, "kept, minus markup"
+        assert "<b" not in text and "</b>" not in text
+        assert "style wh_master__suppliers fill:#f2f2f2" in text, "designed, not started"
+        assert "style wh_commerce__orders fill:#d6ead6" in text
+        assert "style dashboard__shop_performance fill:#e8e0fa" in text
+        assert mermaid.decorate_logical(None, result.alignment) == ""
+
     def test_the_built_and_designed_views_differ(self, result: RunResult) -> None:
         """They answer different questions; identical output would mean a bug."""
         designed = mermaid.logical_diagram(result.project, result.alignment)
         built = mermaid.physical_diagram(result.project, result.alignment)
         assert designed != built
+
+    def test_the_pipeline_runs_from_raw_sources_to_looker(self, result: RunResult) -> None:
+        """The DAG a product owner reads: every step, left to right."""
+        text = mermaid.pipeline_graph(result.project, result.graph, result.alignment)
+        assert 'subgraph sources["raw sources"]' in text
+        assert 'subgraph looker_views["Looker views (base layer)"]' in text
+        assert 'subgraph looker_explores["Looker explores"]' in text
+        assert text.index("raw sources") < text.index('["staging"]') < text.index("Looker views")
+        assert text.index("Looker views") < text.index("Looker explores")
+
+    def test_explores_hang_off_the_views_they_open(self, result: RunResult) -> None:
+        text = mermaid.pipeline_graph(result.project, result.graph, result.alignment)
+        assert "view__wh_commerce__order_fact --> explore__shop_analytics" in text
+        assert "view__wh_master__customer_dim --> explore__shop_analytics" in text, "a join"
+
+    def test_the_spec_and_the_text_agree(self, result: RunResult) -> None:
+        """The browser rebuilds the diagram from the spec, so they must not drift."""
+        import json
+
+        spec = mermaid.pipeline_spec(result.project, result.graph, result.alignment)
+        assert mermaid.render_pipeline(spec) == mermaid.pipeline_graph(
+            result.project, result.graph, result.alignment
+        )
+        data = json.loads(spec.to_json())
+        assert {node["id"] for node in data["nodes"]} == {node.id for node in spec.nodes}
+        assert all(node["shape"] in mermaid.PIPELINE_SHAPES for node in data["nodes"])
+
+    def test_a_selection_renders_only_what_it_keeps(self, result: RunResult) -> None:
+        spec = mermaid.pipeline_spec(result.project, result.graph, result.alignment)
+        text = mermaid.render_pipeline(spec, keep={"wh_commerce__order_fact", "int_shop__orders"})
+        assert "int_shop__orders --> wh_commerce__order_fact" in text
+        assert "stg_shop__orders" not in text
+        assert "raw sources" not in text
+
+    def test_a_view_named_after_its_model_is_a_separate_node(self, result: RunResult) -> None:
+        """Same name, two things. A shared id would draw the view over the model."""
+        text = mermaid.pipeline_graph(result.project, result.graph, result.alignment)
+        edges = [line.split("-->") for line in text.splitlines() if "-->" in line]
+        assert all(left.strip() != right.strip() for left, right in edges), "self-loop drawn"
+        assert "wh_master__customer_dim --> view__wh_master__customer_dim" in text
+
+    def test_the_pipeline_colours_health(self, result: RunResult) -> None:
+        text = mermaid.pipeline_graph(result.project, result.graph, result.alignment)
+        assert "style wh_commerce__legacy_fact fill:#fbe3de" in text, "off-plan is red"
+        assert "style wh_commerce__daily_sales_xa fill:#fdf2cc" in text, "untested is amber"
 
     def test_blast_radius_is_capped(self, result: RunResult) -> None:
         text = mermaid.blast_radius("stg_shop__orders", result.project, result.graph, max_nodes=1)
@@ -144,7 +223,7 @@ class TestSite:
 
     def test_a_page_per_model_is_written(self, result: RunResult, tmp_path: Path) -> None:
         write_site(result, tmp_path)
-        assert (tmp_path / "docs" / "models" / "wh_shop__order_fact.md").exists()
+        assert (tmp_path / "docs" / "models" / "wh_commerce__order_fact.md").exists()
 
     def test_no_page_for_a_vendored_model(self, result: RunResult, tmp_path: Path) -> None:
         write_site(result, tmp_path)
@@ -202,7 +281,7 @@ class TestSite:
         assert "warehouse" in text
 
     def test_a_model_page_covers_columns_lineage_and_findings(self, result: RunResult) -> None:
-        text = model_page(result, "wh_shop__order_fact")
+        text = model_page(result, "wh_commerce__order_fact")
         assert "## Columns" in text
         assert "## What depends on this" in text
         assert "## Findings" in text
@@ -233,7 +312,7 @@ class TestMkDocsBuilds:
             pytest.skip("mkdocs is not installed in this environment")
         assert completed.returncode == 0, completed.stderr[-3000:]
         assert (tmp_path / "_built" / "index.html").exists()
-        assert (tmp_path / "_built" / "models" / "wh_shop__order_fact" / "index.html").exists()
+        assert (tmp_path / "_built" / "models" / "wh_commerce__order_fact" / "index.html").exists()
 
 
 class TestPrComment:
@@ -245,7 +324,7 @@ class TestPrComment:
         assert f"{result.score.total:g} / 100" in build_comment(result)
 
     def test_findings_on_a_changed_file_are_listed(self, result: RunResult) -> None:
-        model = result.project.models["wh_shop__customer_dim"]
+        model = result.project.models["wh_master__customer_dim"]
         body = build_comment(result, changed_files=[model.path])
         assert "on what this change touches" in body
         assert "customer_dim" in body

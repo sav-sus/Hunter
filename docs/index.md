@@ -6,142 +6,128 @@ hide:
 
 <div class="hero" markdown>
 
-# Know what state your analytics repository is in
+# Overview
 
-Point Hunter at a repository holding dbt and LookML. It reads the code, the
-design and the git history, then reports on them. It changes nothing: no
-commits, no pull requests, no writes to your warehouse.
+Rittman Hunter is a health dashboard for an analytics warehouse. It reads the
+dbt models, the LookML, the data model design and the git history in a
+repository, checks them against each other, and publishes one page a business
+stakeholder can read without a GitHub account. It runs on every pull request and
+changes nothing.
 
 [See the dashboard](example/dashboard.md){ .md-button }
 [Install it](install.md){ .md-button .md-button--secondary }
 
 <div class="figures">
-  <div><b>2s</b><span>on 280 models</span></div>
+  <div><b>0</b><span>manual steps</span></div>
+  <div><b>3</b><span>sync checks on every pull request</span></div>
   <div><b>77</b><span>rules</span></div>
   <div><b>0</b><span>credentials needed</span></div>
-  <div><b>8</b><span>areas scored</span></div>
 </div>
 
 </div>
 
-## What you get
+## The problem
 
-<div class="cards">
-  <a href="example/dashboard/">
-    <span class="tag">One screen</span>
-    <b>A dashboard</b>
-    <p>The score, what nobody has decided, where the points are going, and what
-    to fix first. One self-contained HTML file.</p>
-  </a>
-  <a href="example/reconciliation/">
-    <span class="tag">One row per table</span>
-    <b>Designed against built</b>
-    <p>Whether the business asked for it, whether it was designed, whether it
-    was built. Readable without opening a file.</p>
-  </a>
-  <a href="example/debt/">
-    <span class="tag">Ranked</span>
-    <b>What needs doing</b>
-    <p>Ordered by how many points closing it recovers, each item saying what
-    breaks if it is left.</p>
-  </a>
-  <a href="sync-checks/">
-    <span class="tag">Three CI checks</span>
-    <b>LookML, Droughty and Modelling sync</b>
-    <p>Has one layer drifted from another? Three small gates a team will
-    actually make required, each its own GitHub Action.</p>
-  </a>
-  <a href="ci/">
-    <span class="tag">On every change</span>
-    <b>A pull request comment</b>
-    <p>What the change touches, what it breaks downstream, and the debt it
-    adds. Advisory by default.</p>
-  </a>
-</div>
+A warehouse is built in layers: staging models feed integration models, which
+feed warehouse tables, which feed Looker. Each layer is edited by different
+people at different times, and nothing checks that they still agree.
 
-## The four questions it answers
-
-Each one currently takes reading the whole repository by hand.
-
-| Question | How Hunter answers it |
+| What goes wrong | What it costs |
 |---|---|
-| **What is in here, and what is just a working step?** | Classifies every table as temporary or permanent, and records which of five signals decided |
-| **Who built each part?** | Attributes every table to a commit, author and pull request. Routes findings by owner, reports by team, never ranks people |
-| **Is the modelling right?** | Works out what a table behaves like from its columns, then compares that against what its name claims |
-| **Do the layers agree?** | Maps every report field to the column it reads, so a renamed column shows up in the pull request, not in a client's dashboard |
+| A column is renamed in dbt and a Looker field still points at the old name | The client finds the broken dashboard, not the build |
+| Droughty generates tests and descriptions that never reach dbt | Everyone believes a check is running that is not |
+| A working step is used as if it were a finished table | It cannot be changed without breaking something nobody knew about |
+| A table is built with no design and no owner | Nobody can be asked what one row means, or asked to fix it |
+| A table meant to run once is still running a year later | Cost and confusion, with nobody sure whether it is safe to remove |
+| Only the people with repository access can see any of this | The stakeholder who pays for the warehouse has no view of its state |
 
-## What makes it different
+Finding any of this today means reading the whole repository by hand.
 
-<div class="cards">
-  <div>
-    <b>Every finding says what breaks</b>
-    <p>Not "high severity: relationships test missing". Instead: "Where these
-    references point at rows that do not exist, joined figures come out low and
-    the rows simply vanish."</p>
-  </div>
-  <div>
-    <b>It says what it did not check</b>
-    <p>An area Hunter could not measure is excluded and named, with its weight
-    shared across the rest. Never scored as zero, never quietly out of less
-    than 100.</p>
-  </div>
-  <div>
-    <b>It has no opinions of its own</b>
-    <p>Layer names, conventions and weights are all declared. It ships with the
-    Rittman Analytics standard, and every difference from it is published with
-    the reason given.</p>
-  </div>
-  <div>
-    <b>Systemic gaps sit above the number</b>
-    <p>"No table names an owner, 63 of 63" is one decision nobody took, not 63
-    defects. A weighted mean buries that, so it is listed separately.</p>
-  </div>
-</div>
+## The solution
 
-<div class="key" markdown>
-**Nothing is written by a language model.** Every sentence in a report is a
-template filled from a finding's own evidence, so each one has a deterministic
-check behind it.
-</div>
+Hunter reads what is already in the repository and reports on it. It does not
+need a warehouse connection, and it never writes anything back.
 
-## What it reads
+| It reads | To answer |
+|---|---|
+| The dbt manifest | What tables exist, what feeds what, what is tested |
+| The design files (DBML and Mermaid) | Whether what was built is what was designed and asked for |
+| The LookML | Whether the reporting layer still matches the tables |
+| The committed Droughty output | Whether the generated tests and descriptions were applied and are current |
+| The register, a small YAML file | Who owns each table, and whether it is temporary, verified or permanent |
+| Git history | Who built what, and what changed |
 
-A dbt `manifest.json` is the only requirement. Everything else adds an area to
-the score rather than being a prerequisite.
+Every check is a plain statement that either holds or does not, with the tables
+that let it down named. Nothing on the page is written by a language model.
 
-| Source | What it adds | Credential |
+## How it works
+
+<ol class="steps" markdown>
+<li markdown><b>Someone opens a pull request</b>
+Any change to the repository. There is no path filter and nothing to run by hand.</li>
+<li markdown><b>GitHub Actions runs Hunter</b>
+Five jobs: the score, and the LookML, Droughty and modelling sync checks, each as its own line on the pull request. Hunter finds the layers itself, so a new directory of models is picked up without configuration.</li>
+<li markdown><b>The pull request gets one comment</b>
+What the change touches, what it reaches downstream, and what it adds to the debt. Edited in place on each push.</li>
+<li markdown><b>On merge, the dashboard is rebuilt and published</b>
+To GitHub Pages, in the same repository. A stakeholder opens a link.</li>
+</ol>
+
+The full walk-through, in order, is on [From a pull request to the dashboard](how-it-works.md).
+
+## What Hunter produces
+
+| Output | What it is | Who it is for |
 |---|---|---|
-| `manifest.json` | Tables, columns, tests, lineage | No |
-| DBML design files | Does what was built match the design | No |
-| A conceptual Mermaid diagram | Does the design match what the business asked for | No |
-| LookML | Will a renamed column break a report | No |
-| Committed Droughty output | Are generated tests and descriptions still applied | No |
-| Git history | Who wrote what, and what changed in a window | No |
-| `catalog.json` | Column types, which sharpen two checks | No |
-| BigQuery metadata | What is deployed, and what it costs | Yes. Not built yet |
+| [The dashboard](example/dashboard.md) | Score, checklist, roadmap, modelling alignment, diagrams, data flow and table readiness, on one page | A stakeholder with no repository access |
+| [The roadmap](example/roadmap.md) | Every table in one lane: planned, being built, live, temporary by design, being phased out, retired | Whoever plans the work |
+| [Designed against built](example/reconciliation.md) | One row per table: asked for, designed, built | The product owner |
+| [What needs doing](example/debt.md) | Every open finding, ranked by what fixing it recovers | The engineering team |
+| [Three sync checks](sync-checks.md) | LookML, Droughty and modelling drift, each a separate CI check that can fail a build | The pull request reviewer |
+| A pull request comment | What this change touches and what it breaks downstream | The author of the change |
 
-## Where to go next
+## Status: temporary, verified or permanent
+
+Every built table carries one of three words, recorded in [the register](register.md).
+
+| Status | Meaning | How it gets there |
+|---|---|---|
+| Temporary | A working step, or a table only ever meant to run once. Carries a review date | Declared in the register, or inferred from the layer |
+| Verified | Meant to stay, and a named person has confirmed it | Declared in the register, with the person's name |
+| Permanent | Meant to stay | Inferred from the layer and materialisation |
+
+## Quick links
 
 <div class="cards">
   <a href="install/">
     <span class="tag">5 minutes</span>
-    <b>Install and run it</b>
-    <p>Then the first run, and what to do with the score you get.</p>
+    <b>Installation</b>
+    <p>One command, then find your dbt manifest.</p>
   </a>
-  <a href="concepts/">
-    <span class="tag">Background</span>
-    <b>The ideas behind it</b>
-    <p>Seven of them. Everything else in Hunter follows from these.</p>
+  <a href="quickstart/">
+    <span class="tag">10 minutes</span>
+    <b>Quick start</b>
+    <p>Set up, score, publish. Then what to do with what you see.</p>
   </a>
-  <a href="configuration/">
-    <span class="tag">Setup</span>
-    <b>Configure it</b>
-    <p>Two files. What correct looks like, and what your team has decided.</p>
+  <a href="how-it-works/">
+    <span class="tag">In order</span>
+    <b>From a pull request to the dashboard</b>
+    <p>Every step, and what each one produces.</p>
+  </a>
+  <a href="publish/">
+    <span class="tag">GitHub Pages</span>
+    <b>Publish the dashboard</b>
+    <p>One setting in the repository. The workflow does the rest.</p>
   </a>
   <a href="cli/">
     <span class="tag">Reference</span>
-    <b>Commands and rules</b>
-    <p>Thirteen commands, 77 rules, and what each one costs.</p>
+    <b>Commands</b>
+    <p>Thirteen commands and 77 rules.</p>
+  </a>
+  <a href="https://github.com/sav-sus/Hunter">
+    <span class="tag">Source</span>
+    <b>GitHub</b>
+    <p>sav-sus/Hunter. Proprietary, Rittman Analytics.</p>
   </a>
 </div>
 

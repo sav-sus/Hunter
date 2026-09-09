@@ -1,8 +1,52 @@
-# The register
+# Mark a table temporary, verified or permanent
 
-<p class="lede">The file people actually edit. It records what your team
-decided about particular tables, including which ones are temporary on
-purpose.</p>
+<p class="lede">The register is the file people actually edit. It records what
+your team decided about particular tables: which are temporary on purpose,
+which have been confirmed, who owns what, and what is on its way out.</p>
+
+## The three statuses
+
+Every built table carries one of three words on the dashboard.
+
+| Status | Meaning | Where it comes from |
+|---|---|---|
+| **Temporary** | A working step, or a table only ever meant to run once. Carries a review date so it cannot quietly become permanent | Declared here, or inferred from the layer |
+| **Verified** | Meant to stay, and a named person has confirmed it should. The table to build on | Declared here only, with `verified_by` |
+| **Permanent** | Meant to stay | Inferred from the layer and materialisation |
+
+Hunter can infer temporary and permanent. It can never infer verified, because
+verified means a person looked. That is the point of the word: on the roadmap
+and the table list, a verified table is one somebody has checked, and a
+permanent one is one Hunter assumed.
+
+```yaml
+models:
+  wh_commerce__order_fact:
+    persistence: verified
+    verified_by: sav
+    verified_on: 2026-09-08
+    reason: signed off at the design review as the order fact of record
+```
+
+`permanent` is also accepted where you want to override an inference of
+temporary, for instance a finished table that lives in a working layer. It
+needs a reason, like any override.
+
+## Lifecycle status, for the roadmap
+
+Separate from the three words above, and plain information: no reason needed.
+
+```yaml
+models:
+  wh_commerce__legacy_fact:
+    status: deprecated        # planned, building, live, deprecated, retired
+    review_by: 2027-03-31     # the date it should be gone by
+```
+
+The roadmap on the dashboard places every table in one lane: planned, being
+built, live, temporary by design, being phased out, retired. A status declared
+here decides the lane. Without one, Hunter places the table by where it sits
+between the design and the build.
 
 `hunter.yml` says what correct looks like and changes rarely. The register
 records decisions about individual tables and changes constantly. Different
@@ -54,7 +98,7 @@ not read from it.
 
 <div class="key" markdown>
 **A declaration here beats every signal Hunter can compute.** It sits first in
-the [precedence chain](concepts.md#3-temporary-against-permanent), which is why
+the [precedence chain](concepts.md#3-temporary-verified-or-permanent), which is why
 it costs a written reason. The report says which signal decided, so the answer
 can be argued with.
 </div>
@@ -66,7 +110,7 @@ grain in plain English on the report.
 
 ```yaml
 models:
-  wh_shop__order_fact:
+  wh_commerce__order_fact:
     owner: commerce
     grain: one row per order
     business_name: Orders
@@ -78,8 +122,12 @@ models:
     ```yaml
     models:
       # Lifecycle, and metadata the design cannot express.
-      wh_shop__forecast_fact:
+      wh_commerce__forecast_fact:
         status: building        # planned, building, live, deprecated, retired
+        persistence: verified   # temporary, verified or permanent
+        verified_by: sav        # required with verified
+        verified_on: 2026-09-08
+        reason: confirmed at the forecast review
         owner: commerce
         entity_type: fact      # fact, dimension, aggregate, bridge, mapping
         grain: one row per product per week
@@ -90,8 +138,8 @@ models:
 
       # Where the built name and the designed name differ and normalised
       # matching cannot bridge it. This settles the reconciliation row.
-      wh_shop__orders_v2:
-        implements: wh_shop__order_fact
+      wh_commerce__orders_v2:
+        implements: wh_commerce__order_fact
     ```
 
 ## Accepting an off-plan build
@@ -100,7 +148,7 @@ Still appears on the report, as an approved exception rather than a fault.
 
 ```yaml
 off_plan_approved:
-  - model: wh_shop__legacy_fact
+  - model: wh_commerce__legacy_fact
     reason: kept from the previous warehouse while reports move across
     approved_by: sav
     approved_on: 2026-09-08
@@ -170,14 +218,14 @@ would flag, each with a blank field.
 ```yaml
 models:
   # Hunter found no owner for these. Fill in a team name against each.
-  wh_shop__customer_dim:
+  wh_master__customer_dim:
     owner:            # who to ask about this table
     grain:            # what one row of it means, in plain words
 
 off_plan_approved:
   # Built and on no design. Either add them to the design, or accept them
   # here with a reason and a review date.
-  - model: wh_shop__legacy_fact
+  - model: wh_commerce__legacy_fact
     reason:
     approved_by:
     review_by: 2027-09-08

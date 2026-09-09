@@ -83,6 +83,7 @@ class AlignmentRow:
     warehouse: Presence = Presence.UNKNOWN
 
     conceptual_name: str | None = None
+    logical_name: str | None = None
     designed_name: str | None = None
     model_name: str | None = None
 
@@ -329,14 +330,17 @@ def build_alignment(
 
     # 4. Logical presence, where a logical diagram was authored.
     if logical is not None and logical.entities:
-        logical_keys = {key_for(name) for name in logical.entities}
+        # The node id, kept so the authored diagram can be coloured by state.
+        logical_by_key = {key_for(name): name for name in sorted(logical.entities)}
         for key, row in rows.items():
-            row.logical = Presence.PRESENT if key in logical_keys else Presence.ABSENT
+            row.logical = Presence.PRESENT if key in logical_by_key else Presence.ABSENT
+            row.logical_name = logical_by_key.get(key)
         for name in sorted(logical.entities):
             key = key_for(name)
             if key not in rows:
                 row = row_for(name)
                 row.logical = Presence.PRESENT
+                row.logical_name = name
                 row.business_name = logical.entities[name] or None
 
     # 5. Approvals, owners, state and the claim comparison.

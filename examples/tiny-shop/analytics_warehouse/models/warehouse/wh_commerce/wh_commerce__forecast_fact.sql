@@ -13,7 +13,7 @@
 
 with s_products as (
 
-    select * from {{ ref('wh_shop__product_dim') }}
+    select * from {{ ref('wh_master__product_dim') }}
 
 ),
 

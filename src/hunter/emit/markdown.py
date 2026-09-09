@@ -28,7 +28,7 @@ from hunter.emit.plain import (
     state_summary,
     top_fixes,
 )
-from hunter.enums import Presence, Severity
+from hunter.enums import Persistence, Presence, Severity
 from hunter.model.entities import Model
 from hunter.model.findings import Finding
 from hunter.run import RunResult
@@ -498,6 +498,105 @@ def reconciliation_page(result: RunResult) -> str:
     return "\n".join(out)
 
 
+def roadmap_page(result: RunResult) -> str:
+    """Where every table is on its way from an idea to retirement. One lane each."""
+    from hunter.emit.dashboard import roadmap_lanes
+
+    lanes = roadmap_lanes(result)
+    built = [item for lane in lanes for item in lane.items if item.status]
+    counts = {
+        word: sum(1 for item in built if item.status == word)
+        for word in ("verified", "permanent", "temporary", "not determined")
+    }
+    out = [
+        "# The roadmap",
+        "",
+        "Every table Hunter tracks, placed in one lane: planned, being built, live, "
+        "temporary by design, being phased out, or retired. The register decides first, "
+        "because a person saying a table is deprecated outranks the code saying it is "
+        "live. Everything else is placed by where it sits between the design and the "
+        "build.",
+        "",
+        "## Status at a glance",
+        "",
+        "Each built table carries one of three words. The fourth row is what Hunter "
+        "says when it had no signal to go on.",
+        "",
+        table(
+            ["Status", "Tables", "What it means"],
+            [
+                [
+                    "Verified",
+                    counts["verified"],
+                    "meant to stay, and a named person has confirmed it",
+                ],
+                ["Permanent", counts["permanent"], "meant to stay, worked out from the layer"],
+                [
+                    "Temporary",
+                    counts["temporary"],
+                    "a working step, or only ever meant to run once",
+                ],
+                ["Not determined", counts["not determined"], "no signal to go on"],
+            ],
+        ),
+        "",
+        "## The lanes",
+        "",
+        table(
+            ["Lane", "Tables", "What it means"],
+            [[lane.title, len(lane.items), lane.meaning] for lane in lanes],
+        ),
+        "",
+    ]
+    for lane in lanes:
+        out += [f"## {lane.title}", "", lane.meaning, ""]
+        if not lane.items:
+            out += ["Nothing here.", ""]
+            continue
+        out += [
+            table(
+                ["Entity", "Table", "Area", "Owner", "Status", "What happens next"],
+                [
+                    [
+                        item.label,
+                        f"`{item.technical_name}`" if item.technical_name else "-",
+                        item.domain.replace("_", " ") or "-",
+                        item.owner or "nobody named",
+                        item.status or "-",
+                        item.next_step,
+                    ]
+                    for item in lane.items
+                ],
+            ),
+            "",
+        ]
+    out += [
+        "## Changing where a table sits",
+        "",
+        "All of this is read from the register, `.hunter/register.yml`. Lifecycle status "
+        "is plain information and needs no reason:",
+        "",
+        "```yaml",
+        "models:",
+        "  wh_commerce__legacy_fact:",
+        "    status: deprecated          # planned, building, live, deprecated, retired",
+        "    review_by: 2027-03-31       # the date it should be gone by",
+        "```",
+        "",
+        "Marking a table verified is a confirmation, so it names the person:",
+        "",
+        "```yaml",
+        "  wh_commerce__order_fact:",
+        "    persistence: verified",
+        "    verified_by: sav",
+        "    reason: signed off at the design review as the order fact of record",
+        "```",
+        "",
+        timestamp(result, "Repository read"),
+    ]
+    return "\n".join(out)
+
+
 def physical_page(result: RunResult) -> str:
     """The model catalogue. F10."""
     models = [model for model in result.project.sorted_models() if not model.vendored]
@@ -511,22 +610,31 @@ def physical_page(result: RunResult) -> str:
         "",
         "## Temporary against permanent",
         "",
-        "A temporary model is a working step, not something to report from.",
+        "A temporary model is a working step, not something to report from. A verified",
+        "model is a permanent one that a named person has confirmed should stay.",
         "",
         table(
-            ["Kind", "Count"],
+            ["Kind", "Count", "Meaning"],
             [
                 [
+                    "Verified",
+                    sum(1 for model in models if model.persistence is Persistence.VERIFIED),
+                    "meant to stay, and somebody has checked that it should",
+                ],
+                [
                     "Permanent",
-                    sum(1 for model in models if model.persistence.value == "persistent"),
+                    sum(1 for model in models if model.persistence is Persistence.PERSISTENT),
+                    "meant to stay",
                 ],
                 [
                     "Temporary",
-                    sum(1 for model in models if model.persistence.value == "temporary"),
+                    sum(1 for model in models if model.persistence is Persistence.TEMPORARY),
+                    "a working step, or only ever meant to run once",
                 ],
                 [
                     "Not determined",
-                    sum(1 for model in models if model.persistence.value == "unknown"),
+                    sum(1 for model in models if model.persistence is Persistence.UNKNOWN),
+                    "Hunter had no signal to go on",
                 ],
             ],
         ),
@@ -551,7 +659,7 @@ def physical_page(result: RunResult) -> str:
                     model.layer or "-",
                     model.domain or "-",
                     model.materialisation,
-                    str(model.persistence),
+                    model.persistence.label,
                     str(model.persistence_signal).replace("_", " "),
                     len(model.columns),
                     len(model.downstream_models),
@@ -589,7 +697,7 @@ def model_page(result: RunResult, model_name: str) -> str:
                 ["Area", model.domain or "-"],
                 ["Built as", model.materialisation],
                 ["Enabled", "yes" if model.enabled else "no, switched off"],
-                ["Temporary or permanent", str(model.persistence)],
+                ["Temporary, verified or permanent", model.persistence.label],
                 ["Decided by", str(model.persistence_signal).replace("_", " ")],
                 ["One row means", (row.grain if row and row.grain else "not stated")],
                 ["Owner", model.owner or "nobody named"],
@@ -926,14 +1034,27 @@ def conventions_page(result: RunResult) -> str:
         "",
         "## The layers",
         "",
+        "A layer marked *found* was discovered in the models directory and is not in the",
+        "ruleset. Its models are grouped and reported, and held to no layer rules until",
+        "the layer is declared.",
+        "",
         table(
-            ["Layer", "Prefix", "Stage", "Temporary or permanent", "May read", "Holds entities"],
+            [
+                "Layer",
+                "Declared",
+                "Prefix",
+                "Stage",
+                "Temporary or permanent",
+                "May read",
+                "Holds entities",
+            ],
             [
                 [
                     layer.name,
+                    "found, not declared" if layer.discovered else "yes",
                     layer.prefix or "-",
                     layer.pipeline_stage or "outside the flow",
-                    str(layer.persistence),
+                    layer.persistence.label,
                     ", ".join(layer.may_reference) or "anything",
                     "yes" if layer.in_alignment else "no",
                 ]
@@ -1125,6 +1246,7 @@ def not_checked_page(result: RunResult) -> str:
 PAGES: tuple[tuple[str, str], ...] = (
     ("index.md", "Overview"),
     ("reconciliation.md", "Designed against built"),
+    ("roadmap.md", "The roadmap"),
     ("conceptual-model.md", "The business model"),
     ("data-model.md", "The data model"),
     ("scorecard.md", "The score"),
@@ -1155,6 +1277,7 @@ def write_site(
     pages = {
         "index.md": overview_page(result),
         "reconciliation.md": reconciliation_page(result),
+        "roadmap.md": roadmap_page(result),
         "conceptual-model.md": conceptual_page(result),
         "data-model.md": data_model_page(result),
         "scorecard.md": scorecard_page(result),

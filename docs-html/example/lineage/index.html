@@ -271,7 +271,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -321,7 +321,7 @@
   <span class="md-ellipsis">
     
   
-    Start here
+    Getting started
   
 
     
@@ -348,6 +348,12 @@
   
     
     
+      
+        
+      
+        
+      
+        
       
         
       
@@ -368,14 +374,14 @@
   
   
   
-    <a href="../../concepts/" class="md-nav__link">
+    <a href="../../how-it-works/" class="md-nav__link">
       
   
   
   <span class="md-ellipsis">
     
   
-    How it works
+    How to
   
 
     
@@ -402,8 +408,6 @@
   
     
     
-      
-        
       
         
       
@@ -433,7 +437,7 @@
   <span class="md-ellipsis">
     
   
-    Set it up
+    Configuration
   
 
     
@@ -549,6 +553,8 @@
       
         
       
+        
+      
     
     
     
@@ -615,6 +621,34 @@
     
   
     Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The roadmap
   
 
     
@@ -847,6 +881,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#commerce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commerce
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shop" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1057,6 +1113,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#commerce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commerce
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shop" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1107,32 +1185,66 @@
     integration__shop["shop (1)"]
   end
   subgraph warehouse["warehouse"]
-    warehouse__shop["shop (5)"]
+    warehouse__commerce["commerce (3)"]
+    warehouse__master["master (2)"]
   end
-  integration__shop --&gt;|3| warehouse__shop
+  integration__shop --&gt;|2| warehouse__commerce
+  integration__shop --&gt; warehouse__master
   staging__shop --&gt;|2| integration__shop
-  staging__shop --&gt;|2| warehouse__shop</code></pre>
+  staging__shop --&gt; warehouse__commerce
+  staging__shop --&gt; warehouse__master</code></pre>
 <h2 id="by-area">By area<a class="headerlink" href="#by-area" title="Permanent link">&para;</a></h2>
 <p>Rounded boxes are working steps rather than finished tables. Grey boxes sit outside the area and are shown for context.</p>
+<h3 id="commerce">Commerce<a class="headerlink" href="#commerce" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  subgraph focus["commerce"]
+    wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+    wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+    wh_commerce__order_fact["wh_commerce__order_fact"]
+  end
+  int_shop__orders["int_shop__orders"]
+  style int_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__orders["stg_shop__orders"]
+  style stg_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__orders --&gt; wh_commerce__daily_sales_xa
+  int_shop__orders --&gt; wh_commerce__legacy_fact
+  int_shop__orders --&gt; wh_commerce__order_fact</code></pre>
+<h3 id="master">Master<a class="headerlink" href="#master" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  subgraph focus["master"]
+    wh_master__customer_dim["wh_master__customer_dim"]
+    wh_master__product_dim["wh_master__product_dim"]
+  end
+  int_shop__orders["int_shop__orders"]
+  style int_shop__orders fill:#f7f7f7,stroke:#bbb
+  stg_shop__customers["stg_shop__customers"]
+  style stg_shop__customers fill:#f7f7f7,stroke:#bbb
+  stg_shop__customers --&gt; wh_master__customer_dim
+  int_shop__orders --&gt; wh_master__product_dim</code></pre>
 <h3 id="shop">Shop<a class="headerlink" href="#shop" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   subgraph focus["shop"]
     int_shop__orders("int_shop__orders")
     stg_shop__customers("stg_shop__customers")
     stg_shop__orders("stg_shop__orders")
-    wh_shop__customer_dim["wh_shop__customer_dim"]
-    wh_shop__daily_sales_xa["wh_shop__daily_sales_xa"]
-    wh_shop__legacy_fact["wh_shop__legacy_fact"]
-    wh_shop__order_fact["wh_shop__order_fact"]
-    wh_shop__product_dim["wh_shop__product_dim"]
   end
+  wh_commerce__daily_sales_xa["wh_commerce__daily_sales_xa"]
+  style wh_commerce__daily_sales_xa fill:#f7f7f7,stroke:#bbb
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  style wh_commerce__legacy_fact fill:#f7f7f7,stroke:#bbb
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  style wh_commerce__order_fact fill:#f7f7f7,stroke:#bbb
+  wh_master__customer_dim["wh_master__customer_dim"]
+  style wh_master__customer_dim fill:#f7f7f7,stroke:#bbb
+  wh_master__product_dim["wh_master__product_dim"]
+  style wh_master__product_dim fill:#f7f7f7,stroke:#bbb
   stg_shop__customers --&gt; int_shop__orders
   stg_shop__orders --&gt; int_shop__orders
-  int_shop__orders --&gt; wh_shop__legacy_fact
-  int_shop__orders --&gt; wh_shop__order_fact
-  int_shop__orders --&gt; wh_shop__product_dim
-  stg_shop__customers --&gt; wh_shop__customer_dim
-  stg_shop__orders --&gt; wh_shop__daily_sales_xa</code></pre>
+  int_shop__orders --&gt; wh_commerce__legacy_fact
+  int_shop__orders --&gt; wh_commerce__order_fact
+  int_shop__orders --&gt; wh_master__product_dim
+  stg_shop__customers --&gt; wh_master__customer_dim
+  stg_shop__orders --&gt; wh_commerce__daily_sales_xa</code></pre>
 <p><em>Lineage built as at 2026-09-08.</em></p>
 <hr />
 <p><em>Generated by Rittman Hunter, from Rittman Analytics.</em></p>

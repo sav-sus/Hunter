@@ -34,9 +34,30 @@ models:
   # Hunter cannot infer who owns a table or what one row of it means. Recording
   # it here closes the "no identifiable owner" finding and puts the grain in
   # plain English on the report.
-  wh_shop__legacy_fact:
+  wh_commerce__legacy_fact:
     owner: commerce
     grain: one row per legacy order
+    # Lifecycle status is plain information too. `deprecated` puts the table in
+    # the "being phased out" lane of the roadmap, with the review date as the
+    # date it should be gone by.
+    status: deprecated
+    review_by: 2027-03-31
+
+  # ---- 1b. Confirming a table is here to stay. ----
+  #
+  # Status is one of three words. `temporary` is a working step, or a table
+  # only ever meant to run once. `permanent` is what Hunter infers for a
+  # warehouse table. `verified` is permanent plus a named person saying so:
+  # the table has been checked and is confirmed as the one to build on.
+  #
+  # Verified is a confirmation, so it needs a reason and `verified_by`. The
+  # report shows the three words side by side, so a reader can see at a glance
+  # what is confirmed, what is assumed, and what is on its way out.
+  wh_commerce__order_fact:
+    persistence: verified
+    verified_by: sav
+    verified_on: 2026-09-08
+    reason: signed off at the design review as the order fact of record
 
   # ---- 2. Declaring a table temporary. ----
   #
@@ -64,7 +85,7 @@ models:
   # Commented out because this example does not need it, and because a register
   # entry that matches no table is reported as stale. Copy the shape.
   #
-  # wh_shop__supplier_dim:
+  # wh_master__supplier_dim:
   #   status: planned          # planned | building | live | deprecated | retired
   #   owner: procurement
   #   entity_type: dimension   # fact | dimension | aggregate | bridge | mapping
@@ -88,10 +109,10 @@ models:
 # the review date next to it.
 #
 # Left empty on purpose here, so this example still demonstrates the off-plan
-# finding on wh_shop__legacy_fact. The shape is:
+# finding on wh_commerce__legacy_fact. The shape is:
 #
 #   off_plan_approved:
-#     - model: wh_shop__legacy_fact
+#     - model: wh_commerce__legacy_fact
 #       reason: built for the finance close, design entry to follow next sprint
 #       approved_by: sav
 #       approved_on: 2026-09-08
@@ -113,6 +134,6 @@ off_plan_approved: []
 
 ignores:
   - rule: documentation.model_description_missing
-    models: ['wh_shop__customer_dim']
+    models: ['wh_master__customer_dim']
     reason: the description is being written as part of the customer rework
     expires: 2027-01-31

@@ -10,7 +10,7 @@ Orders joined to the customer who placed them. A working step on the way to the 
 | Area | shop |
 | Built as | view |
 | Enabled | yes |
-| Temporary or permanent | temporary |
+| Temporary, verified or permanent | temporary |
 | Decided by | register declaration |
 | One row means | not stated |
 | Owner | nobody named |
@@ -37,7 +37,7 @@ Orders joined to the customer who placed them. A working step on the way to the 
 
 | What | Count | Names |
 |---|---|---|
-| Other tables | 3 | wh_shop__legacy_fact, wh_shop__order_fact, wh_shop__product_dim |
+| Other tables | 3 | wh_commerce__legacy_fact, wh_commerce__order_fact, wh_master__product_dim |
 | Report views | 0 | - |
 
 
@@ -45,12 +45,12 @@ Orders joined to the customer who placed them. A working step on the way to the 
 flowchart LR
   int_shop__orders["int_shop__orders"]
   style int_shop__orders fill:#fdf2cc,stroke:#9a8330
-  wh_shop__legacy_fact["wh_shop__legacy_fact"]
-  wh_shop__order_fact["wh_shop__order_fact"]
-  wh_shop__product_dim["wh_shop__product_dim"]
-  int_shop__orders --> wh_shop__legacy_fact
-  int_shop__orders --> wh_shop__order_fact
-  int_shop__orders --> wh_shop__product_dim
+  wh_commerce__legacy_fact["wh_commerce__legacy_fact"]
+  wh_commerce__order_fact["wh_commerce__order_fact"]
+  wh_master__product_dim["wh_master__product_dim"]
+  int_shop__orders --> wh_commerce__legacy_fact
+  int_shop__orders --> wh_commerce__order_fact
+  int_shop__orders --> wh_master__product_dim
 ```
 
 

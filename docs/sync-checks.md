@@ -1,4 +1,4 @@
-# The three sync checks
+# Check the layers agree
 
 <p class="lede">Three small CI checks, each answering one question about
 whether one layer has drifted from another. Separate from the score, and
@@ -58,7 +58,10 @@ between layers.
 
 ## In CI
 
-Each check is its own composite action, so you can add one without the others.
+The workflow `hunter init` writes already runs all three on every pull request,
+alongside the score. See [Run it on every pull request](ci.md). Each check is
+also its own composite action, so a repository that wants one without the
+others can add just that one.
 
 ```yaml
 name: Layer sync
@@ -150,10 +153,10 @@ hunter sync --out out/sync.json --summary out/sync.md
   Drifted. 5 of 14 checks failed.
 
     --    3 of 6   Every built table has a LookML view
-           wh_shop__forecast_fact, wh_shop__legacy_fact, wh_shop__product_dim
+           wh_commerce__forecast_fact, wh_commerce__legacy_fact, wh_master__product_dim
     ok    3 of 3   Every LookML view points at a table that exists
     --    2 of 3   Every LookML field points at a real column
-           wh_shop__order_fact
+           wh_commerce__order_fact
 ```
 
 The statements come before the findings on purpose. "3 of 6 tables have a view"
@@ -184,7 +187,7 @@ is what a reader wants first; the rule names are how they fix it.
               "statement": "Every built table has a LookML view",
               "held": 3,
               "of": 6,
-              "let_down_by": ["wh_shop__forecast_fact"]
+              "let_down_by": ["wh_commerce__forecast_fact"]
             }
           ],
           "findings": [{ "rule": "crosslayer.field_references_missing_column" }]

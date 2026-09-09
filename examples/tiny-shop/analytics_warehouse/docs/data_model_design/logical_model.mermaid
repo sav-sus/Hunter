@@ -25,12 +25,12 @@ end
   %% -------------------------------------------------------------
   %% 2. Entities
   %% -------------------------------------------------------------
-    wh_shop__orders["orders"]
-    wh_shop__customers["customers"]
-    wh_shop__products["products"]
-    wh_shop__daily_sales["daily sales"]
-    wh_shop__forecasts["forecasts"]
-    wh_shop__suppliers["suppliers"]
+    wh_commerce__orders["orders"]
+    wh_master__customers["customers"]
+    wh_master__products["products"]
+    wh_commerce__daily_sales["daily sales"]
+    wh_commerce__forecasts["forecasts"]
+    wh_master__suppliers["suppliers"]
 
   %% -------------------------------------------------------------
   %% 3. Consumers
@@ -40,14 +40,14 @@ end
   %% -------------------------------------------------------------
   %% 4. Flow
   %% -------------------------------------------------------------
-    data_source__database__shop --> wh_shop__orders
-    data_source__database__shop --> wh_shop__customers
-    data_source__database__shop --> wh_shop__products
-    data_source__database__purchasing --> wh_shop__suppliers
-    wh_shop__orders --> wh_shop__daily_sales
-    wh_shop__products --> wh_shop__forecasts
-    wh_shop__daily_sales --> dashboard__shop_performance
-    wh_shop__orders --> dashboard__shop_performance
+    data_source__database__shop --> wh_commerce__orders
+    data_source__database__shop --> wh_master__customers
+    data_source__database__shop --> wh_master__products
+    data_source__database__purchasing --> wh_master__suppliers
+    wh_commerce__orders --> wh_commerce__daily_sales
+    wh_master__products --> wh_commerce__forecasts
+    wh_commerce__daily_sales --> dashboard__shop_performance
+    wh_commerce__orders --> dashboard__shop_performance
 
 end
 
