@@ -118,14 +118,18 @@ body {{
   letter-spacing: -0.035em; font-family: {brand.MONO_STACK}; word-break: break-all;
 }}
 .stamp {{ margin: 0; color: rgba(255,255,255,0.6); font-size: 13px; }}
-.hero-body {{ display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 10px 34px; }}
+.hero-body {{
+  display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px 44px;
+  align-items: start; padding: 8px 0 4px;
+}}
 .hero-score {{
   display: flex; flex-direction: column; align-items: center; text-align: center;
-  padding-right: 34px; border-right: 1px solid var(--border);
+  justify-content: center; gap: 4px; padding-right: 44px; border-right: 1px solid var(--border);
+  align-self: stretch;
 }}
-.hero-ring {{ margin-bottom: 8px; }}
-.hero-rest {{ min-width: 0; }}
-.hero-verdict {{ margin: 6px 0 4px; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }}
+.hero-ring {{ margin-bottom: 12px; }}
+.hero-rest {{ min-width: 0; align-self: stretch; display: flex; flex-direction: column; }}
+.hero-verdict {{ margin: 10px 0 6px; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }}
 @media (max-width: 860px) {{
   .hero-body {{ grid-template-columns: 1fr; }}
   .hero-score {{
@@ -141,7 +145,7 @@ body {{
   font-weight: 700; font-size: 13px; padding: 4px 11px; border-radius: 6px; color: #fff;
   letter-spacing: 0.02em;
 }}
-.hero-sub {{ margin: 0; color: #6b7280; font-size: 12.5px; max-width: 24ch; }}
+.hero-sub {{ margin: 0; color: #6b7280; font-size: 12.5px; max-width: 30ch; line-height: 1.5; }}
 .delta {{ font-size: 12.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }}
 .delta.up {{ background: {brand.GREEN_LIGHT}; color: #15803d; }}
 .delta.down {{ background: {brand.PEACH_LIGHT}; color: #9f1d1d; }}
@@ -149,40 +153,50 @@ body {{
 
 /* the tiles */
 .tiles {{
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr;
+  gap: 16px; flex: 1;
+}}
+@media (max-width: 860px) {{
+  .tiles {{ grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }}
 }}
 .tile {{
+  display: flex; flex-direction: column; min-height: 118px;
   background: #fff; border: 1px solid rgba(21,29,45,0.06); border-radius: 12px;
-  padding: 14px 16px 12px; box-shadow: var(--shadow-soft);
+  padding: 18px 18px 16px; box-shadow: var(--shadow-soft);
 }}
 .tile b {{
-  display: block; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
 }}
 .tile span {{
-  display: block; font-size: 12.5px; color: #6b7280; margin-top: 6px; font-weight: 500;
+  display: block; font-size: 12.5px; color: #6b7280; margin-top: 8px; font-weight: 500;
+  line-height: 1.4;
 }}
 .tile .bar {{
-  display: block; height: 4px; border-radius: 2px; background: #eceef4; margin-top: 12px;
-  overflow: hidden;
+  display: block; height: 4px; border-radius: 2px; background: #eceef4; margin-top: auto;
+  padding-top: 0; overflow: hidden;
 }}
+.tile span + .bar {{ margin-top: auto; }}
+.tile span {{ margin-bottom: 16px; }}
 .tile .bar u {{ display: block; height: 100%; text-decoration: none; }}
 .tile.yes .bar u {{ background: #16a34a; }}
 .tile.mostly .bar u {{ background: #d97706; }}
 .tile.no .bar u {{ background: {brand.DESTRUCTIVE}; }}
 
 /* the journey strip */
-.journey {{ margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }}
+.journey {{
+  grid-column: 1 / -1; margin-top: 6px; padding-top: 22px; border-top: 1px solid var(--border);
+}}
 .journey-title {{
-  margin: 0 0 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em;
+  margin: 0 0 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em;
   color: #6b7280; font-weight: 700; display: flex; justify-content: space-between; gap: 12px;
   flex-wrap: wrap;
 }}
 .journey-title span {{ text-transform: none; letter-spacing: 0; font-weight: 500; color: #9aa1ad; }}
 .journey-row {{
-  display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto;
-  padding: 4px 0 6px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; overflow-x: auto;
+  padding: 6px 0 10px;
 }}
-.stage {{ flex: 0 0 auto; min-width: 72px; }}
+.stage {{ flex: 0 0 auto; min-width: 88px; }}
 .stage b {{
   display: block; font-size: 30px; line-height: 1; font-weight: 800; letter-spacing: -0.03em;
 }}
@@ -314,6 +328,7 @@ td.num {{ font-family: {brand.MONO_STACK}; font-weight: 700; white-space: nowrap
 .lane li .objects {{ display: block; }}
 .lane li .when {{ display: block; font-size: 11px; color: #6b7280; margin-top: 4px; }}
 .lane .empty {{ margin: 0; font-size: 12px; color: #9ca3af; }}
+.roadmap .finder {{ margin-bottom: 12px; }}
 .tname {{
   --tone: {brand.PRIMARY};
   display: inline-block; font: 700 12.5px/1.2 {brand.MONO_STACK}; color: var(--ink);
@@ -812,8 +827,8 @@ def _hero(result: RunResult, generated: dt.datetime) -> str:
     </div>
     <div class="hero-rest">
       <div class="tiles">{"".join(tiles)}</div>
-      {_journey(result)}
     </div>
+    {_journey(result)}
   </div>
 </section>"""
 
@@ -2025,11 +2040,21 @@ def _roadmap(result: RunResult) -> str:
         f"<div class='stat'><b>{temporary}</b><span>temporary by design</span></div>"
         "</div>"
     )
+    total = sum(len(lane.items) for lane in lanes)
+    finder = (
+        "<div class='finder'>"
+        "<input type='search' class='find' autocomplete='off'"
+        " placeholder='Find a table, an entity, an owner, an area or a status'"
+        " aria-label='Find on the roadmap'>"
+        f"<span class='tally'>{total} tables</span>"
+        "</div>"
+    )
     return _card(
         "Roadmap: what is planned, live, temporary and on its way out",
         "Every table Hunter tracks, in one lane. The register decides first; the chain from "
         "design to build decides the rest.",
-        stats + f"<div class='lanes'>{''.join(columns)}</div>",
+        f"<div class='roadmap'>{finder}{stats}<div class='lanes'>{''.join(columns)}</div>"
+        "<p class='empty' hidden>Nothing matches that.</p></div>",
         anchor="roadmap",
     )
 
@@ -2312,10 +2337,10 @@ def _readiness(result: RunResult) -> str:
 NAV = [
     ("#top", "Score"),
     ("#checklist", "Checklist"),
-    ("#roadmap", "Roadmap"),
     ("#alignment", "Modelling alignment"),
     ("#diagrams", "Diagrams"),
     ("#dag", "Data flow"),
+    ("#roadmap", "Roadmap"),
     ("#readiness", "Table readiness"),
     ("scorecard/", "Full report"),
 ]
@@ -2480,6 +2505,33 @@ DIAGRAM_JS = """
         atally.textContent = (needle ? shown + ' of ' + arows.length : arows.length) + ' entities';
       }
       if (aempty) { aempty.hidden = shown !== 0; }
+    });
+  }
+  // ---- the roadmap card: filter the lane items as you type
+  var roadmap = document.querySelector('.roadmap');
+  if (roadmap) {
+    var rbox = roadmap.querySelector('.find');
+    var ritems = Array.prototype.slice.call(roadmap.querySelectorAll('.lane li[data-find]'));
+    var rlanes = Array.prototype.slice.call(roadmap.querySelectorAll('.lane'));
+    var rtally = roadmap.querySelector('.tally');
+    var rempty = roadmap.querySelector('.empty');
+    rbox.addEventListener('input', function () {
+      var needle = rbox.value.trim().toLowerCase();
+      var shown = 0;
+      ritems.forEach(function (item) {
+        var hit = !needle || item.getAttribute('data-find').indexOf(needle) !== -1;
+        item.hidden = !hit;
+        if (hit) { shown++; }
+      });
+      rlanes.forEach(function (lane) {
+        var count = lane.querySelectorAll('li[data-find]:not([hidden])').length;
+        var badge = lane.querySelector('h3 b');
+        if (badge) { badge.textContent = count; }
+      });
+      if (rtally) {
+        rtally.textContent = (needle ? shown + ' of ' + ritems.length : ritems.length) + ' tables';
+      }
+      if (rempty) { rempty.hidden = shown !== 0; }
     });
   }
   // ---- relationship lines for the physical model cards
@@ -2699,10 +2751,10 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
         [
             _hero(result, generated),
             _checklist(result),
-            _roadmap(result),
             _alignment(result),
             _diagrams(result),
             _dag(result),
+            _roadmap(result),
             _readiness(result),
         ]
     )

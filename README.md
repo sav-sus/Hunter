@@ -26,6 +26,15 @@ Missing everywhere it was checked:
 
 Two seconds on a 280-model repository. No warehouse credential needed.
 
+**See it live.** The documentation, the example dashboard and the step-by-step
+guide are published from `main` to GitHub Pages:
+
+| | |
+|---|---|
+| The example dashboard | https://sav-sus.github.io/Hunter/example/dashboard.html |
+| The documentation | https://sav-sus.github.io/Hunter/ |
+| Quick start, step by step | https://sav-sus.github.io/Hunter/quickstart/ |
+
 That is the terminal output. The report itself is a dashboard: the score, what
 nobody has decided, where the points are going, how much of the plan is real,
 which tables everything is built on, and what to fix first, in one screen.
