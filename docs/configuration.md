@@ -141,6 +141,20 @@ A found layer carries no rules: no required descriptions, owners or tests, and
 no place in the pipeline order. Declare it here to say what it should look like.
 Until then, nothing needs editing for its tables to appear on the dashboard.
 
+??? note "CI: how the workflow gets dbt's manifest"
+
+    ```yaml
+    ci:
+      manifest_source: committed        # parse, committed or artifact
+      manifest_path: .hunter/ci-manifest.json.gz
+      # manifest_workflow: dbt.yml      # for artifact
+      # manifest_artifact: manifest
+    ```
+
+    Read and written by `hunter init`, so rerunning it regenerates the same
+    workflow. Nothing at score time reads this block. See
+    [how CI gets the manifest](ci.md#before-the-first-run-how-ci-gets-the-manifest).
+
 ??? note "Branding: names and the logo on the report"
 
     ```yaml

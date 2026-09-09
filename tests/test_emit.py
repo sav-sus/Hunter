@@ -16,7 +16,15 @@ from hunter.emit.markdown import PAGES, mkdocs_config, model_page, table, write_
 from hunter.emit.plain import GLOSSARY, score_sentence, top_fixes
 from hunter.emit.pr_comment import MARKER, build_comment, previous_keys
 from hunter.emit.report import REPORT_SCHEMA_VERSION, build_report, write_report
-from hunter.emit.scaffold import detect, register_text, ruleset_text, scaffold, workflow_text
+from hunter.emit.scaffold import (
+    STAMP_PREFIX,
+    detect,
+    file_state,
+    register_text,
+    ruleset_text,
+    scaffold,
+    workflow_text,
+)
 from hunter.emit.showcase import Window, build_showcase, showcase_page
 from hunter.run import RunResult, run
 
@@ -576,18 +584,59 @@ class TestScaffold:
         assert any("DBT_PROFILES_YML" in note for note in found.notes)
 
     def test_scaffold_writes_all_three_files(self, tmp_path: Path) -> None:
-        written = scaffold(tmp_path, today=AS_OF)
-        names = {path.name for path in written}
+        outcome = scaffold(tmp_path, today=AS_OF)
+        names = {path.name for path in outcome.written}
         assert names == {"hunter.yml", "register.yml"}
+        assert len(outcome.created) == 3
 
-    def test_scaffold_refuses_to_overwrite(self, tmp_path: Path) -> None:
+    def test_every_generated_file_carries_a_fingerprint(self, tmp_path: Path) -> None:
+        for path in scaffold(tmp_path, today=AS_OF).written:
+            assert path.read_text(encoding="utf-8").startswith(STAMP_PREFIX)
+            assert file_state(path) == "pristine"
+
+    def test_an_untouched_file_is_refreshed_without_force(self, tmp_path: Path) -> None:
         scaffold(tmp_path, today=AS_OF)
-        with pytest.raises(FileExistsError, match="already exist"):
+        outcome = scaffold(tmp_path, today=AS_OF)
+        assert len(outcome.refreshed) == 3
+        assert not outcome.overwritten
+
+    def test_an_edited_workflow_is_not_silently_discarded(self, tmp_path: Path) -> None:
+        """The afternoon somebody spent getting the workflow green survives a rerun."""
+        scaffold(tmp_path, today=AS_OF)
+        workflow = tmp_path / ".github" / "workflows" / "hunter.yml"
+        workflow.write_text(
+            workflow.read_text(encoding="utf-8") + "\n# a hand edit\n", encoding="utf-8"
+        )
+        assert file_state(workflow) == "edited"
+        with pytest.raises(FileExistsError) as caught:
+            scaffold(tmp_path, today=AS_OF)
+        message = str(caught.value)
+        assert ".github/workflows/hunter.yml: edited since init wrote it" in message
+        assert "--force" in message
+        assert ".bak" in message
+        assert "# a hand edit" in workflow.read_text(encoding="utf-8")
+
+    def test_a_file_init_did_not_write_is_treated_as_edited(self, tmp_path: Path) -> None:
+        (tmp_path / ".hunter").mkdir()
+        (tmp_path / ".hunter" / "hunter.yml").write_text("extends: ra-house@1\n", encoding="utf-8")
+        with pytest.raises(FileExistsError, match="not written by hunter init"):
             scaffold(tmp_path, today=AS_OF)
 
-    def test_force_overwrites(self, tmp_path: Path) -> None:
+    def test_force_keeps_the_edited_file_beside_the_new_one(self, tmp_path: Path) -> None:
         scaffold(tmp_path, today=AS_OF)
-        assert scaffold(tmp_path, force=True, today=AS_OF)
+        register = tmp_path / ".hunter" / "register.yml"
+        register.write_text("version: 1\nmodels:\n  wh_a__x:\n    owner: a\n", encoding="utf-8")
+        outcome = scaffold(tmp_path, force=True, today=AS_OF)
+        backup = outcome.overwritten[register]
+        assert backup.name == "register.yml.bak"
+        assert "owner: a" in backup.read_text(encoding="utf-8")
+        assert file_state(register) == "pristine"
+        assert len(outcome.refreshed) == 2
+
+    def test_the_workflow_can_be_run_by_hand(self) -> None:
+        loaded = yaml.safe_load(workflow_text())
+        triggers = loaded.get("on", loaded.get(True))
+        assert "workflow_dispatch" in triggers
 
 
 class TestPlainLanguage:
@@ -676,3 +725,54 @@ class TestDbtPins:
         assert "Unpinned: no dbt version was found" in text
         assert '"dbt-bigquery~=1.9"' in text
         yaml.safe_load(text)
+
+
+class TestManifestSource:
+    """A client with no CI warehouse credential gets the manifest in without hand edits."""
+
+    def test_committed_unpacks_a_file_from_the_repository(self) -> None:
+        from hunter.config.schema import CiSpec
+
+        text = workflow_text(ci=CiSpec(manifest_source="committed"))  # type: ignore[arg-type]
+        loaded = yaml.safe_load(text)
+        names = [
+            step.get("name") or step.get("uses") for step in loaded["jobs"]["manifest"]["steps"]
+        ]
+        assert "Unpack .hunter/ci-manifest.json.gz" in names
+        assert "dbt parse" not in names
+        assert "DBT_PROFILES_YML" not in text
+        assert "gunzip" in text
+        assert "No committed manifest" in text
+
+    def test_artifact_fetches_from_the_repositorys_own_dbt_workflow(self) -> None:
+        from hunter.config.schema import CiSpec
+
+        text = workflow_text(
+            ci=CiSpec(
+                manifest_source="artifact",  # type: ignore[arg-type]
+                manifest_workflow="dbt.yml",
+                manifest_artifact="dbt-artifacts",
+            )
+        )
+        loaded = yaml.safe_load(text)
+        job = loaded["jobs"]["manifest"]
+        assert job["permissions"]["actions"] == "read"
+        assert '--workflow "dbt.yml"' in text
+        assert '--name "dbt-artifacts"' in text
+        assert "SET THIS FIRST" not in text
+        assert "SET THIS FIRST" in workflow_text(ci=CiSpec(manifest_source="artifact"))  # type: ignore[arg-type]
+
+    def test_the_choice_is_written_to_the_ruleset_and_read_back(self, tmp_path: Path) -> None:
+        """init --force regenerates the same workflow, not the default one."""
+        from hunter.config.schema import CiSpec
+
+        (tmp_path / "dbt_project.yml").write_text("name: shop\nprofile: shop\n", encoding="utf-8")
+        scaffold(tmp_path, today=AS_OF, ci=CiSpec(manifest_source="committed"))  # type: ignore[arg-type]
+        ruleset = yaml.safe_load((tmp_path / ".hunter" / "hunter.yml").read_text(encoding="utf-8"))
+        assert ruleset["ci"] == {
+            "manifest_source": "committed",
+            "manifest_path": ".hunter/ci-manifest.json.gz",
+        }
+        from hunter.config import resolve
+
+        assert resolve(tmp_path / ".hunter" / "hunter.yml").config.ci.manifest_source == "committed"

@@ -4,11 +4,36 @@
 pull request gets the score and the three sync checks. Every push to main
 rebuilds the dashboard and publishes it. Nobody runs anything by hand.</p>
 
-## Before the first run: two secrets
+## Before the first run: how CI gets the manifest
 
 Every Hunter command reads dbt's manifest, and dbt writes it under `target/`,
-which is gitignored. A CI checkout never has one. So the workflow builds it
-first with `dbt parse`, and `dbt parse` needs a profile it can resolve.
+which is gitignored. A CI checkout never has one. The first job of the
+workflow supplies it, in one of three ways. Choose at `hunter init`; the choice
+is kept in `hunter.yml` under `ci`, so rerunning init regenerates the same
+workflow rather than the default one.
+
+| `--manifest-source` | What the first job does | Needs |
+|---|---|---|
+| `parse` (default) | Installs the dbt version the repository pins, runs `dbt deps` and `dbt parse` | The two secrets below |
+| `committed` | Unpacks a manifest kept in the repository, by default `.hunter/ci-manifest.json.gz` | Nothing. Refresh the file when models change |
+| `artifact` | Downloads `manifest.json` from the latest successful run of the repository's own dbt workflow | `--manifest-workflow`, and that workflow uploading the manifest as an artifact |
+
+```bash
+hunter init --manifest-source committed
+hunter init --manifest-source artifact --manifest-workflow dbt.yml --manifest-artifact manifest
+```
+
+A client whose warehouse uses OAuth, with no service account for CI, takes
+`committed`:
+
+```bash
+cd analytics_warehouse && dbt parse && gzip -c target/manifest.json > ../.hunter/ci-manifest.json.gz
+```
+
+### The `parse` secrets
+
+`dbt parse` does not connect to the warehouse, but dbt will not start without
+a profile it can resolve, so CI needs one.
 
 | Secret | What it holds |
 |---|---|
@@ -18,12 +43,22 @@ first with `dbt parse`, and `dbt parse` needs a profile it can resolve.
 Add both under Settings, Secrets and variables, Actions. Without the first,
 the manifest job stops with a message naming it, and nothing else runs.
 
-<div class="key" markdown>
-**Already have a manifest?** If your own dbt job publishes `manifest.json`
-somewhere, replace the steps of the `manifest` job with one that fetches it to
-the path in `MANIFEST`, keep the upload step, and skip both secrets. `dbt parse`
-does not connect to the warehouse, but dbt will not start without a profile.
-</div>
+## Rerunning `hunter init`
+
+Every file init writes starts with a fingerprint line. On a rerun:
+
+| The file is | init does |
+|---|---|
+| Exactly as init last wrote it | Refreshes it, and says so |
+| Edited since, or not written by init | Leaves it alone, names it, and says how many lines would be lost |
+| Edited, with `--force` | Writes the new file and keeps the old one beside it as `<name>.bak`, and says so |
+
+So picking up a new Hunter release is `hunter init`, and nothing you changed
+disappears without being named first. The manifest source is read back from
+`hunter.yml`, so the regenerated workflow matches the one you had.
+
+The workflow can also be run by hand from the Actions tab. A manual run counts
+as a push, so it publishes: the way to test Pages without merging anything.
 
 ## The workflow
 
@@ -31,7 +66,7 @@ Six jobs. Each shows as its own line on the pull request.
 
 | Job | When | What it does |
 |---|---|---|
-| Build the dbt manifest | Every run | Installs the dbt version the repository pins, runs `dbt deps` and `dbt parse`, and hands `manifest.json` to the other jobs |
+| The manifest | Every run | Builds, unpacks or fetches `manifest.json`, depending on `--manifest-source`, and hands it to the other jobs |
 | Score | Every pull request and push | Scores the repository and posts one comment, edited in place |
 | LookML sync | Every pull request and push | Does the reporting layer still match the tables? |
 | Droughty sync | Every pull request and push | Was the generated schema applied, and is it current? |
@@ -53,6 +88,7 @@ on:
     branches: [main]
   schedule:
     - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 permissions:
   contents: read

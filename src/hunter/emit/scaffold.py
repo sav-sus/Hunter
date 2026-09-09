@@ -13,13 +13,18 @@ asking for a reason against each one does.
 from __future__ import annotations
 
 import datetime as dt
+import difflib
+import hashlib
 import re
 import subprocess
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
 
 from hunter import __version__
+from hunter.config.schema import CiSpec
+from hunter.enums import ManifestSource
 
 #: Where a dbt project might sit, in the order worth trying.
 DBT_PROJECT_FILE = "dbt_project.yml"
@@ -314,8 +319,9 @@ def _as_relative(path: Path, root: Path) -> str:
     return value or "."
 
 
-def ruleset_text(found: Detected, *, house: str = "ra-house@1") -> str:
+def ruleset_text(found: Detected, *, house: str = "ra-house@1", ci: CiSpec | None = None) -> str:
     """The starting ``hunter.yml``, with every detected path written in."""
+    ci = ci or CiSpec()
     lines = [
         "# Rittman Hunter, project ruleset.",
         "#",
@@ -357,6 +363,27 @@ def ruleset_text(found: Detected, *, house: str = "ra-house@1") -> str:
         "# few weeks: a tool that fails builds on day one gets switched off.",
         "pull_request:",
         "  mode: advisory",
+        "",
+        "# How CI gets dbt's manifest. `parse` runs dbt parse in CI and needs the",
+        "# DBT_PROFILES_YML secret. `committed` unpacks a manifest kept in this",
+        "# repository, no credential needed. `artifact` fetches it from this",
+        "# repository's own dbt workflow. Change it here and rerun `hunter init",
+        "# --force`: the workflow is regenerated to match, so the choice survives.",
+        "ci:",
+        f"  manifest_source: {ci.manifest_source}",
+        *(
+            [f"  manifest_path: {ci.manifest_path}"]
+            if ci.manifest_source is ManifestSource.COMMITTED
+            else [f"  # manifest_path: {ci.manifest_path}"]
+        ),
+        *(
+            [
+                f"  manifest_workflow: {ci.manifest_workflow or '<your-dbt-workflow>.yml'}",
+                f"  manifest_artifact: {ci.manifest_artifact}",
+            ]
+            if ci.manifest_source is ManifestSource.ARTIFACT
+            else ["  # manifest_workflow: dbt.yml", "  # manifest_artifact: manifest"]
+        ),
         "",
         "# Where the site is published. Set it once GitHub Pages is switched on, and",
         "# the pull request comment links to the live dashboard as well as to the run",
@@ -520,6 +547,7 @@ def workflow_text(
     profile: str | None = None,
     dbt_pins: list[str] | None = None,
     dbt_pins_source: str | None = None,
+    ci: CiSpec | None = None,
 ) -> str:
     """The workflow a client repository needs. Section 11.6.
 
@@ -532,6 +560,7 @@ def workflow_text(
     filtered by path: a new layer is picked up on its own.
     """
     action_ref = action_ref or DEFAULT_ACTION_REF
+    ci = ci or CiSpec()
     repo, _, tag = action_ref.partition("@")
     adapter_guessed = adapter is None
     adapter = adapter or "bigquery"
@@ -560,6 +589,15 @@ def workflow_text(
             "\n        # change the manifest Hunter scores. Pin it here once you know the"
             f'\n        # version, for example "dbt-core~=1.10" "dbt-{adapter}~=1.9".'
         )
+    manifest_header, manifest_job = _manifest_pieces(
+        ci,
+        profile=profile,
+        adapter=adapter,
+        packages=packages,
+        install_note=install_note,
+        adapter_note=adapter_note,
+        manifest=manifest,
+    )
     return f"""# Rittman Hunter.
 #
 # What runs when:
@@ -574,41 +612,7 @@ def workflow_text(
 # No path filter on purpose. A new layer or a new model is detected by Hunter
 # itself, so nothing here needs editing as the warehouse grows.
 #
-# ---------------------------------------------------------------------------
-# REQUIRED BEFORE THE FIRST RUN: two repository secrets
-#
-# Every Hunter command reads dbt's manifest.json, and dbt writes it under
-# target/, which is gitignored, so a checkout never has one. The first job
-# below builds it with `dbt parse`. That does not connect to the warehouse,
-# but dbt will not start without a profile it can resolve, so CI needs one.
-#
-#   DBT_PROFILES_YML    the whole contents of a profiles.yml for CI. For
-#                       BigQuery with a service account, for example:
-#
-#                         {profile}:
-#                           target: ci
-#                           outputs:
-#                             ci:
-#                               type: {adapter}
-#                               method: service-account
-#                               keyfile: /home/runner/.dbt/keyfile.json
-#                               project: your-gcp-project
-#                               dataset: hunter_ci
-#                               threads: 4
-#
-#   DBT_KEYFILE_JSON    the service account key as JSON. Written to
-#                       /home/runner/.dbt/keyfile.json, the path the profile
-#                       above points at. Leave it unset for adapters that
-#                       authenticate another way.
-#
-# Add both under Settings, Secrets and variables, Actions. Without the first,
-# the manifest job stops with a message naming it, and nothing else runs.
-#
-# ALREADY HAVE A MANIFEST? If your own dbt job publishes manifest.json
-# somewhere, replace the steps of the `manifest` job with one that fetches it
-# to {manifest}, keep the upload step, and delete the two secrets.
-# ---------------------------------------------------------------------------
-#
+{manifest_header}
 # GitHub Pages: in the repository settings, under Pages, set the source to
 # "GitHub Actions" once. The publish job does the rest.
 #
@@ -622,6 +626,9 @@ on:
     branches: [main]
   schedule:
     - cron: '0 6 * * 1'
+  # Run by hand from the Actions tab. A manual run counts as a push, so it is
+  # the way to test publishing without merging anything.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -636,46 +643,7 @@ env:
   MANIFEST: {manifest}
 
 jobs:
-  manifest:
-    name: Build the dbt manifest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install dbt
-        run: pip install --quiet {packages}{install_note}{adapter_note}
-      - name: Write the dbt profile from the repository secrets
-        env:
-          DBT_PROFILES_YML: ${{{{ secrets.DBT_PROFILES_YML }}}}
-          DBT_KEYFILE_JSON: ${{{{ secrets.DBT_KEYFILE_JSON }}}}
-        run: |
-          set -euo pipefail
-          if [ -z "$DBT_PROFILES_YML" ]; then
-            echo "::error title=Missing secret DBT_PROFILES_YML::Hunter reads dbt's manifest," \
-              "and building one needs a dbt profile. Add a repository secret named" \
-              "DBT_PROFILES_YML holding a profiles.yml for CI. The comment at the top of" \
-              ".github/workflows/hunter.yml shows one."
-            exit 1
-          fi
-          mkdir -p "$HOME/.dbt"
-          printf '%s\\n' "$DBT_PROFILES_YML" > "$HOME/.dbt/profiles.yml"
-          if [ -n "$DBT_KEYFILE_JSON" ]; then
-            printf '%s\\n' "$DBT_KEYFILE_JSON" > "$HOME/.dbt/keyfile.json"
-          fi
-      - name: dbt deps
-        working-directory: ${{{{ env.DBT_PROJECT_DIR }}}}
-        run: dbt deps
-      - name: dbt parse
-        working-directory: ${{{{ env.DBT_PROJECT_DIR }}}}
-        run: dbt parse
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dbt-manifest
-          path: ${{{{ env.MANIFEST }}}}
-          if-no-files-found: error
-
+{manifest_job}
   hunter:
     name: Score
     needs: manifest
@@ -763,6 +731,263 @@ jobs:
 """
 
 
+def _manifest_pieces(
+    ci: CiSpec,
+    *,
+    profile: str,
+    adapter: str,
+    packages: str,
+    install_note: str,
+    adapter_note: str,
+    manifest: str,
+) -> tuple[str, str]:
+    """The header comment and the first job, for the chosen manifest source.
+
+    Three ways CI can get dbt's manifest, chosen at ``hunter init`` and kept in
+    hunter.yml under ``ci``, so regenerating the workflow keeps the choice
+    instead of handing the client the default to edit by hand again.
+    """
+    common = (
+        "# ---------------------------------------------------------------------------\n"
+        "# HOW CI GETS DBT'S MANIFEST\n"
+        "#\n"
+        "# Every Hunter command reads dbt's manifest.json, and dbt writes it under\n"
+        "# target/, which is gitignored, so a checkout never has one. The first job\n"
+        f"# below supplies it. Source: {ci.manifest_source}. To change it, run\n"
+        "#   hunter init --force --manifest-source parse|committed|artifact\n"
+        "# or edit `ci:` in .hunter/hunter.yml and rerun `hunter init --force`.\n"
+    )
+    if ci.manifest_source is ManifestSource.COMMITTED:
+        header = common + (
+            "#\n"
+            "# committed: a manifest kept in the repository, gzipped or plain, at\n"
+            f"#   {ci.manifest_path}\n"
+            "# No warehouse credential is needed. Refresh it whenever models change,\n"
+            "# or the sync checks will report drift that is only staleness:\n"
+            "#   dbt parse && gzip -c target/manifest.json > <that path>\n"
+            "# ---------------------------------------------------------------------------\n"
+        )
+        job = f"""  manifest:
+    name: Unpack the committed dbt manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack {ci.manifest_path}
+        run: |
+          set -euo pipefail
+          src="{ci.manifest_path}"
+          if [ ! -f "$src" ]; then
+            echo "::error title=No committed manifest at $src::Hunter reads dbt's manifest and" \\
+              "this workflow expects one committed at $src. Create it with: dbt parse &&" \\
+              "gzip -c target/manifest.json > $src. Or choose another source with" \\
+              "hunter init --force --manifest-source parse|artifact."
+            exit 1
+          fi
+          mkdir -p "$(dirname "$MANIFEST")"
+          case "$src" in
+            *.gz) gunzip -c "$src" > "$MANIFEST" ;;
+            *) cp "$src" "$MANIFEST" ;;
+          esac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dbt-manifest
+          path: ${{{{ env.MANIFEST }}}}
+          if-no-files-found: error
+"""
+        return header, job
+
+    if ci.manifest_source is ManifestSource.ARTIFACT:
+        workflow = ci.manifest_workflow or "<your-dbt-workflow>.yml"
+        placeholder = (
+            ""
+            if ci.manifest_workflow
+            else "# SET THIS FIRST: manifest_workflow in .hunter/hunter.yml, the workflow file\n"
+            "# in this repository that runs dbt, then rerun `hunter init --force`.\n"
+        )
+        header = common + (
+            "#\n"
+            "# artifact: fetched from the latest successful run of this repository's own\n"
+            f"# dbt workflow, {workflow}, from the artifact named\n"
+            f"# {ci.manifest_artifact!r}. That workflow must upload manifest.json under\n"
+            "# that name. No warehouse credential is needed here; dbt already ran.\n"
+            + placeholder
+            + "# ---------------------------------------------------------------------------\n"
+        )
+        job = f"""  manifest:
+    name: Fetch the dbt manifest from {workflow}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Download the manifest artifact from the latest successful run
+        env:
+          GH_TOKEN: ${{{{ github.token }}}}
+        run: |
+          set -euo pipefail
+          run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "{workflow}" \\
+            --branch main --status success --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$run_id" ]; then
+            echo "::error title=No successful run of {workflow}::Hunter fetches dbt's manifest" \\
+              "from that workflow's {ci.manifest_artifact!r} artifact and found no successful" \\
+              "run on main. Check ci.manifest_workflow in .hunter/hunter.yml."
+            exit 1
+          fi
+          mkdir -p "$(dirname "$MANIFEST")"
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" \\
+            --name "{ci.manifest_artifact}" --dir manifest-download
+          found=$(find manifest-download -name manifest.json | head -1)
+          if [ -z "$found" ]; then
+            echo "::error title=No manifest.json in artifact {ci.manifest_artifact!r}::The" \\
+              "artifact was downloaded but holds no manifest.json. Check ci.manifest_artifact" \\
+              "in .hunter/hunter.yml against what {workflow} uploads."
+            exit 1
+          fi
+          mv "$found" "$MANIFEST"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dbt-manifest
+          path: ${{{{ env.MANIFEST }}}}
+          if-no-files-found: error
+"""
+        return header, job
+
+    header = common + (
+        "#\n"
+        "# parse: runs `dbt parse` here. That does not connect to the warehouse, but\n"
+        "# dbt will not start without a profile it can resolve, so CI needs one, as\n"
+        "# two repository secrets:\n"
+        "#\n"
+        "#   DBT_PROFILES_YML    the whole contents of a profiles.yml for CI. For\n"
+        "#                       BigQuery with a service account, for example:\n"
+        "#\n"
+        f"#                         {profile}:\n"
+        "#                           target: ci\n"
+        "#                           outputs:\n"
+        "#                             ci:\n"
+        f"#                               type: {adapter}\n"
+        "#                               method: service-account\n"
+        "#                               keyfile: /home/runner/.dbt/keyfile.json\n"
+        "#                               project: your-gcp-project\n"
+        "#                               dataset: hunter_ci\n"
+        "#                               threads: 4\n"
+        "#\n"
+        "#   DBT_KEYFILE_JSON    the service account key as JSON. Written to\n"
+        "#                       /home/runner/.dbt/keyfile.json, the path the profile\n"
+        "#                       above points at. Leave it unset for adapters that\n"
+        "#                       authenticate another way.\n"
+        "#\n"
+        "# Add both under Settings, Secrets and variables, Actions. Without the first,\n"
+        "# the manifest job stops with a message naming it, and nothing else runs.\n"
+        "#\n"
+        "# NO CREDENTIAL FOR CI? Use `committed` (a manifest kept in the repository) or\n"
+        "# `artifact` (fetched from your own dbt workflow). Neither needs a secret.\n"
+        "# ---------------------------------------------------------------------------\n"
+    )
+    job = f"""  manifest:
+    name: Build the dbt manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dbt
+        run: pip install --quiet {packages}{install_note}{adapter_note}
+      - name: Write the dbt profile from the repository secrets
+        env:
+          DBT_PROFILES_YML: ${{{{ secrets.DBT_PROFILES_YML }}}}
+          DBT_KEYFILE_JSON: ${{{{ secrets.DBT_KEYFILE_JSON }}}}
+        run: |
+          set -euo pipefail
+          if [ -z "$DBT_PROFILES_YML" ]; then
+            echo "::error title=Missing secret DBT_PROFILES_YML::Hunter reads dbt's manifest," \\
+              "and building one needs a dbt profile. Add a repository secret named" \\
+              "DBT_PROFILES_YML holding a profiles.yml for CI. The comment at the top of" \\
+              ".github/workflows/hunter.yml shows one. No credential? Run" \\
+              "hunter init --force --manifest-source committed."
+            exit 1
+          fi
+          mkdir -p "$HOME/.dbt"
+          printf '%s\\n' "$DBT_PROFILES_YML" > "$HOME/.dbt/profiles.yml"
+          if [ -n "$DBT_KEYFILE_JSON" ]; then
+            printf '%s\\n' "$DBT_KEYFILE_JSON" > "$HOME/.dbt/keyfile.json"
+          fi
+      - name: dbt deps
+        working-directory: ${{{{ env.DBT_PROJECT_DIR }}}}
+        run: dbt deps
+      - name: dbt parse
+        working-directory: ${{{{ env.DBT_PROJECT_DIR }}}}
+        run: dbt parse
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dbt-manifest
+          path: ${{{{ env.MANIFEST }}}}
+          if-no-files-found: error
+"""
+    return header, job
+
+
+STAMP_PREFIX = "# Written by hunter init"
+
+
+def stamp(text: str) -> str:
+    """Prefix generated text with a line that fingerprints the rest of it.
+
+    The fingerprint is how a later ``hunter init`` tells a file nobody touched,
+    which it can refresh, from one somebody spent an afternoon getting right,
+    which it must not overwrite without being told to.
+    """
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()[:12]
+    return (
+        f"{STAMP_PREFIX} {__version__}, fingerprint {digest}. Edit freely: init refuses to\n"
+        "# overwrite an edited file unless run with --force, and then keeps a .bak copy.\n" + text
+    )
+
+
+def file_state(path: Path) -> str:
+    """``missing``, ``pristine`` (as generated), ``edited``, or ``foreign``."""
+    if not path.exists():
+        return "missing"
+    text = path.read_text(encoding="utf-8")
+    first, _, rest = text.partition("\n")
+    if not first.startswith(STAMP_PREFIX):
+        return "foreign"
+    match = re.search(r"fingerprint ([0-9a-f]{12})", first)
+    _, _, body = rest.partition("\n")
+    if match is None:
+        return "foreign"
+    return (
+        "pristine"
+        if hashlib.sha256(body.encode("utf-8")).hexdigest()[:12] == match.group(1)
+        else "edited"
+    )
+
+
+def _difference(path: Path, fresh: str) -> str:
+    """How far an existing file is from what init would write now, in one clause."""
+    current = path.read_text(encoding="utf-8").splitlines()
+    proposed = fresh.splitlines()
+    diff = list(difflib.ndiff(current, proposed))
+    added = sum(1 for line in diff if line.startswith("+ "))
+    removed = sum(1 for line in diff if line.startswith("- "))
+    lost = "1 line" if removed == 1 else f"{removed} lines"
+    return f"{lost} of yours would be lost, {added} added"
+
+
+@dataclass
+class ScaffoldOutcome:
+    """What ``scaffold`` did to each file, so init can say so."""
+
+    created: list[Path] = field(default_factory=list)
+    refreshed: list[Path] = field(default_factory=list)
+    overwritten: dict[Path, Path] = field(default_factory=dict)  # path -> backup
+
+    @property
+    def written(self) -> list[Path]:
+        return sorted([*self.created, *self.refreshed, *self.overwritten])
+
+
 def scaffold(
     root: Path,
     *,
@@ -771,39 +996,65 @@ def scaffold(
     off_plan: list[str] | None = None,
     today: dt.date | None = None,
     write_workflow: bool = True,
-) -> list[Path]:
+    ci: CiSpec | None = None,
+) -> ScaffoldOutcome:
     """Write the ruleset, the register and the workflow.
 
+    A file that is exactly as init last wrote it is refreshed. A file somebody
+    has edited, or that init did not write, is left alone and named, unless
+    ``force`` is given, in which case the old file is kept beside the new one
+    as ``<name>.bak``.
+
     Raises:
-        FileExistsError: a target already exists and ``force`` is not set.
-            Overwriting a ruleset somebody has tuned would be worse than
-            refusing.
+        FileExistsError: an edited or foreign file is in the way and ``force``
+            is not set. The message names each file and what would be lost.
     """
     found = detect(root)
+    ci = ci or CiSpec()
     targets: dict[Path, str] = {
-        root / ".hunter" / "hunter.yml": ruleset_text(found),
-        root / ".hunter" / "register.yml": register_text(
-            needs_owner=needs_owner, off_plan=off_plan, today=today
+        root / ".hunter" / "hunter.yml": stamp(ruleset_text(found, ci=ci)),
+        root / ".hunter" / "register.yml": stamp(
+            register_text(needs_owner=needs_owner, off_plan=off_plan, today=today)
         ),
     }
     if write_workflow:
-        targets[root / ".github" / "workflows" / "hunter.yml"] = workflow_text(
-            dbt_project_dir=found.dbt_project_dir,
-            adapter=found.adapter,
-            profile=found.profile,
-            dbt_pins=found.dbt_pins,
-            dbt_pins_source=found.dbt_pins_source,
+        targets[root / ".github" / "workflows" / "hunter.yml"] = stamp(
+            workflow_text(
+                dbt_project_dir=found.dbt_project_dir,
+                adapter=found.adapter,
+                profile=found.profile,
+                dbt_pins=found.dbt_pins,
+                dbt_pins_source=found.dbt_pins_source,
+                ci=ci,
+            )
         )
 
-    if not force:
-        existing = [path for path in targets if path.exists()]
-        if existing:
-            names = ", ".join(str(path.relative_to(root)) for path in sorted(existing))
-            raise FileExistsError(f"These already exist: {names}")
+    states = {path: file_state(path) for path in targets}
+    blocking = {path: state for path, state in states.items() if state in ("edited", "foreign")}
+    if blocking and not force:
+        lines = ["These files are in the way, and init will not discard them:"]
+        for path, state in sorted(blocking.items()):
+            why = (
+                "edited since init wrote it" if state == "edited" else "not written by hunter init"
+            )
+            lines.append(f"  {path.relative_to(root)}: {why}; {_difference(path, targets[path])}")
+        lines.append(
+            "Run again with --force to overwrite them. Each old file is kept beside the "
+            "new one as <name>.bak."
+        )
+        raise FileExistsError("\n".join(lines))
 
-    written: list[Path] = []
+    outcome = ScaffoldOutcome()
     for path, text in targets.items():
         path.parent.mkdir(parents=True, exist_ok=True)
+        state = states[path]
+        if state in ("edited", "foreign"):
+            backup = path.with_name(path.name + ".bak")
+            backup.write_bytes(path.read_bytes())
+            outcome.overwritten[path] = backup
+        elif state == "pristine":
+            outcome.refreshed.append(path)
+        else:
+            outcome.created.append(path)
         path.write_text(text, encoding="utf-8")
-        written.append(path)
-    return sorted(written)
+    return outcome

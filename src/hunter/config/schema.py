@@ -16,6 +16,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 from hunter.enums import (
     Dimension,
     EntityKind,
+    ManifestSource,
     Persistence,
     PrMode,
     ReportMode,
@@ -378,6 +379,23 @@ class BrandingSpec(Strict):
     site_url: str | None = None
 
 
+class CiSpec(Strict):
+    """How the generated workflow gets dbt's manifest.
+
+    Read by ``hunter init`` and written back by it, so rerunning init
+    regenerates the same workflow rather than the default one. Nothing at
+    score time reads this.
+    """
+
+    manifest_source: ManifestSource = ManifestSource.PARSE
+    #: For ``committed``: the manifest in the repository, gzipped or plain.
+    manifest_path: str = ".hunter/ci-manifest.json.gz"
+    #: For ``artifact``: the workflow file in this repository that runs dbt.
+    manifest_workflow: str | None = None
+    #: For ``artifact``: the artifact that workflow uploads the manifest in.
+    manifest_artifact: str = "manifest"
+
+
 class PrSpec(Strict):
     """F11. Advisory on first installation, per FR11.7."""
 
@@ -415,6 +433,7 @@ class HunterConfig(Strict):
     integrations: IntegrationsSpec = Field(default_factory=IntegrationsSpec)
     branding: BrandingSpec = Field(default_factory=BrandingSpec)
     pull_request: PrSpec = Field(default_factory=PrSpec)
+    ci: CiSpec = Field(default_factory=CiSpec)
 
     @model_validator(mode="after")
     def _references_name_known_layers(self) -> HunterConfig:

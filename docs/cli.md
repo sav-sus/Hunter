@@ -220,8 +220,18 @@ Writes three files: `.hunter/hunter.yml`, `.hunter/register.yml` and
 checks on every pull request, and publishes the dashboard to GitHub Pages on
 every push to main. See [Run it on every pull request](ci.md).
 
-Refuses to overwrite existing files without `--force`. Overwriting a ruleset
-somebody has tuned would be worse than refusing.
+| Option | What it does |
+|---|---|
+| `--manifest-source parse\|committed\|artifact` | How CI gets dbt's manifest. Kept in `hunter.yml` under `ci`, so a rerun keeps it |
+| `--manifest-path` | For `committed`: where the manifest is kept. Default `.hunter/ci-manifest.json.gz` |
+| `--manifest-workflow`, `--manifest-artifact` | For `artifact`: the dbt workflow file and the artifact it uploads |
+| `--force` | Overwrite edited files, keeping each as `<name>.bak` |
+
+Rerunning init refreshes files that are exactly as it last wrote them, and
+refuses to touch edited ones without `--force`, naming each and what would be
+lost. Every generated file starts with a fingerprint line that makes this
+cheap to tell.
+
 
 ## `hunter rules`
 

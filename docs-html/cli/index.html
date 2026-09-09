@@ -1444,8 +1444,36 @@ would flag, each with a blank reason.</p>
 <code>.github/workflows/hunter.yml</code>. The workflow runs the score and the three sync
 checks on every pull request, and publishes the dashboard to GitHub Pages on
 every push to main. See <a href="../ci/">Run it on every pull request</a>.</p>
-<p>Refuses to overwrite existing files without <code>--force</code>. Overwriting a ruleset
-somebody has tuned would be worse than refusing.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--manifest-source parse\|committed\|artifact</code></td>
+<td>How CI gets dbt's manifest. Kept in <code>hunter.yml</code> under <code>ci</code>, so a rerun keeps it</td>
+</tr>
+<tr>
+<td><code>--manifest-path</code></td>
+<td>For <code>committed</code>: where the manifest is kept. Default <code>.hunter/ci-manifest.json.gz</code></td>
+</tr>
+<tr>
+<td><code>--manifest-workflow</code>, <code>--manifest-artifact</code></td>
+<td>For <code>artifact</code>: the dbt workflow file and the artifact it uploads</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite edited files, keeping each as <code>&lt;name&gt;.bak</code></td>
+</tr>
+</tbody>
+</table>
+<p>Rerunning init refreshes files that are exactly as it last wrote them, and
+refuses to touch edited ones without <code>--force</code>, naming each and what would be
+lost. Every generated file starts with a fingerprint line that makes this
+cheap to tell.</p>
 <h2 id="hunter-rules"><code>hunter rules</code><a class="headerlink" href="#hunter-rules" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>hunter<span class="w"> </span>rules
 </code></pre></div>
