@@ -510,9 +510,14 @@ class TestRoadmap:
         positions = [card.index(f"data-lane='{key}'") for key, *_ in ROADMAP_LANES]
         assert positions == sorted(positions)
 
-    def test_the_roadmap_comes_after_the_checklist_and_before_alignment(self, page: str) -> None:
+    def test_the_roadmap_sits_between_the_data_flow_and_the_table_list(self, page: str) -> None:
+        """Reading order: alignment, diagrams, data flow, roadmap, built tables."""
         assert (
-            page.index("id='checklist'") < page.index('id="roadmap"') < page.index('id="alignment"')
+            page.index('id="alignment"')
+            < page.index('id="diagrams"')
+            < page.index('id="dag"')
+            < page.index('id="roadmap"')
+            < page.index('id="readiness"')
         )
 
     def test_a_verified_table_is_live_with_the_word_on_it(self, result: RunResult) -> None:
@@ -580,3 +585,17 @@ class TestStatusColumn:
     def test_the_status_is_searchable(self, result: RunResult) -> None:
         row = next(row for row in readiness_rows(result) if row.name == "wh_commerce__order_fact")
         assert "verified" in row.searchable
+
+
+class TestRoadmapSearch:
+    def test_the_roadmap_has_a_find_box_like_the_other_cards(self, page: str) -> None:
+        card = page[page.index('id="roadmap"') :]
+        card = card[: card.index("</section>")]
+        assert "class='find'" in card
+        assert "class='tally'" in card
+
+    def test_every_roadmap_item_carries_what_the_search_matches(self, page: str) -> None:
+        card = page[page.index('id="roadmap"') :]
+        card = card[: card.index("</section>")]
+        assert card.count("<li data-find=") == card.count("<li ")
+        assert "wh_commerce__legacy_fact" in card
