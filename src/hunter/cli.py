@@ -24,6 +24,7 @@ import typer
 from hunter import __version__
 from hunter.config import ConfigError
 from hunter.config.register import RegisterError
+from hunter.config.schema import CiSpec
 from hunter.emit import mermaid
 from hunter.emit.markdown import model_page, write_site
 from hunter.emit.pr_comment import build_comment
@@ -567,18 +568,97 @@ def baseline(
     typer.echo("Commit this file so future runs measure movement rather than absolutes.")
 
 
+def _ci_settings(
+    root: Path,
+    *,
+    manifest_source: str | None,
+    manifest_path: str | None,
+    manifest_workflow: str | None,
+    manifest_artifact: str | None,
+    default: CiSpec,
+) -> CiSpec:
+    """The ci block: what hunter.yml already says, then what the flags say.
+
+    Reading the existing file first is what lets ``init --force`` regenerate the
+    same workflow rather than the default one.
+    """
+    import yaml
+
+    raw: dict[str, object] = {}
+    existing = root / ".hunter" / "hunter.yml"
+    if existing.exists():
+        try:
+            loaded = yaml.safe_load(existing.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            loaded = {}
+        if isinstance(loaded, dict) and isinstance(loaded.get("ci"), dict):
+            raw = dict(loaded["ci"])
+    for key, value in (
+        ("manifest_source", manifest_source),
+        ("manifest_path", manifest_path),
+        ("manifest_workflow", manifest_workflow),
+        ("manifest_artifact", manifest_artifact),
+    ):
+        if value is not None:
+            raw[key] = value
+    try:
+        return CiSpec.model_validate(raw) if raw else default
+    except ValueError as exc:
+        _fail(f"The ci settings are not valid: {exc}")
+        raise AssertionError("unreachable") from exc
+
+
 @app.command()
 def init(
     root: Path = typer.Argument(Path(), help="The repository to set up."),
-    force: bool = typer.Option(False, "--force", help="Overwrite existing files."),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        help=(
+            "Overwrite files you have edited, keeping each old one beside the new as "
+            "<name>.bak. Without it, init refreshes only files that are exactly as it "
+            "last wrote them."
+        ),
+    ),
+    manifest_source: str | None = typer.Option(
+        None,
+        "--manifest-source",
+        help=(
+            "How CI gets dbt's manifest: parse (run dbt parse; needs a profile secret), "
+            "committed (a manifest kept in the repository), or artifact (from your own "
+            "dbt workflow). Kept in hunter.yml under ci, so it survives a rerun."
+        ),
+    ),
+    manifest_path: str | None = typer.Option(
+        None, "--manifest-path", help="For committed: where the manifest is kept."
+    ),
+    manifest_workflow: str | None = typer.Option(
+        None, "--manifest-workflow", help="For artifact: the workflow file that runs dbt."
+    ),
+    manifest_artifact: str | None = typer.Option(
+        None, "--manifest-artifact", help="For artifact: the artifact holding manifest.json."
+    ),
 ) -> None:
-    """Write a starting hunter.yml and register.yml for this repository.
+    """Write a starting hunter.yml, register.yml and workflow for this repository.
 
     The register is pre-filled with the models Hunter would flag, each with a
     blank reason, so the team fills in reasons rather than authoring from
     nothing. That is what makes it get used.
+
+    Rerunning init refreshes files that are exactly as it last wrote them and
+    refuses to touch ones that have been edited unless --force is given, in
+    which case the old file is kept as <name>.bak.
     """
     from hunter.emit.scaffold import detect, scaffold
+
+    ci = _ci_settings(
+        root,
+        manifest_source=manifest_source,
+        manifest_path=manifest_path,
+        manifest_workflow=manifest_workflow,
+        manifest_artifact=manifest_artifact,
+        default=CiSpec(),
+    )
 
     found = detect(root)
     for note in found.notes:
@@ -615,11 +695,21 @@ def init(
             )
 
     try:
-        written = scaffold(root, force=force, needs_owner=needs_owner, off_plan=off_plan)
+        outcome = scaffold(root, force=force, needs_owner=needs_owner, off_plan=off_plan, ci=ci)
     except FileExistsError as exc:
-        _fail(f"{exc}\nRun again with --force to overwrite.")
-    for path in written:
+        _fail(str(exc))
+    for path in outcome.created:
         typer.echo(f"Wrote {path}")
+    for path in outcome.refreshed:
+        typer.echo(f"Refreshed {path} (it was exactly as init last wrote it)")
+    for path, backup in outcome.overwritten.items():
+        typer.secho(
+            f"Overwrote {path}. Your edited version is kept at {backup}; merge anything you "
+            "still need, then delete it.",
+            fg=typer.colors.YELLOW,
+        )
+    if ci.manifest_source.value != "parse":
+        typer.echo(f"  CI gets the manifest from: {ci.manifest_source}. See the workflow header.")
 
     if needs_owner or off_plan:
         typer.echo("")

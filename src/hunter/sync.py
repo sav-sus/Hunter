@@ -327,6 +327,21 @@ _VERDICT_MARK = {
 }
 
 
+def summary_title(results: list[SyncResult]) -> str:
+    """The heading of a comment or step summary.
+
+    Each sync check posts its own comment, so the heading names the check and
+    its verdict: a reader pairing a red "Hunter / Droughty sync" job with its
+    comment should manage it from the collapsed timeline. The check's own title
+    is used, so the heading and the body cannot disagree. "layer sync" is kept
+    only for a run covering more than one check, where no single name is right.
+    """
+    if len(results) == 1:
+        item = results[0]
+        return f"Rittman Hunter: {item.check.title}, {item.verdict}"
+    return "Rittman Hunter: layer sync"
+
+
 def as_markdown(results: list[SyncResult], *, logo_url: str | None = None) -> str:
     """A CI step summary.
 
@@ -335,7 +350,7 @@ def as_markdown(results: list[SyncResult], *, logo_url: str | None = None) -> st
     """
     from hunter.emit.pr_comment import header
 
-    lines: list[str] = header("Rittman Hunter: layer sync", logo_url)
+    lines: list[str] = header(summary_title(results), logo_url)
     lines += ["| | Check | Result | Detail |", "|---|---|---|---|"]
     for item in results:
         mark = _VERDICT_MARK[item.verdict]

@@ -92,6 +92,13 @@ Unknown keys are errors. A typo must not silently switch off a rule.
 
 ## Turning a rule off, or changing what it costs
 
+There is one way to do this, and it asks for a reason. There is no silent
+switch for any rule: an earlier `cross_layer.require_datagroup_on_explores`
+did the same job as disabling `crosslayer.explore_no_caching_policy` without
+recording why, and it has been removed. The `hunter.yml` that `hunter init`
+writes lists the rules repositories most often change, commented out, so the
+mechanism is visible without reading source.
+
 Needs a reason, and the reason is published.
 
 ```yaml
@@ -133,6 +140,20 @@ names it.
 A found layer carries no rules: no required descriptions, owners or tests, and
 no place in the pipeline order. Declare it here to say what it should look like.
 Until then, nothing needs editing for its tables to appear on the dashboard.
+
+??? note "CI: how the workflow gets dbt's manifest"
+
+    ```yaml
+    ci:
+      manifest_source: committed        # parse, committed or artifact
+      manifest_path: .hunter/ci-manifest.json.gz
+      # manifest_workflow: dbt.yml      # for artifact
+      # manifest_artifact: manifest
+    ```
+
+    Read and written by `hunter init`, so rerunning it regenerates the same
+    workflow. Nothing at score time reads this block. See
+    [how CI gets the manifest](ci.md#before-the-first-run-how-ci-gets-the-manifest).
 
 ??? note "Branding: names and the logo on the report"
 

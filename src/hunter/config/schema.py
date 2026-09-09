@@ -11,11 +11,12 @@ import datetime as dt
 import fnmatch
 from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from hunter.enums import (
     Dimension,
     EntityKind,
+    ManifestSource,
     Persistence,
     PrMode,
     ReportMode,
@@ -201,9 +202,29 @@ class DroughtySpec(Strict):
 class CrossLayerSpec(Strict):
     """dbt against LookML expectations. F4."""
 
-    require_datagroup_on_explores: bool = True
     flag_duplicate_measures: bool = True
-    generate_missing_exposures: bool = True
+    #: Report warehouse tables that LookML reads with no dbt exposure declared.
+    #: It reports; it writes nothing. The old name, generate_missing_exposures,
+    #: is still accepted so an existing hunter.yml keeps loading.
+    report_missing_exposures: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("report_missing_exposures", "generate_missing_exposures"),
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _retired_switch_names_its_replacement(cls, data: object) -> object:
+        if isinstance(data, dict) and "require_datagroup_on_explores" in data:
+            raise ValueError(
+                "cross_layer.require_datagroup_on_explores was removed. It switched off "
+                "one rule silently. Do it under rules instead, with a reason:\n"
+                "  rules:\n"
+                "    crosslayer.explore_no_caching_policy:\n"
+                "      enabled: false\n"
+                "      reason: <why this repository does not use datagroups>"
+            )
+        return data
+
     #: v1 records derived tables and skips them, per risk 6.
     skip_derived_tables: bool = True
 
@@ -358,6 +379,23 @@ class BrandingSpec(Strict):
     site_url: str | None = None
 
 
+class CiSpec(Strict):
+    """How the generated workflow gets dbt's manifest.
+
+    Read by ``hunter init`` and written back by it, so rerunning init
+    regenerates the same workflow rather than the default one. Nothing at
+    score time reads this.
+    """
+
+    manifest_source: ManifestSource = ManifestSource.PARSE
+    #: For ``committed``: the manifest in the repository, gzipped or plain.
+    manifest_path: str = ".hunter/ci-manifest.json.gz"
+    #: For ``artifact``: the workflow file in this repository that runs dbt.
+    manifest_workflow: str | None = None
+    #: For ``artifact``: the artifact that workflow uploads the manifest in.
+    manifest_artifact: str = "manifest"
+
+
 class PrSpec(Strict):
     """F11. Advisory on first installation, per FR11.7."""
 
@@ -395,6 +433,7 @@ class HunterConfig(Strict):
     integrations: IntegrationsSpec = Field(default_factory=IntegrationsSpec)
     branding: BrandingSpec = Field(default_factory=BrandingSpec)
     pull_request: PrSpec = Field(default_factory=PrSpec)
+    ci: CiSpec = Field(default_factory=CiSpec)
 
     @model_validator(mode="after")
     def _references_name_known_layers(self) -> HunterConfig:

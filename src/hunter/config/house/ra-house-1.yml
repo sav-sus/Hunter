@@ -235,9 +235,8 @@ entity_inference:
 # Cross-layer
 # ---------------------------------------------------------------------------
 cross_layer:
-  require_datagroup_on_explores: true
   flag_duplicate_measures: true
-  generate_missing_exposures: true
+  report_missing_exposures: true
   skip_derived_tables: true
 
 # ---------------------------------------------------------------------------

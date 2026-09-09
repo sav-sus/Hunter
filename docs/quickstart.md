@@ -192,8 +192,19 @@ else, and `dbt parse` needs a dbt profile. You give it one as a secret.
 4. For BigQuery with a service account, add a second secret. Name:
    `DBT_KEYFILE_JSON`. Value: the service account key file, as JSON.
 
-**If your dbt job already produces a manifest** somewhere, you can skip the
-secrets: the header of the workflow file says how to fetch that file instead.
+**If you cannot get a credential for CI**, for instance because the warehouse
+uses your own login rather than a service account, skip the secrets and keep a
+manifest in the repository instead:
+
+```bash
+cd path/to/the-dbt-project && dbt parse && gzip -c target/manifest.json > ../.hunter/ci-manifest.json.gz
+cd -
+hunter init --manifest-source committed
+```
+
+The workflow is regenerated to unpack that file. Refresh it when models
+change. **If your dbt job already uploads a manifest** as an artifact, use
+`hunter init --manifest-source artifact --manifest-workflow <its file>`.
 
 **If you skip this step**, the first job on the pull request stops with a
 message that names the missing secret. Nothing else runs until it is added.

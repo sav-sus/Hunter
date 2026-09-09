@@ -231,6 +231,14 @@ class ReportMode(StrEnum):
     CLIENT = "client"
 
 
+class ManifestSource(StrEnum):
+    """How CI gets dbt's manifest. Chosen at ``hunter init``, kept in hunter.yml."""
+
+    PARSE = "parse"  # run dbt parse in CI; needs a dbt profile secret
+    COMMITTED = "committed"  # unpack a manifest committed in the repository
+    ARTIFACT = "artifact"  # fetch it from the repository's own dbt workflow
+
+
 class PrMode(StrEnum):
     """How the Action behaves on a pull request. FR11.6."""
 

@@ -306,3 +306,19 @@ class TestIgnoreRule:
         )
         assert ignore.is_expired(dt.date(2026, 7, 1))
         assert not ignore.is_expired(dt.date(2026, 6, 30))
+
+
+class TestRetiredSwitches:
+    def test_the_old_exposure_switch_name_still_loads(self) -> None:
+        from hunter.config.schema import CrossLayerSpec
+
+        spec = CrossLayerSpec.model_validate({"generate_missing_exposures": False})
+        assert spec.report_missing_exposures is False
+
+    def test_the_silent_datagroup_switch_names_its_replacement(self) -> None:
+        import pytest
+
+        from hunter.config.schema import CrossLayerSpec
+
+        with pytest.raises(ValueError, match=r"crosslayer\.explore_no_caching_policy"):
+            CrossLayerSpec.model_validate({"require_datagroup_on_explores": False})

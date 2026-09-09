@@ -332,3 +332,33 @@ class TestTheCommand:
         payload = json.loads(out.read_text(encoding="utf-8"))
         assert [entry["key"] for entry in payload["checks"]] == ["lookml", "droughty", "modelling"]
         assert "Rittman Hunter" in summary.read_text(encoding="utf-8")
+
+
+class TestSummaryTitle:
+    """Each sync check posts its own comment; the heading must say which."""
+
+    def test_two_checks_produce_two_different_headings(self, results) -> None:
+        by_key = {item.check.key: item for item in results}
+        lookml = sync.as_markdown([by_key["lookml"]])
+        droughty = sync.as_markdown([by_key["droughty"]])
+        assert lookml.splitlines()[0] != droughty.splitlines()[0]
+
+    def test_the_heading_is_the_check_title_and_verdict(self, results) -> None:
+        """Matches the CI job name exactly: "LookML sync", not "lookml sync"."""
+        for item in results:
+            heading = sync.as_markdown([item]).splitlines()[0]
+            assert heading == f"## Rittman Hunter: {item.check.title}, {item.verdict}"
+        titles = {item.check.title for item in results}
+        assert titles == {"LookML sync", "Droughty sync", "Modelling sync"}
+
+    def test_a_run_over_several_checks_falls_back_to_layer_sync(self, results) -> None:
+        assert len(results) > 1
+        assert sync.as_markdown(results).splitlines()[0] == "## Rittman Hunter: layer sync"
+
+    def test_the_heading_is_never_hardcoded(self) -> None:
+        """Fails if someone puts a literal title back into as_markdown."""
+        import inspect
+
+        source = inspect.getsource(sync.as_markdown)
+        assert 'header("Rittman Hunter' not in source
+        assert "summary_title(results)" in source
