@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import functools
+import hashlib
 from pathlib import Path
 
 ASSETS = Path(__file__).parent / "assets"
@@ -94,6 +95,35 @@ def data_uri(filename: str) -> str:
     mime = suffix.get(path.suffix, "application/octet-stream")
     encoded = base64.b64encode(path.read_bytes()).decode("ascii")
     return f"data:{mime};base64,{encoded}"
+
+
+#: The diagram renderer, vendored so the dashboard needs no network. Pinned,
+#: like every parser Hunter depends on, and checked against this digest so a
+#: swapped file cannot go unnoticed. Licence: assets/MERMAID-LICENSE (MIT).
+MERMAID_VERSION = "11.4.1"
+MERMAID_SHA256 = "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e"
+
+
+@functools.lru_cache(maxsize=1)
+def mermaid_js() -> str:
+    """The bundled Mermaid source, ready to sit inside a <script> element.
+
+    Raises:
+        RuntimeError: the vendored file is missing or is not the pinned build.
+    """
+    path = ASSETS / "mermaid.min.js"
+    if not path.exists():
+        raise RuntimeError(f"the bundled diagram library is missing: {path}")
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != MERMAID_SHA256:
+        raise RuntimeError(
+            f"{path} is not Mermaid {MERMAID_VERSION}: digest {digest[:12]} "
+            f"differs from the pinned {MERMAID_SHA256[:12]}"
+        )
+    # A "</script" inside the source would end the element early. None is
+    # present in this build; escaping it keeps that true for the next one.
+    return raw.decode("utf-8").replace("</script", "<\\/script")
 
 
 def logo_uri() -> str:

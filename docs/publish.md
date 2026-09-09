@@ -69,7 +69,7 @@ A browser-side password check is not access control.
 | The publish job is skipped | The run was for a pull request. Only pushes to main publish |
 | The publish job fails with a permissions error | The Pages source is still set to a branch. Set it to GitHub Actions |
 | The page is there but out of date | Look at the Actions tab. A failed score job means nothing was handed to Pages |
-| The diagrams show as text | The diagram library did not load. Everything else on the page is unaffected |
+| The diagrams show as text | Scripting is switched off in the browser. Everything else on the page is unaffected |
 
 ## Without GitHub Pages
 

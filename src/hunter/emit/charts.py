@@ -7,7 +7,7 @@ matter:
    a build artifact, a laptop with no connection and an email attachment, and a
    chart that silently fails to draw is worse than a table. The model diagrams
    are the one exception on the page: they need Mermaid, they are fetched at a
-   pinned version, and they degrade to source text where it does not arrive.
+   pinned version bundled into the page, and they degrade to source text without scripting.
 2. The output has to be byte-identical between runs, because the whole site is
    compared against a committed golden file. A library that lays out at draw
    time cannot promise that.

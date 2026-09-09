@@ -60,6 +60,8 @@ SKIP_SUFFIXES = {
 
 SKIP_PATHS = {
     "scripts/check_no_client_content.py",  # this file names the patterns
+    "src/hunter/assets/mermaid.min.js",  # vendored, 2.5 MB of minified JavaScript
+    "src/hunter/assets/MERMAID-LICENSE",
 }
 
 

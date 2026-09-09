@@ -20,7 +20,6 @@ from hunter import brand
 from hunter.emit import charts
 from hunter.emit.charts import Slice
 from hunter.emit.dashboard import (
-    MERMAID_URL,
     ROADMAP_LANES,
     checklist,
     dashboard_html,
@@ -47,26 +46,45 @@ def page(result: RunResult) -> str:
 
 
 class TestSelfContained:
-    """The reason the charts are hand-drawn instead of a library."""
+    """The reason the charts are hand-drawn and the diagram library is bundled."""
 
-    def test_the_only_thing_fetched_is_the_diagram_library(self, page: str) -> None:
-        """A report is opened offline. Anything remote would silently not draw.
+    def test_nothing_on_the_page_is_fetched(self, page: str) -> None:
+        """A report is opened offline, emailed, or behind a corporate filter.
 
-        Data URIs are the logo and the favicon, inlined from the package. The
-        one allowed remote reference is the pinned Mermaid build that draws the
-        model diagrams, and the page has to survive it not arriving.
+        Anything remote would silently not draw at the client's end while
+        drawing at ours. Data URIs are the logo and the favicon, inlined from
+        the package; the diagram library is inlined the same way. This is the
+        check that stops a CDN reference coming back.
         """
-        remote = re.findall(r'(?:src|href)="(?!#|data:)([^"]+)"', page)
-        assert remote == [MERMAID_URL], f"unexpected remote references: {remote}"
+        markup = re.sub(r"<script>.*?</script>", "", page, flags=re.S)
+        remote = re.findall(r'(?:src|href)="(?!#|data:)([^"]+)"', markup)
+        assert remote == [], f"external references: {remote}"
+        assert "<script src=" not in page
+        # Every script element is inline: either bare, or the JSON data block
+        # the data-flow selector reads. Nothing carries a src.
+        tags = re.findall(r"<script\b[^>]*>", page)
+        assert tags and all(
+            tag == "<script>" or tag.startswith("<script type='application/json'") for tag in tags
+        ), tags
 
-    def test_the_diagram_library_is_pinned(self) -> None:
-        assert re.search(r"mermaid@\d+\.\d+\.\d+/", MERMAID_URL)
+    def test_the_diagram_library_is_bundled_and_pinned(self, page: str) -> None:
+        from hunter.brand import MERMAID_SHA256, MERMAID_VERSION, mermaid_js
 
-    def test_the_page_degrades_when_the_library_does_not_load(self, page: str) -> None:
+        assert re.fullmatch(r"\d+\.\d+\.\d+", MERMAID_VERSION)
+        source = mermaid_js()
+        assert source.startswith('"use strict";var __esbuild_esm_mermaid')
+        assert f'"{MERMAID_VERSION}"' in source
+        assert source[:200] in page
+        assert len(MERMAID_SHA256) == 64
+        assert "</script" not in source
+
+    def test_the_page_degrades_without_scripting(self, page: str) -> None:
         """The diagram source is in the HTML, and a note explains what happened."""
         assert "<pre class='mermaid'>" in page
-        assert "could not be loaded" in page
-        assert 'onerror="window.hunterDiagramsOffline=true"' in page
+        assert "<noscript>" in page
+        assert "Scripting is switched off" in page
+        assert "cdn.jsdelivr.net" not in page
+        assert "hunterDiagramsOffline" not in page
 
     def test_the_logo_is_inlined(self, page: str) -> None:
         assert "data:image/png;base64," in page
@@ -79,7 +97,10 @@ class TestSelfContained:
 class TestWellFormed:
     def test_every_chart_parses_as_xml(self, page: str) -> None:
         """A malformed path or an unescaped label would show as a blank panel."""
-        found = re.findall(r"<svg\b.*?</svg>", page, re.S)
+        # The bundled diagram library carries SVG fragments as strings. Only
+        # the SVG Hunter itself wrote is under test here.
+        markup = re.sub(r"<script>.*?</script>", "", page, flags=re.S)
+        found = re.findall(r"<svg\b.*?</svg>", markup, re.S)
         assert len(found) >= 1, f"expected at least the score ring, found {len(found)}"
         for svg in found:
             ElementTree.fromstring(svg)  # raises if the SVG is not well formed

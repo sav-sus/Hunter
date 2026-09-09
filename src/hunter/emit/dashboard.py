@@ -1373,7 +1373,9 @@ def _alignment(result: RunResult) -> str:
 #: source renders the same way next year. This is the only thing on the page
 #: fetched from anywhere. Without it the diagram source is shown as text and
 #: everything else on the page is unaffected.
-MERMAID_URL = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
+#: The diagram renderer is bundled into the page from the package, so the file
+#: has no external reference at all. brand.mermaid_js() checks the pinned build.
+MERMAID_VERSION = brand.MERMAID_VERSION
 
 #: The model diagrams, in the order a stakeholder reads them.
 DIAGRAMS: tuple[tuple[str, str, str], ...] = (
@@ -1496,8 +1498,10 @@ def _tabbed(
         "</div>"
     )
     offline = (
-        "<p class='offline' hidden>The diagram library could not be loaded, so the "
-        "diagram source is shown as text. Open this page with a connection to see it drawn.</p>"
+        "<noscript><p class='offline'>Scripting is switched off in this browser, so the "
+        "diagram source is shown as text rather than drawn.</p></noscript>"
+        "<p class='offline' hidden>The bundled diagram library did not start in this "
+        "browser, so the diagram source is shown as text rather than drawn.</p>"
     )
     return _card(
         title,
@@ -2395,13 +2399,13 @@ SEARCH_JS = """
 
 #: Tabs and zoom for every tabbed diagram card. Each diagram is drawn the first time
 #: its tab is opened, because the library measures text and a hidden element
-#: measures as nothing. If the library never arrived the source stays as text
-#: and a note says so.
+#: measures as nothing. The library is bundled into the page; if it still failed
+#: to start, the source stays as text and a note says so.
 DIAGRAM_JS = """
 (function () {
   var groups = document.querySelectorAll('.tabbed');
   if (!groups.length) { return; }
-  var ready = typeof window.mermaid !== 'undefined' && !window.hunterDiagramsOffline;
+  var ready = typeof window.mermaid !== 'undefined';
   if (ready) {
     window.mermaid.initialize({ startOnLoad: false, theme: 'base', securityLevel: 'antiscript',
       themeVariables: {
@@ -2799,7 +2803,7 @@ def dashboard_html(result: RunResult, *, generated_at: dt.datetime | None = None
   <span class="meta">{esc(stamp)}</span>
 </div></footer>
 <script>{SEARCH_JS}</script>
-<script src="{MERMAID_URL}" onerror="window.hunterDiagramsOffline=true"></script>
+<script>{brand.mermaid_js()}</script>
 <script>{DIAGRAM_JS}</script>
 </body>
 </html>

@@ -22,8 +22,8 @@ each item saying what breaks if it is left.
 answering one question: the number, what nobody has decided, where the points
 are going, how much of the plan is real, every rule at once, which tables
 everything is built on, and what to fix first. It is one self-contained HTML
-file, so it can be sent as an attachment. Everything is inlined except the
-diagram library, which is pinned and degrades to source text.
+file, so it can be sent as an attachment. Everything is inlined, including the
+diagram library, which is bundled into the file at a pinned version.
 
 **A site**, twelve pages behind the dashboard, readable by an engineer and by
 someone who has never seen SQL. Plain language sits above the detail on the same

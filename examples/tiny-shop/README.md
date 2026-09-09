@@ -23,7 +23,7 @@ It scores **87.8** and triggers 28 of Hunter's 77 rules across all seven scored
 areas.
 
 `hunter dashboard` writes one HTML file with the stylesheet, every chart and
-the logo inlined. Only the diagram library is fetched, at a pinned version, and
+the logo inlined. The diagram library is bundled in at a pinned version, nothing is fetched, and
 the page reads in full without it.
 
 ## The two config files
